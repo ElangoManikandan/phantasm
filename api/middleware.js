@@ -16,3 +16,4 @@ export default async function middleware(req, res) {
     return res.status(401).json({ error: 'Unauthorized' })
   }
 }
+
