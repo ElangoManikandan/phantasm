@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - PHANTASM'25</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #FF5722, #E64A19);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        header p {
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        /* Navigation Bar Styles */
+        nav {
+            background: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 2rem;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 1rem 2rem;
+            transition: background 0.3s, color 0.3s;
+            border-radius: 4px;
+        }
+        nav ul li a:hover {
+            background: #FF5722;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        /* Main Content */
+        main {
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        main section {
+            margin-bottom: 3rem;
+        }
+        main h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #FF5722;
+            font-weight: 600;
+        }
+        main p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: #555;
+        }
+
+        /* Event List Styles */
+        .event-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 0;
+        }
+        .event-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+        .event-card h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .event-card p {
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            font-size: 1rem;
+            margin-top: 3rem;
+        }
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Events</h1>
+        <p>Explore the exciting events and workshops we offer at PHANTASM'25</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
+            <li><a href="login.html">Login</a></li>
+   <li><a href="contributors.html">Contributors</a></li>
+            <li><a href="contact-us.html">Contact Us</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section>
+            <h2>Technical Events</h2>
+            <div class="event-list">
+                <div class="event-card" onclick="redirectTo('codeathon.html')" style="cursor: pointer;">
+                    <h3>Codeathon</h3>
+                    <p>Compete with the best minds to solve real-world problems.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('debug_challenge.html')" style="cursor: pointer;">
+                    <h3>Debug Challenge</h3>
+                    <p>Show off your debugging skills and solve complex code issues.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('tech_quiz.html')" style="cursor: pointer;">
+                    <h3>Tech Quiz</h3>
+                    <p>Test your knowledge on the latest in technology.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('ai_hackathon.html')" style="cursor: pointer;">
+                    <h3>AI Hackathon</h3>
+                    <p>Build innovative solutions using artificial intelligence.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Non-Technical Events</h2>
+            <div class="event-list">
+                <div class="event-card" onclick="redirectTo('treasure_hunt.html')" style="cursor: pointer;">
+                    <h3>Treasure Hunt</h3>
+                    <p>Join the thrilling quest to find hidden treasures.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('quiz_mania.html')" style="cursor: pointer;">
+                    <h3>Quiz Mania</h3>
+                    <p>Compete in an exciting general knowledge quiz.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('photography_contest.html')" style="cursor: pointer;">
+                    <h3>Photography Contest</h3>
+                    <p>Showcase your photography skills and win amazing prizes.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('debate_competition.html')" style="cursor: pointer;">
+                    <h3>Debate Competition</h3>
+                    <p>Engage in thought-provoking debates and express your views.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Workshops</h2>
+            <div class="event-list">
+                <div class="event-card" onclick="redirectTo('machine_learning_basics.html')" style="cursor: pointer;">
+                    <h3>Machine Learning Basics</h3>
+                    <p>Learn the fundamentals of machine learning with hands-on sessions.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('web_development.html')" style="cursor: pointer;">
+                    <h3>Web Development</h3>
+                    <p>Build your first website using HTML, CSS, and JavaScript.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('data_science_essentials.html')" style="cursor: pointer;">
+                    <h3>Data Science Essentials</h3>
+                    <p>Explore data analysis and visualization techniques.</p>
+                </div>
+                <div class="event-card" onclick="redirectTo('cybersecurity_101.html')" style="cursor: pointer;">
+                    <h3>Cybersecurity 101</h3>
+                    <p>Learn the basics of securing digital platforms and preventing threats.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 PHANTASM'25 Symposium. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function redirectTo(page) {
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

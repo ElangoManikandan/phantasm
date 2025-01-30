@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Events - PHANTASM'25</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #4CAF50, #3E8E41);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Navigation Bar Styles */
+        nav {
+            background: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 1.5rem;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            transition: background 0.3s, color 0.3s;
+        }
+        nav ul li a:hover {
+            background: #4CAF50;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem;
+            text-align: center;
+        }
+        main section {
+            margin-bottom: 2rem;
+        }
+        main h2 {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+        .event-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 0;
+        }
+        .event-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            transition: transform 0.3s;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+        .event-card h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .event-card p {
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Technical Events</h1>
+        <p>Unleash your technical expertise with these exciting events.</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="contact-us.html">Contact Us</a></li>
+        </ul>
+    </nav>
+    <main>
+<section>
+    <h2>Explore Our Events</h2>
+    <div class="event-list">
+        <div class="event-card" onclick="redirectTo('codeathon.html')" style="cursor: pointer;">
+            <h3>Codeathon</h3>
+            <p>Compete with the best minds to solve real-world problems.</p>
+        </div>
+        <div class="event-card" onclick="redirectTo('debug_challenge.html')" style="cursor: pointer;">
+            <h3>Debug Challenge</h3>
+            <p>Show off your debugging skills and solve complex code issues.</p>
+        </div>
+        <div class="event-card" onclick="redirectTo('tech_quiz.html')" style="cursor: pointer;">
+            <h3>Tech Quiz</h3>
+            <p>Test your knowledge on the latest in technology.</p>
+        </div>
+        <div class="event-card" onclick="redirectTo('ai_hackathon.html')" style="cursor: pointer;">
+            <h3>AI Hackathon</h3>
+            <p>Build innovative solutions using artificial intelligence.</p>
+        </div>
+    </div>
+</section>
+<script>
+    function redirectTo(page) {
+        window.location.href = page;
+    }
+</script>
+
+    </main>
+    <footer>
+        <p>&copy; 2024 PHANTASM'25 Symposium. All rights reserved.</p>
+    </footer>
+</body>
+</html>
