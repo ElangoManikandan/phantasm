@@ -44,3 +44,5 @@ export const requireAdmin = (req, res, next) => {
   }
   next()
 }
+
+export default auth;
