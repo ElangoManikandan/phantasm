@@ -12,13 +12,7 @@ app.use(bodyParser.json());
 app.use("/admin", adminRoutes);    // Admin-related routes
 app.use("/auth", authRoutes);      // Authentication routes
 app.use("/events", eventsRoutes);  // Event-related routes
-app.use("/profile", profileRoutes); // Profile-related routes
-
-// Import necessary modules
-const express = require('express');
-const mysql = require('mysql');
-const app = express();
-const port = process.env.PORT || 3000;
+app.use("/profile", profileRoutes); // Profile-related route
 
 // Middleware to parse JSON
 app.use(express.json());
