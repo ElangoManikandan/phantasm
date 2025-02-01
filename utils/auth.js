@@ -1,48 +1,46 @@
 import jwt from 'jsonwebtoken'
-import { redis } from './redis'
 
-const EXPIRATION_TIME = 86400 // 24 hours in seconds
+const EXPIRATION_TIME = '24h' // JWT expiration time
 
-export const createSession = async (user) => {
-  const token = jwt.sign(
+export const createSession = (user) => {
+  return jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: EXPIRATION_TIME }
   )
-  
-  await redis.set(`session:${user.id}`, JSON.stringify({
-    user,
-    valid: true,
-    expires: Date.now() + EXPIRATION_TIME * 1000
-  }))
-
-  return token
 }
 
-export const verifySession = async (token) => {
+export const verifySession = (token) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const session = await redis.get(`session:${decoded.id}`)
-    
-    if (!session?.valid || session.expires < Date.now()) {
-      throw new Error('Invalid session')
-    }
-    
-    return session.user
+    return jwt.verify(token, process.env.JWT_SECRET)
   } catch (error) {
     throw new Error('Authentication failed')
   }
 }
 
+// Authentication middleware
+export const requireAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization
 
-/*// Authentication middleware
-const requireAuth = (req, res, next) => {
-  // Your auth logic
-};
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  const token = authHeader.split(' ')[1]
+
+  try {
+    const decoded = verifySession(token)
+    req.user = decoded
+    next()
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid or expired token' })
+  }
+}
 
 // Admin check middleware
-const requireAdmin = (req, res, next) => {
-  // Your admin check logic
-};
-
-module.exports = { requireAuth, requireAdmin };*/
+export const requireAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Admin access required' })
+  }
+  next()
+}
