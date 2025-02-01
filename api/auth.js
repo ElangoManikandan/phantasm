@@ -1,12 +1,13 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const db = require("../utils/db");
-const { generateToken } = require("../utils/auth");
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import path from "path";
+import fs from "fs";
+import QRCode from "qrcode";
+import { generateToken } from "../utils/auth";
+import db from "../utils/db";
+
 const router = express.Router();
-const jwt = require("jsonwebtoken");
-const path = require("path");
-const fs = require("fs");
-const QRCode = require("qrcode");
 
 router.post("/register", async (req, res) => {
     const { name, college, year, email, password, accommodation, role, admin_key } = req.body;
@@ -103,7 +104,7 @@ router.post("/register", async (req, res) => {
 
 // User Login Route
 
-app.post("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -164,7 +165,6 @@ router.get("/check-authentication", (req, res) => {
         res.status(403).json({ error: "Invalid token" });
     }
 });
-
 
 // Forgot Password Route
 router.post('/forgot-password', (req, res) => {
