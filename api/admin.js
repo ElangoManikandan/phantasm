@@ -1,36 +1,43 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const db = require("../utils/db");
-const { requireAdmin } = require("../api/middleware");
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import db from "../utils/db.js"; // Ensure correct path with .js extension
+import { requireAdmin } from "../api/middleware.js"; // Ensure correct path with .js extension
+
 const router = express.Router();
 
+// Login route for admin
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // Fetch the admin from the database
-    const [admin] = await db.promise().query(
-        "SELECT * FROM users WHERE email = ? AND role = 'admin'",
-        [email]
-    );
+    try {
+        // Fetch the admin from the database
+        const [admin] = await db.promise().query(
+            "SELECT * FROM users WHERE email = ? AND role = 'admin'",
+            [email]
+        );
 
-    if (admin.length === 0 || !bcrypt.compareSync(password, admin[0].password)) {
-        return res.status(401).json({ success: false, message: "Invalid credentials" });
+        if (admin.length === 0 || !bcrypt.compareSync(password, admin[0].password)) {
+            return res.status(401).json({ success: false, message: "Invalid credentials" });
+        }
+
+        // Create a JWT token with the admin's ID and role
+        const token = jwt.sign(
+            { id: admin[0].id, role: admin[0].role },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" } // Token expires in 1 hour
+        );
+
+        // Send the token in the response
+        res.status(200).json({
+            success: true,
+            message: "Admin logged in successfully.",
+            token: token, // The token will be sent to the client
+        });
+    } catch (err) {
+        console.error("Error during login:", err);
+        res.status(500).json({ success: false, message: "Server error during login" });
     }
-
-    // Create a JWT token with the admin's ID and role
-    const token = jwt.sign(
-        { id: admin[0].id, role: admin[0].role }, 
-        process.env.JWT_SECRET, 
-        { expiresIn: "1h" } // Token expires in 1 hour, you can adjust the duration
-    );
-
-    // Send the token in the response
-    res.status(200).json({
-        success: true,
-        message: "Admin logged in successfully.",
-        token: token, // The token will be sent to the client
-    });
 });
 
 // Admin Attendance Route
@@ -74,7 +81,7 @@ router.post('/admin/mark-attendance', requireAdmin, async (req, res) => {
         if (registrationResults.length === 0) {
             // Register the user for the event
             await db.promise().query(
-                `INSERT INTO registrations (user_id, event_id) VALUES (?, ?)` ,
+                `INSERT INTO registrations (user_id, event_id) VALUES (?, ?)`,
                 [userId, event_id]
             );
         }
@@ -103,9 +110,7 @@ router.post('/admin/mark-attendance', requireAdmin, async (req, res) => {
     }
 });
 
-
 // Admin Profile Route
-// Get admin profile route
 router.get('/get-admin-profile', requireAdmin, (req, res) => {
     const adminId = req.user.id; // Get admin's ID from the decoded JWT
 
@@ -126,7 +131,6 @@ router.get('/get-admin-profile', requireAdmin, (req, res) => {
 });
 
 // Admin Attendance Details Route
-// Fetch Attendance Details
 router.get('/attendance', requireAdmin, (req, res) => {
     const adminId = req.user.id; // Get admin's ID from the decoded JWT
 
@@ -148,5 +152,4 @@ router.get('/attendance', requireAdmin, (req, res) => {
     );
 });
 
-
-export default router;
+export default router;  // Use export default for ES module
