@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import mysql from 'mysql2/promise';
 
 // Create a connection to the MySQL database
