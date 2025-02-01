@@ -4,10 +4,10 @@ import mysql from 'mysql2/promise';
 
 // Create a connection to the MySQL database
 const db = mysql.createPool({
-  host: 'your-database-host',   // Replace with your database host
-  user: 'your-database-user',   // Replace with your database user
-  password: 'your-database-password', // Replace with your database password
-  database: 'your-database-name'  // Replace with your database name
+  host:'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+  user: '43yxnpPZ3zo884a.root',   // Replace with your database user
+  password: 'oPWexZ8hDt6o97QT', // Replace with your database password
+  database: 'symposium_db'  // Replace with your database name
 });
 
 export default async function handler(req, res) {
