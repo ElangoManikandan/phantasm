@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
         // 🔹 Fetch Attendance Records
         if (method === "GET" && url.endsWith("/admin/attendance")) {
-            const [attendance] = await db.promise().query(
+            const [attendance] = await pool.promise().query(
                 `SELECT events.name AS event_name, users.name AS participant_name, 
                         attendance.attendance_status, attendance.marked_at
                  FROM attendance
