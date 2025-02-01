@@ -1,6 +1,7 @@
-const express = require("express");
-const db = require("../utils/db");
-const { requireAuth } = require("../api/middleware");
+import express from "express";
+import db from "../utils/db";
+import { requireAuth } from "../api/middleware";
+
 const router = express.Router();
 
 // Register for Event Route
@@ -39,10 +40,9 @@ router.post("/event/register", requireAuth, (req, res) => {
     });
 });
 
-
 // Fetch Registered Events Route
 // Fetch Registered Events for a User using JWT Authentication
-app.get("/user/events", requireAuth, (req, res) => {
+router.get("/user/events", requireAuth, (req, res) => {
     const userId = req.user.id; // Access user id from the JWT payload
 
     const query = `
@@ -58,9 +58,8 @@ app.get("/user/events", requireAuth, (req, res) => {
     });
 });
 
-
 // Get All Events Route
-app.get("/get-events", requireAuth, (req, res) => {
+router.get("/get-events", requireAuth, (req, res) => {
     const query = "SELECT id, name, DATE_FORMAT(date, '%d-%m-%Y') AS date, TIME_FORMAT(time, '%H:%i:%s') AS time FROM events";
 
     db.query(query, (err, results) => {
