@@ -1,19 +1,23 @@
-import { verifySession } from '../utils/auth'
+const jwt = require("jsonwebtoken");
 
-export default async function middleware(req, res) {
-  // Skip middleware for public routes
-  if (req.path === '/api/login' || req.path === '/api/register') {
-    return
-  }
+const requireAuth = (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1]; // Extract token from the Authorization header
 
-  try {
-    const token = req.cookies?.sessionToken
-    if (!token) throw new Error('No token found')
-    
-    const user = await verifySession(token)
-    req.user = user
-  } catch (error) {
-    return res.status(401).json({ error: 'Unauthorized' })
-  }
-}
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
 
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify the token with the secret
+        req.user = decoded; // Attach decoded user data to request
+        next(); // Proceed to the next middleware/route handler
+    } catch (err) {
+        return res.status(403).json({ error: "Invalid token" }); // Invalid token error
+    }
+};
+const requireAdmin = (req, res, next) => {
+    if (!req.user || req.user.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden: Admins only" });
+    }
+    next();
+};
+
+module.exports = { requireAuth, requireAdmin };

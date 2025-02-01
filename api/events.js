@@ -1,108 +1,76 @@
-import db from '../../utils/db'; // MySQL connection pool
-import jwt from 'jsonwebtoken';
+const express = require("express");
+const db = require("../utils/db");
+const { requireAuth } = require("../api/middleware");
+const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // Ensure JWT secret is set
+// Register for Event Route
+// Event Registration Route using JWT Authentication
+router.post("/event/register", requireAuth, (req, res) => {
+    const { eventId } = req.body;
+    const userId = req.user.id; // Access user id from the JWT payload
 
-export default async function handler(req, res) {
-    if (req.method === 'GET') {
-        if (req.query.user === "true") {
-            return getUserRegisteredEvents(req, res);
-        } else {
-            return getAllEvents(req, res);
-        }
-    } else if (req.method === 'POST') {
-        return registerForEvent(req, res);
-    } else {
-        res.status(405).json({ error: 'Method Not Allowed' });
+    if (!eventId) {
+        return res.status(400).json({ error: "Event ID is required!" });
     }
-}
 
-// Fetch all events
-function getAllEvents(req, res) {
+    // Check if the event exists in the events table
+    const checkEventQuery = "SELECT id FROM events WHERE id = ?";
+    db.query(checkEventQuery, [eventId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: "Database error when checking event!" });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: "Event not found!" });
+        }
+
+        // Insert the registration into the registrations table
+        const query = "INSERT INTO registrations (user_id, event_id) VALUES (?, ?)";
+        db.query(query, [userId, eventId], (err, result) => {
+            if (err) {
+                if (err.code === "ER_DUP_ENTRY") {
+                    return res.status(400).json({ error: "User already registered for this event!" });
+                }
+                return res.status(500).json({ error: "Database error!", details: err });
+            }
+
+            // Send success response
+            res.status(201).json({ message: "Event registration successful!" });
+        });
+    });
+});
+
+
+// Fetch Registered Events Route
+// Fetch Registered Events for a User using JWT Authentication
+app.get("/user/events", requireAuth, (req, res) => {
+    const userId = req.user.id; // Access user id from the JWT payload
+
+    const query = `
+        SELECT e.name AS eventName
+        FROM events e
+        INNER JOIN registrations r ON e.id = r.event_id
+        WHERE r.user_id = ?
+    `;
+
+    db.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).json({ error: "Database error!", details: err });
+        res.status(200).json(results);  // Send the event names to the frontend
+    });
+});
+
+
+// Get All Events Route
+app.get("/get-events", requireAuth, (req, res) => {
     const query = "SELECT id, name, DATE_FORMAT(date, '%d-%m-%Y') AS date, TIME_FORMAT(time, '%H:%i:%s') AS time FROM events";
-    
+
     db.query(query, (err, results) => {
         if (err) {
             console.error("Error fetching events:", err);
             return res.status(500).json({ error: "Failed to fetch events." });
         }
-        res.status(200).json(results);
+
+        res.json(results); // Send the event details as JSON
     });
-}
+});
 
-// Register a user for an event
-function registerForEvent(req, res) {
-    const token = req.headers.authorization?.split(' ')[1]; // Expecting "Bearer <token>"
-
-    if (!token) {
-        return res.status(401).json({ error: "Unauthorized. No token provided." });
-    }
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const userId = decoded.id;
-        const { eventId } = req.body;
-
-        if (!eventId) {
-            return res.status(400).json({ error: "Event ID is required!" });
-        }
-
-        // Check if the event exists
-        db.query('SELECT id FROM events WHERE id = ?', [eventId], (err, results) => {
-            if (err) {
-                return res.status(500).json({ error: "Database error when checking event!" });
-            }
-
-            if (results.length === 0) {
-                return res.status(404).json({ error: "Event not found!" });
-            }
-
-            // Insert the registration into the registrations table
-            db.query('INSERT INTO registrations (user_id, event_id) VALUES (?, ?)', [userId, eventId], (err) => {
-                if (err) {
-                    if (err.code === 'ER_DUP_ENTRY') {
-                        return res.status(400).json({ error: "User already registered for this event!" });
-                    }
-                    return res.status(500).json({ error: "Database error!", details: err });
-                }
-
-                res.status(201).json({ message: "Event registration successful!" });
-            });
-        });
-    } catch (err) {
-        return res.status(401).json({ error: "Invalid or expired token." });
-    }
-}
-
-// Fetch user-registered events
-function getUserRegisteredEvents(req, res) {
-    const token = req.headers.authorization?.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({ error: 'Authentication token is required!' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const userId = decoded.id;
-
-        const query = `
-            SELECT e.name AS eventName
-            FROM events e
-            INNER JOIN registrations r ON e.id = r.event_id
-            WHERE r.user_id = ?
-        `;
-
-        db.query(query, [userId], (err, results) => {
-            if (err) {
-                console.error('Database error:', err);
-                return res.status(500).json({ error: 'Database error!', details: err });
-            }
-
-            res.status(200).json(results);
-        });
-    } catch (error) {
-        console.error('JWT Verification error:', error);
-        res.status(401).json({ error: 'Invalid or expired token' });
-    }
-}
+module.exports = router;
