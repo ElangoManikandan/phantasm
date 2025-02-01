@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         const { email, password } = req.body;
 
         try {
-            const [admin] = await db.promise().query(
+            const [admin] = await pool.promise().query(
                 "SELECT * FROM users WHERE email = ? AND role = 'admin'",
                 [email]
             );
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
 
         // 🔹 Get Admin Profile
         if (method === "GET" && url.endsWith("/admin/profile")) {
-            const [admin] = await db.promise().query(
+            const [admin] = await pool.promise().query(
                 "SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'",
                 [decoded.id]
             );
