@@ -1,4 +1,4 @@
-import { pool } from '../../utils/db'; // MySQL connection pool
+import db from '../../utils/db'; // MySQL connection pool
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // Ensure JWT secret is set
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 function getAllEvents(req, res) {
     const query = "SELECT id, name, DATE_FORMAT(date, '%d-%m-%Y') AS date, TIME_FORMAT(time, '%H:%i:%s') AS time FROM events";
     
-    pool.query(query, (err, results) => {
+    db.query(query, (err, results) => {
         if (err) {
             console.error("Error fetching events:", err);
             return res.status(500).json({ error: "Failed to fetch events." });
@@ -48,7 +48,7 @@ function registerForEvent(req, res) {
         }
 
         // Check if the event exists
-        pool.query('SELECT id FROM events WHERE id = ?', [eventId], (err, results) => {
+        db.query('SELECT id FROM events WHERE id = ?', [eventId], (err, results) => {
             if (err) {
                 return res.status(500).json({ error: "Database error when checking event!" });
             }
@@ -58,7 +58,7 @@ function registerForEvent(req, res) {
             }
 
             // Insert the registration into the registrations table
-            pool.query('INSERT INTO registrations (user_id, event_id) VALUES (?, ?)', [userId, eventId], (err) => {
+            db.query('INSERT INTO registrations (user_id, event_id) VALUES (?, ?)', [userId, eventId], (err) => {
                 if (err) {
                     if (err.code === 'ER_DUP_ENTRY') {
                         return res.status(400).json({ error: "User already registered for this event!" });
@@ -93,7 +93,7 @@ function getUserRegisteredEvents(req, res) {
             WHERE r.user_id = ?
         `;
 
-        pool.query(query, [userId], (err, results) => {
+        db.query(query, [userId], (err, results) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Database error!', details: err });
