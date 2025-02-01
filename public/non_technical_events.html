@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Technical Events - PHANTASM'25</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        /* Navigation Bar Styles */
+        nav {
+            background: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 1.5rem;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            transition: background 0.3s, color 0.3s;
+        }
+        nav ul li a:hover {
+            background: #FF9800;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem;
+            text-align: center;
+        }
+        main section {
+            margin-bottom: 2rem;
+        }
+        main h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #FF9800;
+        }
+        main p {
+            font-size: 1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #555;
+        }
+        .event-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 0;
+        }
+        .event-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            transition: transform 0.3s;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+        .event-card h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .event-card p {
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Non-Technical Events</h1>
+        <p>Showcase your creativity and have fun with these events.</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="technical_events.html">Technical Events</a></li>
+            <li><a href="non_technical_events.html">Non-Technical Events</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="contact-us.html">Contact Us</a></li>
+        </ul>
+    </nav>
+    <main>
+<section>
+    <h2>Explore Our Non-Technical Events</h2>
+    <div class="event-list">
+        <div class="event-card" onclick="redirectTo('treasure_hunt.html')" style="cursor: pointer;">
+            <h3>Treasure Hunt</h3>
+            <p>Embark on a thrilling quest and solve clues to find the treasure.</p>
+        </div>
+        <div class="event-card" onclick="redirectTo('quiz_mania.html')" style="cursor: pointer;">
+            <h3>Quiz Mania</h3>
+            <p>Compete in a general knowledge quiz with exciting rounds.</p>
+        </div>
+        <div class="event-card" onclick="redirectTo('photography_contest.html')" style="cursor: pointer;">
+            <h3>Photography Contest</h3>
+            <p>Showcase your photography skills and capture the best moments.</p>
+        </div>
+        <div class="event-card" onclick="redirectTo('debate_competition.html')" style="cursor: pointer;">
+            <h3>Debate Competition</h3>
+            <p>Express your opinions and battle it out in this debate.</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    function redirectTo(page) {
+        window.location.href = page;
+    }
+</script>
+
+    </main>
+    <footer>
+        <p>&copy; 2024 PHANTASM'25 Symposium. All rights reserved.</p>
+    </footer>
+</body>
+</html>
