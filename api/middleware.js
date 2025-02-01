@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const requireAuth = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -25,4 +25,5 @@ const requireAdmin = (req, res, next) => {
     next();
 };
 
-module.exports = { requireAuth, requireAdmin };
+// Export as ESM
+export default { requireAuth, requireAdmin };
