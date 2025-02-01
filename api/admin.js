@@ -149,4 +149,4 @@ router.get('/attendance', requireAdmin, (req, res) => {
 });
 
 
-module.exports = router;
+export default router;
