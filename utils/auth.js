@@ -1,4 +1,5 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
+const router = express.Router();
 
 const EXPIRATION_TIME = '24h' // JWT expiration time
 
