@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import QRCode from 'qrcode';
 import path from 'path';
 import fs from 'fs';
-import db from '../../utils/db';
+import {pool} from '../../utils/db';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
