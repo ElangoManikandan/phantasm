@@ -1,4 +1,4 @@
-import {pool} from "../utils/db"; // Import database connection
+import db from "../utils/db"; // Import database connection
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         const { email, password } = req.body;
 
         try {
-            const [admin] = await pool.promise().query(
+            const [admin] = await db.promise().query(
                 "SELECT * FROM users WHERE email = ? AND role = 'admin'",
                 [email]
             );
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
 
         // 🔹 Get Admin Profile
         if (method === "GET" && url.endsWith("/admin/profile")) {
-            const [admin] = await pool.promise().query(
+            const [admin] = await db.promise().query(
                 "SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'",
                 [decoded.id]
             );
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
         // 🔹 Fetch Attendance Records
         if (method === "GET" && url.endsWith("/admin/attendance")) {
-            const [attendance] = await pool.promise().query(
+            const [attendance] = await db.promise().query(
                 `SELECT events.name AS event_name, users.name AS participant_name, 
                         attendance.attendance_status, attendance.marked_at
                  FROM attendance
