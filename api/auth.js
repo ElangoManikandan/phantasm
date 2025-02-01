@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
 import QRCode from "qrcode";
-import { generateToken } from "../utils/auth";
+import { createSession } from "../utils/auth"; // Update import statement to match the function name
 import db from "../utils/db";
 
 const router = express.Router();
