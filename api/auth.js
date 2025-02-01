@@ -5,7 +5,7 @@ import path from "path";
 import fs from "fs";
 import QRCode from "qrcode";
 import { createSession } from "../utils/auth.js"; // Update import statement to match the function name
-import db from "../utils/db";
+import db from "../utils/db.js";
 
 const router = express.Router();
 
