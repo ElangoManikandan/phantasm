@@ -1,5 +1,5 @@
 import express from "express";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../utils/db.js"; // Ensure correct path with .js extension
 import { requireAdmin } from "../api/middleware.js"; // Ensure correct path with .js extension
