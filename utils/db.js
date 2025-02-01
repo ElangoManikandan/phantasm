@@ -1,10 +1,15 @@
-const mysql = require('mysql2/promise');
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
 
-const pool = mysql.createPool({
-  uri: 'mysql://43yxnpPZ3zo884a.root:<PASSWORD>@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/symposium_db?ssl={"rejectUnauthorized":true}',
+dotenv.config();
+
+const db = mysql.createPool({
+  host: process.env.TIDB_HOST,
+  user: process.env.TIDB_USER,
+  password: process.env.TIDB_PASSWORD,
+  database: process.env.TIDB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
 });
 
-module.exports = db;
+export default db;
