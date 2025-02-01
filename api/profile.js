@@ -1,4 +1,4 @@
-import { pool } from '../../utils/db'; // MySQL connection pool
+import db from '../../utils/db'; // MySQL connection pool
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // JWT Secret
@@ -30,7 +30,7 @@ function getUserProfile(req, res) {
             FROM users WHERE id = ?
         `;
 
-        pool.query(query, [userId], (err, results) => {
+        db.query(query, [userId], (err, results) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Database error!', details: err });
@@ -74,7 +74,7 @@ function updateUserProfile(req, res) {
             WHERE id = ?
         `;
 
-        pool.query(query, [name, college, year, accommodation, userId], (err, result) => {
+        db.query(query, [name, college, year, accommodation, userId], (err, result) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).json({ error: 'Database error!', details: err });
