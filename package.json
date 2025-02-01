@@ -1,26 +1,25 @@
 {
-  "name": "symposium_project",
+  "name": "phantasm",
   "version": "1.0.0",
-  "description": "Vercel-optimized symposium backend",
+  "description": "Render-optimized symposium backend",
+  "type": "module",
   "scripts": {
-    "dev": "vercel dev",
-    "start": "vercel dev",
-    "deploy": "vercel deploy --prod"
+    "dev": "node api/index.js",
+    "start": "node api/index.js"
   },
   "dependencies": {
-    "@vercel/node": "^2.15.3",
     "bcrypt": "^5.1.1",
     "cookie": "^0.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "html5-qrcode": "^2.3.8",
-    "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
     "jsqr": "^1.4.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.12.0",
     "qrcode": "^1.5.4",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.3",
