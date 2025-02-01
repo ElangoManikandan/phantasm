@@ -2,9 +2,10 @@
   "name": "symposium_project",
   "version": "1.0.0",
   "description": "Vercel-optimized symposium backend",
+  "main":"index.js"
   "scripts": {
     "dev": "vercel dev",
-    "start": "vercel dev",
+    "start": "node api/index.js",
     "deploy": "vercel deploy --prod"
   },
   "dependencies": {
