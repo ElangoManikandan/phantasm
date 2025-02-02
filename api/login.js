@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import db from "../utils/db.js";
+
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { email, password } = req.body;
@@ -29,19 +30,20 @@ export default async function handler(req, res) {
             // Generate JWT token with user details
             const token = jwt.sign(
                 { id: user.id, name: user.name, email: user.email, role: user.role },
-                'your-jwt-secret', // Secret key for signing JWT
+                process.env.JWT_SECRET, // Use environment variable for the secret
                 { expiresIn: '1h' } // Token expiration time (e.g., 1 hour)
             );
 
             // Set the JWT token as an HTTP-only cookie
             res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Secure; Path=/; Max-Age=3600; SameSite=Strict`);
 
-            // Redirect based on the user's role
-            if (user.role === "admin") {
-                return res.redirect("/adminprofile.html"); // Redirect to admin profile
-            } else {
-                return res.redirect("/profile.html"); // Redirect to user profile
-            }
+            // Respond with the user details, token, and role for the frontend to handle
+            return res.status(200).json({
+                message: "Login successful!",
+                role: user.role,  // Send the role back to the frontend
+                token: token  // Send JWT token back
+            });
+
         } catch (error) {
             return res.status(500).json({ error: "Server error!" });
         }
@@ -50,3 +52,4 @@ export default async function handler(req, res) {
         res.status(405).json({ error: "Method Not Allowed" });
     }
 }
+export default login;
