@@ -38,6 +38,7 @@ app.get("/test-db", async (req, res) => {
 });
 
 
+
 // Serve `index.html` when visiting the root URL
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
