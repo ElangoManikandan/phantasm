@@ -25,5 +25,8 @@ const requireAdmin = (req, res, next) => {
     next();
 };
 
-// Export as ESM
-export default { requireAuth, requireAdmin };
+// ✅ Use default export as an object
+export default {
+    requireAuth,
+    requireAdmin
+};
