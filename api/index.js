@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Define routes
 app.use("/admin", adminRoutes);
-app.use("/auth", authRoutes);
+app.use('/api/auth', authRoutes);
 app.use("/events", eventsRoutes);
 app.use("/profile", profileRoutes);
 
