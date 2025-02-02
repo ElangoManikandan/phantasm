@@ -47,4 +47,10 @@ const requireAdmin = (req, res, next) => {
   next()
 }
 
-export default ;
+export default {
+  createSession,
+  verifySession,
+  requireAuth,
+  requireAdmin
+};
+;
