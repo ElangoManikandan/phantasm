@@ -124,60 +124,65 @@
         </form>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const form = document.getElementById("registerForm");
-            const roleSelect = document.getElementById('role');
-            const adminKeyGroup = document.getElementById('adminKeyGroup');
-            const adminKeyInput = document.getElementById('admin_key');
+ <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("registerForm");
+        const roleSelect = document.getElementById('role');
+        const adminKeyGroup = document.getElementById('adminKeyGroup');
+        const adminKeyInput = document.getElementById('admin_key');
 
-            // Show admin key input only if 'Admin' role is selected
-            roleSelect.addEventListener('change', () => {
-                if (roleSelect.value === 'admin') {
-                    adminKeyGroup.style.display = 'block';
-                } else {
-                    adminKeyGroup.style.display = 'none';
-                }
-            });
-
-            form.addEventListener("submit", async (event) => {
-                event.preventDefault(); // Prevent default form submission
-
-                // If role is admin, ensure admin_key is not empty
-                if (roleSelect.value === 'admin' && !adminKeyInput.value) {
-                    alert("Admin Key is required for Admin role.");
-                    return;
-                }
-
-                const formData = new FormData(form);
-                const formObject = Object.fromEntries(formData.entries());
-
-                try {
-const response = await fetch("https://phantasm.onrender.com/api/auth/register", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formObject),
-});
-
-                    const result = await response.json();
-
-                    if (response.ok) {
-                        // Success: Show alert and reset the form
-                        alert(result.message || "Registered successfully!");
-                        form.reset();
-                        window.location.href = "/login.html"; // Redirect to login page after success
-                    } else {
-                        // Error: Show error message
-                        alert(result.error || "Registration failed!");
-                    }
-                } catch (error) {
-                    // Network or other errors
-                    alert("Something went wrong! Please try again.");
-                }
-            });
+        // Show admin key input only if 'Admin' role is selected
+        roleSelect.addEventListener('change', () => {
+            if (roleSelect.value === 'admin') {
+                adminKeyGroup.style.display = 'block';
+            } else {
+                adminKeyGroup.style.display = 'none';
+            }
         });
-    </script>
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault(); // Prevent default form submission
+
+            // If role is admin, ensure admin_key is not empty
+            if (roleSelect.value === 'admin' && !adminKeyInput.value) {
+                alert("Admin Key is required for Admin role.");
+                return;
+            }
+
+            const formData = new FormData(form);
+            const formObject = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch("https://phantasm.onrender.com/api/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formObject),
+                });
+
+                const result = await response.json();
+                console.log(result); // Log the result to debug
+
+                if (response.ok) {
+                    // Success: Show alert and reset the form
+                    alert(result.message || "Registered successfully!");
+                    form.reset();
+
+                    // Wait a bit before redirecting
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl || "/login.html"; // Redirect based on response
+                    }, 2000);
+                } else {
+                    // Error: Show error message
+                    alert(result.error || "Registration failed!");
+                }
+            } catch (error) {
+                // Network or other errors
+                alert("Something went wrong! Please try again.");
+            }
+        });
+    });
+</script>
 </body>
 </html>
