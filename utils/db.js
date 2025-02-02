@@ -12,4 +12,6 @@ const db = mysql.createPool({
   connectionLimit: 10,
 });
 
+const db = pool.promise();
+
 export default db;
