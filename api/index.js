@@ -26,16 +26,17 @@ app.use("/events", eventsRoutes);
 app.use("/profile", profileRoutes);
 
 // Test database connection route
-app.get("/test-db", (req, res) => {
-  db.query("SELECT 1", (err, results) => {
-    if (err) {
-      console.error("Database connection failed:", err);
-      return res.status(500).json({ error: "Database connection failed!" });
-    }
+app.get("/test-db", async (req, res) => {
+  try {
+    const [results] = await db.promise().query("SELECT 1");
     console.log("Database connected successfully");
     res.status(200).json({ message: "Database connected successfully!", results });
-  });
+  } catch (err) {
+    console.error("Database connection failed:", err);
+    res.status(500).json({ error: "Database connection failed!" });
+  }
 });
+
 
 // Serve `index.html` when visiting the root URL
 app.get("/", (req, res) => {
