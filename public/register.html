@@ -153,13 +153,13 @@
                 const formObject = Object.fromEntries(formData.entries());
 
                 try {
-                    const response = await fetch("api/auth/register", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(formObject),
-                    });
+const response = await fetch("https://phantasm.onrender.com/api/auth/register", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formObject),
+});
 
                     const result = await response.json();
 
