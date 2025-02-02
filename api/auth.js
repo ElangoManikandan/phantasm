@@ -85,21 +85,13 @@ router.post("/register", async (req, res) => {
                     );
 
                     // Send appropriate response for user or admin with JWT token
-                    if (role === "user") {
-                        return res.status(201).json({
-                            message: "User registered successfully!",
-                            redirectUrl: "/profile.html", // Redirect URL for users
-                            qrCodeUrl: `/qrcodes/user_${userId}.png`, // QR code URL
-                            token: token  // Send JWT token for the user
-                        });
-                    } else if (role === "admin") {
-                        return res.status(201).json({
-                            message: "Admin registered successfully!",
-                            redirectUrl: "/adminprofile.html", // Redirect URL for admins
-                            qrCodeUrl: `/qrcodes/user_${userId}.png`, // QR code URL
-                            token: token  // Send JWT token for the admin
-                        });
-                    }
+                    return res.status(201).json({
+                        message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
+                        redirectUrl: role === "user" ? "/profile.html" : "/adminprofile.html", // Redirect URL for users or admins
+                        qrCodeUrl: `/qrcodes/user_${userId}.png`, // QR code URL
+                        token: token  // Send JWT token for the user or admin
+                    });
+
                 } catch (qrError) {
                     console.error("QR Code generation error:", qrError);
                     return res.status(500).json({ error: "QR Code generation failed!" });
