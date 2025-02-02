@@ -14,6 +14,7 @@ const db = mysql.createPool({
   connectionLimit: 10,
   ssl: {
     ca: caCert,  // Using only the CA certificate for server verification
+    rejectUnauthorized: true
   },
 });
 
