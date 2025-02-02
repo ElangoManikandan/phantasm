@@ -4,10 +4,12 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
 import QRCode from "qrcode";
-import { createSession } from "../utils/auth.js"; // Update import statement to match the function name
+import auth from "../utils/auth.js"; // Update import statement to match the function name
 import db from "../utils/db.js";
 
 const router = express.Router();
+const { requireAuth, requireAdmin } = auth;
+
 
 router.post("/register", async (req, res) => {
     const { name, college, year, email, password, accommodation, role, admin_key } = req.body;
