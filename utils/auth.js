@@ -4,7 +4,7 @@ const router = express.Router();
 
 const EXPIRATION_TIME = '24h' // JWT expiration time
 
-export const createSession = (user) => {
+const createSession = (user) => {
   return jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET,
@@ -12,7 +12,7 @@ export const createSession = (user) => {
   )
 }
 
-export const verifySession = (token) => {
+const verifySession = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_SECRET)
   } catch (error) {
@@ -21,7 +21,7 @@ export const verifySession = (token) => {
 }
 
 // Authentication middleware
-export const requireAuth = (req, res, next) => {
+const requireAuth = (req, res, next) => {
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -40,11 +40,11 @@ export const requireAuth = (req, res, next) => {
 }
 
 // Admin check middleware
-export const requireAdmin = (req, res, next) => {
+const requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Forbidden: Admin access required' })
   }
   next()
 }
 
-export default auth;
+export default ;
