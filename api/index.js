@@ -7,9 +7,17 @@ import authRoutes from "./auth.js";
 import eventsRoutes from "./events.js";
 import profileRoutes from "./profile.js";
 import db from "../utils/db.js";  // Ensure correct path
+import cors from 'cors';  
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Enable CORS globally
+app.use(cors({
+    origin: 'https://phantasm.onrender.com',  // Specify your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware to parse JSON
 app.use(bodyParser.json());
