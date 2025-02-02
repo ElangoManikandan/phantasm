@@ -102,48 +102,48 @@
             <a href="forgot-password.html">Forgot Password?</a>
         </div>
     </div>
+<script>
+    // Login Form JavaScript
+    const loginForm = document.getElementById('loginForm');
+    const emailField = document.getElementById('email');
+    const passwordField = document.getElementById('password');
 
-    <script>
-        // Login Form JavaScript
-        const loginForm = document.getElementById('loginForm');
-        const emailField = document.getElementById('email');
-        const passwordField = document.getElementById('password');
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();  // Prevent default form submission
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();  // Prevent default form submission
+        const email = emailField.value;
+        const password = passwordField.value;
 
-            const email = emailField.value;
-            const password = passwordField.value;
+        // Prepare data to send to the server
+        const loginData = { email, password };
 
-            // Prepare data to send to the server
-            const loginData = { email, password };
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(loginData),
+                credentials: 'include',  // Ensure cookies (JWT token) are included
+            });
 
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(loginData),
-                });
+            const result = await response.json();
 
-                const result = await response.json();
-
-                if (response.ok) {
-                    // Handle successful login (redirect based on role)
-                    if (result.role === 'admin') {
-                        window.location.href = '/adminprofile.html';
-                    } else {
-                        window.location.href = '/profile.html';
-                    }
+            if (response.ok) {
+                // Handle successful login (redirect based on role)
+                if (result.role === 'admin') {
+                    window.location.href = '/adminprofile.html';
                 } else {
-                    alert(result.error || "Login failed. Please try again.");
+                    window.location.href = '/profile.html';
                 }
-            } catch (error) {
-                console.error("Error during login:", error);
-                alert("An error occurred. Please try again later.");
+            } else {
+                alert(result.error || "Login failed. Please try again.");
             }
-        });
-    </script>
+        } catch (error) {
+            console.error("Error during login:", error);
+            alert("An error occurred. Please try again later.");
+        }
+    });
+</script>
 </body>
 </html>
