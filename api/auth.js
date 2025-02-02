@@ -6,6 +6,13 @@ import fs from "fs";
 import QRCode from "qrcode";
 import auth from "../utils/auth.js"; // Update import statement to match the function name
 import db from "../utils/db.js";
+import cors from 'cors';
+// Enable CORS for all routes
+router.use(cors({
+    origin: 'https://phantasm.onrender.com', // Replace with your frontend URL or '*' for all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 const router = express.Router();
 const { requireAuth, requireAdmin } = auth;
