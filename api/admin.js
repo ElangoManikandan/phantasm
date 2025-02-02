@@ -2,7 +2,8 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../utils/db.js"; // Ensure correct path with .js extension
-import { requireAdmin } from "../middleware.js"; // Ensure correct path with .js extension
+import middleware from "../middleware.js";
+const { requireAuth, requireAdmin } = middleware;
 
 const router = express.Router();
 
