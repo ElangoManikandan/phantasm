@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import mysql from 'mysql2/promise';
+import db from "../utils/db.js";
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { email, password } = req.body;
