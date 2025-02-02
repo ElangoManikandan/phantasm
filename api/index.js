@@ -1,11 +1,12 @@
 // Import required modules
 import express from "express";
 import bodyParser from "body-parser";
-import adminRoutes from "./admin.js"; // Correctly import with .js extension
+import path from "path";
+import adminRoutes from "./admin.js";
 import authRoutes from "./auth.js";
 import eventsRoutes from "./events.js";
 import profileRoutes from "./profile.js";
-import db from "../utils/db.js";  // Ensure correct path with .js extension
+import db from "../utils/db.js";  // Ensure correct path
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,11 +15,15 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.json());
 
+// Serve static frontend files from the `public` folder
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "public")));
+
 // Define routes
-app.use("/admin", adminRoutes);    // Admin-related routes
-app.use("/auth", authRoutes);      // Authentication routes
-app.use("/events", eventsRoutes);  // Event-related routes
-app.use("/profile", profileRoutes); // Profile-related route
+app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
+app.use("/events", eventsRoutes);
+app.use("/profile", profileRoutes);
 
 // Test database connection route
 app.get("/test-db", (req, res) => {
@@ -32,14 +37,14 @@ app.get("/test-db", (req, res) => {
   });
 });
 
-// Example route
+// Serve `index.html` when visiting the root URL
 app.get("/", (req, res) => {
-  res.send("Welcome to the Symposium API");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
 
-export default app;  // Export the app for further use
+export default app;
