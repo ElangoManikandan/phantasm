@@ -28,7 +28,8 @@ app.use("/profile", profileRoutes);
 // Test database connection route
 app.get("/test-db", async (req, res) => {
   try {
-    const [results] = await db.promise().query("SELECT 1");
+    // Use db.query directly
+    const [results] = await db.query("SELECT 1");  // No .promise() needed
     console.log("Database connected successfully");
     res.status(200).json({ message: "Database connected successfully!", results });
   } catch (err) {
@@ -36,6 +37,7 @@ app.get("/test-db", async (req, res) => {
     res.status(500).json({ error: "Database connection failed!" });
   }
 });
+
 
 
 
