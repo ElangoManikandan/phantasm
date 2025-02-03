@@ -8,7 +8,7 @@ import eventsRoutes from "./events.js";
 import profileRoutes from "./profile.js";
 import loginRoutes from "./login.js";  
 import db from "../utils/db.js";  
-import userRouter from './api/user.js'; 
+import userRouter from './user.js'; 
 const app = express();
 const port = process.env.PORT || 3000;
 
