@@ -177,7 +177,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Fetch user profile data from Vercel serverless API route
-            fetch('/api/profile/get-profile')
+            fetch('/api/profile/user/profile')
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
