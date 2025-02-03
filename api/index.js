@@ -30,9 +30,9 @@ const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "public")));
 
 // Define routes
-app.use("/admin", adminRoutes);
+app.use("api//admin", adminRoutes);
 app.use('/api/auth', authRoutes);
-app.use("/events", eventsRoutes);
+app.use("api//events", eventsRoutes);
 app.use("/api/login", loginRoutes);  
 app.use("/api/profile", profileRoutes);
 
