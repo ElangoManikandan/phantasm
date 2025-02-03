@@ -28,7 +28,8 @@ const queryDatabase = (query, values) => {
             else resolve(results);
         });
     });
-};
+};const mysql = require("mysql2/promise");
+
 router.post("/register", async (req, res) => {
     console.log(`➡️ [${new Date().toISOString()}] Register endpoint hit`);
 
@@ -56,57 +57,52 @@ router.post("/register", async (req, res) => {
             return res.status(400).json({ error: "Invalid admin key!" });
         }
 
-        // Insert user into database
+        // Insert user into database using promise-based query
         console.log(`📤 [${new Date().toISOString()}] Preparing to insert user into database...`);
-        const query = `INSERT INTO users (name, college, year, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-
-        db.query(query, [name, college, year, email, hashedPassword, accommodation, role], async (err, result) => {
-            if (err) {
-                console.error(`❌ [${new Date().toISOString()}] Database error:`, err);
-                if (err.code === "ER_DUP_ENTRY") {
-                    return res.status(400).json({ error: "Email already exists!" });
-                }
-                return res.status(500).json({ error: "Database error!", details: err });
-            }
-
-            console.log(`✅ [${new Date().toISOString()}] User inserted successfully! ID: ${result.insertId}`);
-
-            // Generate QR Code ID
-            const userId = result.insertId;
-            const qr_code_id = `PSM_${userId}`;
-
-            console.log(`🆔 [${new Date().toISOString()}] Assigning QR Code ID: ${qr_code_id}`);
-
-            // Update QR Code ID in DB
-            const updateQuery = `UPDATE users SET qr_code_id = ? WHERE id = ?`;
-            console.log(`📤 [${new Date().toISOString()}] Updating QR Code ID in database...`);
-
-            db.query(updateQuery, [qr_code_id, userId], async (updateErr) => {
-                if (updateErr) {
-                    console.error(`❌ [${new Date().toISOString()}] Error updating QR Code ID:`, updateErr);
-                    return res.status(500).json({ error: "Error updating QR Code ID!" });
-                }
-
-                console.log(`✅ [${new Date().toISOString()}] QR Code ID updated successfully for User ID: ${userId}`);
-
-                try {
-                    // Generate JWT Token
-                    console.log(`🔐 [${new Date().toISOString()}] Generating authentication token...`);
-                    const token = jwt.sign({ id: userId, role, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-                    console.log(`📩 [${new Date().toISOString()}] Sending success response to frontend`);
-                    return res.status(201).json({
-                        message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
-                        qrCodeUrl: `/qrcodes/user_${userId}.png`,
-                        token: token,
-                    });
-
-                } catch (qrError) {
-                    console.error(`❌ [${new Date().toISOString()}] JWT Token generation error:`, qrError);
-                    return res.status(500).json({ error: "Token generation failed!" });
-                }
-            });
+        const connection = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
         });
+
+        const [result] = await connection.execute(
+            `INSERT INTO users (name, college, year, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [name, college, year, email, hashedPassword, accommodation, role]
+        );
+
+        console.log(`✅ [${new Date().toISOString()}] User inserted successfully! ID: ${result.insertId}`);
+
+        // Generate QR Code ID
+        const userId = result.insertId;
+        const qr_code_id = `PSM_${userId}`;
+
+        console.log(`🆔 [${new Date().toISOString()}] Assigning QR Code ID: ${qr_code_id}`);
+
+        // Update QR Code ID in DB
+        const [updateResult] = await connection.execute(
+            `UPDATE users SET qr_code_id = ? WHERE id = ?`,
+            [qr_code_id, userId]
+        );
+
+        console.log(`✅ [${new Date().toISOString()}] QR Code ID updated successfully for User ID: ${userId}`);
+
+        try {
+            // Generate JWT Token
+            console.log(`🔐 [${new Date().toISOString()}] Generating authentication token...`);
+            const token = jwt.sign({ id: userId, role, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+            console.log(`📩 [${new Date().toISOString()}] Sending success response to frontend`);
+            return res.status(201).json({
+                message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
+                qrCodeUrl: `/qrcodes/user_${userId}.png`,
+                token: token,
+            });
+
+        } catch (qrError) {
+            console.error(`❌ [${new Date().toISOString()}] JWT Token generation error:`, qrError);
+            return res.status(500).json({ error: "Token generation failed!" });
+        }
     } catch (error) {
         console.error(`❌ [${new Date().toISOString()}] Server error:`, error);
         return res.status(500).json({ error: "Server error!" });
