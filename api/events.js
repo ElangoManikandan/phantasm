@@ -41,27 +41,6 @@ router.post("/event/register", requireAuth, async (req, res) => {
         return res.status(500).json({ error: "Database error!", details: error });
     }
 });
-
-// 🟢 Fetch Registered Events
-router.get("/user/events", requireAuth, async (req, res) => {
-    const userId = req.user.id;
-
-    try {
-        const [events] = await db.query(
-            `SELECT e.name AS eventName 
-            FROM events e
-            INNER JOIN registrations r ON e.id = r.event_id
-            WHERE r.user_id = ?`,
-            [userId]
-        );
-
-        res.status(200).json(events.length > 0 ? events : []);  // Always return an array
-    } catch (error) {
-        console.error("Error fetching registered events:", error);
-        res.status(500).json({ error: "Database error!", details: error });
-    }
-});
-
 // 🟢 Get All Events (Public Route)
 router.get("/get-events", async (req, res) => {
     try {
