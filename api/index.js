@@ -1,29 +1,30 @@
-// Import required modules
 import express from "express";
-import bodyParser from "body-parser";
+import cors from "cors";
 import path from "path";
+import bodyParser from "body-parser";
 import adminRoutes from "./admin.js";
 import authRoutes from "./auth.js";
 import eventsRoutes from "./events.js";
 import profileRoutes from "./profile.js";
-import db from "../utils/db.js";  // Ensure correct path
-import cors from 'cors';  
+import db from "../utils/db.js";  
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Enable CORS globally
+// Enable CORS globally (Adjust origin if needed)
 app.use(cors({
-    origin: 'https://phantasm.onrender.com',  // Specify your frontend URL
+    origin: 'https://phantasm.onrender.com',  // Replace with your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Middleware to parse JSON
-app.use(bodyParser.json());
-app.use(express.json());
+// ✅ Use express.json() to parse JSON request bodies
+app.use(express.json()); 
 
-// Serve static frontend files from the `public` folder
+// ✅ Optional: Use bodyParser.urlencoded() for form data
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Serve static frontend files
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -33,28 +34,22 @@ app.use('/api/auth', authRoutes);
 app.use("/events", eventsRoutes);
 app.use("/profile", profileRoutes);
 
-// Test database connection route
+// Test database connection
 app.get("/test-db", async (req, res) => {
   try {
-    // Use db.query directly
-    const [results] = await db.query("SELECT 1");  // No .promise() needed
-    console.log("Database connected successfully");
+    const [results] = await db.query("SELECT 1");
     res.status(200).json({ message: "Database connected successfully!", results });
   } catch (err) {
-    console.error("Database connection failed:", err);
     res.status(500).json({ error: "Database connection failed!" });
   }
 });
 
-
-
-
-// Serve `index.html` when visiting the root URL
+// Serve index.html for root
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Start the server
+// Start server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
