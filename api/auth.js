@@ -30,15 +30,18 @@ const queryDatabase = (query, values) => {
     });
 };
 
-// **User Registration**
 router.post("/register", async (req, res) => {
+    console.log("Register endpoint hit"); // Log when the route is accessed
+
     const { name, college, year, email, password, accommodation, role, admin_key } = req.body;
 
     if (!name || !college || !year || !email || !password || !accommodation || !role) {
+        console.log("Missing required fields");
         return res.status(400).json({ error: "All fields are required!" });
     }
 
     if (role !== "user" && role !== "admin") {
+        console.log("Invalid role");
         return res.status(400).json({ error: "Invalid role! Choose either 'user' or 'admin'." });
     }
 
@@ -46,38 +49,54 @@ router.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         if (role === "admin" && admin_key !== process.env.ADMIN_KEY) {
+            console.log("Invalid admin key");
             return res.status(400).json({ error: "Invalid admin key!" });
         }
 
-        const insertQuery = `INSERT INTO users (name, college, year, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-        const result = await queryDatabase(insertQuery, [name, college, year, email, hashedPassword, accommodation, role]);
+        const query = `INSERT INTO users (name, college, year, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        db.query(query, [name, college, year, email, hashedPassword, accommodation, role], async (err, result) => {
+            if (err) {
+                console.error("Database error:", err);
+                if (err.code === "ER_DUP_ENTRY") {
+                    return res.status(400).json({ error: "Email already exists!" });
+                }
+                return res.status(500).json({ error: "Database error!", details: err });
+            }
 
-        const userId = result.insertId;
-        const qr_code_id = `PSM_${userId}`;
+            console.log("User successfully inserted into database");
 
-        await queryDatabase(`UPDATE users SET qr_code_id = ? WHERE id = ?`, [qr_code_id, userId]);
+            const userId = result.insertId;
+            const qr_code_id = `PSM_${userId}`;
 
-        const qrData = qr_code_id;
-        const qrCodePath = path.join(process.cwd(), "public", "qrcodes", `user_${userId}.png`);
+            const updateQuery = `UPDATE users SET qr_code_id = ? WHERE id = ?`;
+            db.query(updateQuery, [qr_code_id, userId], async (updateErr) => {
+                if (updateErr) {
+                    console.log("Error updating QR code ID");
+                    return res.status(500).json({ error: "Error updating QR code ID" });
+                }
 
-        if (!fs.existsSync(path.dirname(qrCodePath))) {
-            fs.mkdirSync(path.dirname(qrCodePath), { recursive: true });
-        }
+                console.log("QR code updated successfully");
 
-        await QRCode.toFile(qrCodePath, qrData);
+                try {
+                    const qrData = qr_code_id;
+                    const token = jwt.sign({ id: userId, role, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        const token = jwt.sign({ id: userId, role, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+                    console.log("Sending success response to frontend");
+                    return res.status(201).json({
+                        message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
+                        qrCodeUrl: `/qrcodes/user_${userId}.png`,
+                        token: token,
+                    });
 
-        res.status(201).json({
-            message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
-            redirectUrl: role === "user" ? "/profile.html" : "/adminprofile.html",
-            qrCodeUrl: `/qrcodes/user_${userId}.png`,
-            token,
+                } catch (qrError) {
+                    console.error("QR Code generation error:", qrError);
+                    return res.status(500).json({ error: "QR Code generation failed!" });
+                }
+            });
         });
-
     } catch (error) {
         console.error("Server error:", error);
-        res.status(500).json({ error: "Server error!" });
+        return res.status(500).json({ error: "Server error!" });
     }
 });
 
