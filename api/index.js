@@ -8,7 +8,7 @@ import eventsRoutes from "./events.js";
 import profileRoutes from "./profile.js";
 import loginRoutes from "./login.js";  
 import db from "../utils/db.js";  
-
+import userRouter from './api/user.js'; 
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -35,6 +35,10 @@ app.use('/api/auth', authRoutes);
 app.use("api//events", eventsRoutes);
 app.use("/api/login", loginRoutes);  
 app.use("/api/profile", profileRoutes);
+// Import user routes
+
+app.use('/api/user', userRouter); // Use user routes for '/api/user'
+
 
 // Test database connection
 app.get("/test-db", async (req, res) => {
