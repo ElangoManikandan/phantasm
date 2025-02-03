@@ -29,59 +29,70 @@ const queryDatabase = (query, values) => {
         });
     });
 };
-
 router.post("/register", async (req, res) => {
-    console.log("Register endpoint hit"); // Log when the route is accessed
+    console.log("➡️ Register endpoint hit");  // ✅ Log route access
 
+    // Extract request data
     const { name, college, year, email, password, accommodation, role, admin_key } = req.body;
+    console.log("📌 Received Data:", { name, college, year, email, role });
 
+    // Validate request data
     if (!name || !college || !year || !email || !password || !accommodation || !role) {
-        console.log("Missing required fields");
+        console.log("❌ Missing required fields");
         return res.status(400).json({ error: "All fields are required!" });
     }
 
     if (role !== "user" && role !== "admin") {
-        console.log("Invalid role");
+        console.log("❌ Invalid role:", role);
         return res.status(400).json({ error: "Invalid role! Choose either 'user' or 'admin'." });
     }
 
     try {
+        console.log("🔑 Hashing password...");
         const hashedPassword = await bcrypt.hash(password, 10);
 
         if (role === "admin" && admin_key !== process.env.ADMIN_KEY) {
-            console.log("Invalid admin key");
+            console.log("❌ Invalid admin key provided");
             return res.status(400).json({ error: "Invalid admin key!" });
         }
 
+        // Insert user into database
+        console.log("📤 Inserting user into database...");
         const query = `INSERT INTO users (name, college, year, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
         db.query(query, [name, college, year, email, hashedPassword, accommodation, role], async (err, result) => {
             if (err) {
-                console.error("Database error:", err);
+                console.error("❌ Database error:", err);
                 if (err.code === "ER_DUP_ENTRY") {
                     return res.status(400).json({ error: "Email already exists!" });
                 }
                 return res.status(500).json({ error: "Database error!", details: err });
             }
 
-            console.log("User successfully inserted into database");
+            console.log("✅ User successfully inserted into database, ID:", result.insertId);
 
+            // Generate QR Code ID
             const userId = result.insertId;
             const qr_code_id = `PSM_${userId}`;
 
+            console.log("🆔 Assigning QR Code ID:", qr_code_id);
+
+            // Update QR Code ID in DB
             const updateQuery = `UPDATE users SET qr_code_id = ? WHERE id = ?`;
             db.query(updateQuery, [qr_code_id, userId], async (updateErr) => {
                 if (updateErr) {
-                    console.log("Error updating QR code ID");
-                    return res.status(500).json({ error: "Error updating QR code ID" });
+                    console.error("❌ Error updating QR Code ID:", updateErr);
+                    return res.status(500).json({ error: "Error updating QR Code ID!" });
                 }
 
-                console.log("QR code updated successfully");
+                console.log("✅ QR Code ID updated successfully");
 
                 try {
-                    const qrData = qr_code_id;
+                    // Generate JWT Token
+                    console.log("🔐 Generating authentication token...");
                     const token = jwt.sign({ id: userId, role, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-                    console.log("Sending success response to frontend");
+                    console.log("📩 Sending success response to frontend");
                     return res.status(201).json({
                         message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
                         qrCodeUrl: `/qrcodes/user_${userId}.png`,
@@ -89,13 +100,13 @@ router.post("/register", async (req, res) => {
                     });
 
                 } catch (qrError) {
-                    console.error("QR Code generation error:", qrError);
+                    console.error("❌ QR Code generation error:", qrError);
                     return res.status(500).json({ error: "QR Code generation failed!" });
                 }
             });
         });
     } catch (error) {
-        console.error("Server error:", error);
+        console.error("❌ Server error:", error);
         return res.status(500).json({ error: "Server error!" });
     }
 });
