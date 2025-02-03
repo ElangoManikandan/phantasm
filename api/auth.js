@@ -28,7 +28,8 @@ const queryDatabase = (query, values) => {
             else resolve(results);
         });
     });
-};const mysql = require("mysql2/promise");
+};
+import mysql from "mysql2/promise";
 
 router.post("/register", async (req, res) => {
     console.log(`➡️ [${new Date().toISOString()}] Register endpoint hit`);
