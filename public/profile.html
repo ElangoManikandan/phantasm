@@ -176,7 +176,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Fetch user profile data from Vercel serverless API route
-            fetch('/api/profile/user/profile')
+            fetch('/api/user/profile')
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -210,7 +210,7 @@
                 .catch(error => console.error('Error fetching profile:', error));
     
             // Fetch registered events from Vercel serverless API route
-            fetch('/api/events/user/events')
+            fetch('/api/user/events')
                 .then(response => response.json())
                 .then(events => {
                     const eventsContainer = document.getElementById('registered-events');
