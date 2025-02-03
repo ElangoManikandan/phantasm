@@ -173,117 +173,141 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Fetch user profile data from Vercel serverless API route
-            fetch('/api/user/profile')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        // Redirect to login page if user is not authenticated
-                        alert(data.error);
-                        window.location.href = '/login.html';
-                    } else {
-                        // Populate profile data on the page
-                        document.getElementById('user-name').textContent = data.name;
-                        document.getElementById('profile-name').textContent = data.name;
-                        document.getElementById('profile-college').textContent = data.college;
-                        document.getElementById('profile-year').textContent = data.year;
-                        document.getElementById('profile-accommodation').textContent = data.accommodation;
-    
-                        // Set form fields for editing
-                        document.getElementById('name').value = data.name;
-                        document.getElementById('college').value = data.college;
-                        document.getElementById('year').value = data.year;
-                        document.getElementById('accommodation').value = data.accommodation;
-    
-                        // Display saved QR code
-                        const qrCodeElement = document.getElementById('qr-code');
-                        if (data.qr_code_id) {
-                            const qrCodeUrl = `/api/qrcodes/${data.qr_code_id}`; // Fetch QR code from API
-                            qrCodeElement.src = qrCodeUrl;
-                        } else {
-                            console.error('QR code not available');
-                        }
-                    }
-                })
-                .catch(error => console.error('Error fetching profile:', error));
-    
-            // Fetch registered events from Vercel serverless API route
-            fetch('/api/user/events')
-                .then(response => response.json())
-                .then(events => {
-                    const eventsContainer = document.getElementById('registered-events');
-                    if (events.length === 0) {
-                        eventsContainer.innerHTML = '<p>No events registered yet.</p>';
-                        return;
-                    }
-    
-                    const eventCards = events.map(event => `
-                        <div class="event-card">
-                            <h3>${event.eventName}</h3>
-                        </div>
-                    `).join('');
-                    eventsContainer.innerHTML = eventCards;
-                })
-                .catch(error => console.error('Error fetching events:', error));
-    
-            // Edit and save profile functionality
-            const editBtn = document.getElementById('edit-btn');
-            const saveBtn = document.getElementById('save-btn');
-            const profileInfo = document.getElementById('profile-info');
-            const editProfile = document.getElementById('edit-profile');
-    
-            editBtn.addEventListener('click', () => {
-                profileInfo.style.display = 'none';
-                editProfile.style.display = 'flex';
-                editBtn.style.display = 'none';
-                saveBtn.style.display = 'inline-block';
-            });
-    
-            saveBtn.addEventListener('click', () => {
-                const formData = {
-                    name: document.getElementById('name').value,
-                    college: document.getElementById('college').value,
-                    year: document.getElementById('year').value,
-                    accommodation: document.getElementById('accommodation').value,
-                };
-    
-                fetch('/api/profile/update-profile', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert(data.message);
-                            location.reload(); // Reload the page to reflect changes
-                        } else {
-                            alert(data.error || 'An error occurred.');
-                        }
-                    })
-                    .catch(error => console.error('Error updating profile:', error));
-            });
-    
-            // Logout functionality
-            document.getElementById('logoutbutton').addEventListener('click', () => {
-                fetch('/api/logout', { method: 'GET' })
-                    .then(response => {
-                        if (response.ok) {
-                            // Redirect to login page after successful logout
-                            window.location.href = '/login.html';
-                        } else {
-                            console.error('Logout failed');
-                        }
-                    })
-                    .catch(error => console.error('Error during logout:', error));
-            });
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const authToken = localStorage.getItem('authToken');  // Assuming you store the auth token in localStorage
+
+        if (!authToken) {
+            // If no token is found, redirect to the login page
+            window.location.href = '/login.html';
+            return;
+        }
+
+        // Fetch user profile data from Vercel serverless API route
+        fetch('/api/user/profile', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`  // Send the token in the Authorization header
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                // Redirect to login page if user is not authenticated
+                alert(data.error);
+                window.location.href = '/login.html';
+            } else {
+                // Populate profile data on the page
+                document.getElementById('user-name').textContent = data.name;
+                document.getElementById('profile-name').textContent = data.name;
+                document.getElementById('profile-college').textContent = data.college;
+                document.getElementById('profile-year').textContent = data.year;
+                document.getElementById('profile-accommodation').textContent = data.accommodation;
+
+                // Set form fields for editing
+                document.getElementById('name').value = data.name;
+                document.getElementById('college').value = data.college;
+                document.getElementById('year').value = data.year;
+                document.getElementById('accommodation').value = data.accommodation;
+
+                // Display saved QR code
+                const qrCodeElement = document.getElementById('qr-code');
+                if (data.qr_code_id) {
+                    const qrCodeUrl = `/api/qrcodes/${data.qr_code_id}`; // Fetch QR code from API
+                    qrCodeElement.src = qrCodeUrl;
+                } else {
+                    console.error('QR code not available');
+                }
+            }
+        })
+        .catch(error => console.error('Error fetching profile:', error));
+
+        // Fetch registered events from Vercel serverless API route
+        fetch('/api/user/events', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`  // Send the token in the Authorization header
+            }
+        })
+        .then(response => response.json())
+        .then(events => {
+            const eventsContainer = document.getElementById('registered-events');
+            if (events.length === 0) {
+                eventsContainer.innerHTML = '<p>No events registered yet.</p>';
+                return;
+            }
+
+            const eventCards = events.map(event => `
+                <div class="event-card">
+                    <h3>${event.eventName}</h3>
+                </div>
+            `).join('');
+            eventsContainer.innerHTML = eventCards;
+        })
+        .catch(error => console.error('Error fetching events:', error));
+
+        // Edit and save profile functionality
+        const editBtn = document.getElementById('edit-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const profileInfo = document.getElementById('profile-info');
+        const editProfile = document.getElementById('edit-profile');
+
+        editBtn.addEventListener('click', () => {
+            profileInfo.style.display = 'none';
+            editProfile.style.display = 'flex';
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
         });
-    
-        document.getElementById('go-to-events-btn').addEventListener('click', () => {
-            window.location.href = '/events.html'; // Navigation to events
+
+        saveBtn.addEventListener('click', () => {
+            const formData = {
+                name: document.getElementById('name').value,
+                college: document.getElementById('college').value,
+                year: document.getElementById('year').value,
+                accommodation: document.getElementById('accommodation').value,
+            };
+
+            fetch('/api/profile/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`  // Send the token in the Authorization header
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert(data.error || 'An error occurred.');
+                }
+            })
+            .catch(error => console.error('Error updating profile:', error));
         });
-    </script>
+
+        // Logout functionality
+        document.getElementById('logoutbutton').addEventListener('click', () => {
+            fetch('/api/logout', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`  // Send the token in the Authorization header
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    localStorage.removeItem('authToken');  // Remove token after logout
+                    window.location.href = '/login.html';  // Redirect to login page after successful logout
+                } else {
+                    console.error('Logout failed');
+                }
+            })
+            .catch(error => console.error('Error during logout:', error));
+        });
+    });
+
+    document.getElementById('go-to-events-btn').addEventListener('click', () => {
+        window.location.href = '/events.html'; // Navigation to events
+    });
+</script>
 </body>
 </html>
