@@ -33,6 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/admin", adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/events", eventsRoutes);
+app.use("/api/login",login);
 app.use("/profile", profileRoutes);
 
 // Test database connection
