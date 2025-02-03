@@ -6,6 +6,7 @@ import adminRoutes from "./admin.js";
 import authRoutes from "./auth.js";
 import eventsRoutes from "./events.js";
 import profileRoutes from "./profile.js";
+import login from "./login.js";
 import db from "../utils/db.js";  
 
 const app = express();
