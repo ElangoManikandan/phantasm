@@ -6,7 +6,7 @@ import adminRoutes from "./admin.js";
 import authRoutes from "./auth.js";
 import eventsRoutes from "./events.js";
 import profileRoutes from "./profile.js";
-import login from "./login.js";
+import loginRoutes from "./login.js";  
 import db from "../utils/db.js";  
 
 const app = express();
@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/admin", adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/events", eventsRoutes);
-app.use("/api/login",login);
+app.use("/api/login", loginRoutes);  
 app.use("/profile", profileRoutes);
 
 // Test database connection
