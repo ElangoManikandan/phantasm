@@ -175,26 +175,38 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const authToken = localStorage.getItem('authToken');  // Assuming you store the auth token in localStorage
+        const authToken = localStorage.getItem('authToken');  // Assuming the token is stored in localStorage
 
         if (!authToken) {
             // If no token is found, redirect to the login page
+            console.log('No authToken found. Redirecting to login...');
             window.location.href = '/login.html';
             return;
         }
 
-        // Fetch user profile data from Vercel serverless API route
+        // Function to handle errors globally
+        const handleFetchError = (response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        };
+
+        // Fetch user profile data from the server
         fetch('/api/user/profile', {
             headers: {
                 'Authorization': `Bearer ${authToken}`  // Send the token in the Authorization header
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Profile response status:', response.status);
+            return handleFetchError(response);
+        })
         .then(data => {
+            console.log('Profile data:', data);
             if (data.error) {
-                // Redirect to login page if user is not authenticated
                 alert(data.error);
-                window.location.href = '/login.html';
+                window.location.href = '/login.html';  // Redirect to login page if user is not authenticated
             } else {
                 // Populate profile data on the page
                 document.getElementById('user-name').textContent = data.name;
@@ -212,35 +224,40 @@
                 // Display saved QR code
                 const qrCodeElement = document.getElementById('qr-code');
                 if (data.qr_code_id) {
-                    const qrCodeUrl = `/api/qrcodes/${data.qr_code_id}`; // Fetch QR code from API
-                    qrCodeElement.src = qrCodeUrl;
+                    qrCodeElement.src = `/api/qrcodes/${data.qr_code_id}`; // Fetch QR code from API
                 } else {
                     console.error('QR code not available');
                 }
             }
         })
-        .catch(error => console.error('Error fetching profile:', error));
+        .catch(error => {
+            console.error('Error fetching profile:', error);
+            window.location.href = '/login.html';  // Redirect to login page if profile fetch fails
+        });
 
-        // Fetch registered events from Vercel serverless API route
+        // Fetch registered events from the server
         fetch('/api/user/events', {
             headers: {
                 'Authorization': `Bearer ${authToken}`  // Send the token in the Authorization header
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Events response status:', response.status);
+            return handleFetchError(response);
+        })
         .then(events => {
+            console.log('Events data:', events);
             const eventsContainer = document.getElementById('registered-events');
             if (events.length === 0) {
                 eventsContainer.innerHTML = '<p>No events registered yet.</p>';
-                return;
+            } else {
+                const eventCards = events.map(event => `
+                    <div class="event-card">
+                        <h3>${event.eventName}</h3>
+                    </div>
+                `).join('');
+                eventsContainer.innerHTML = eventCards;
             }
-
-            const eventCards = events.map(event => `
-                <div class="event-card">
-                    <h3>${event.eventName}</h3>
-                </div>
-            `).join('');
-            eventsContainer.innerHTML = eventCards;
         })
         .catch(error => console.error('Error fetching events:', error));
 
@@ -273,11 +290,14 @@
                 },
                 body: JSON.stringify(formData),
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Update profile response status:', response.status);
+                return handleFetchError(response);
+            })
             .then(data => {
                 if (data.message) {
                     alert(data.message);
-                    location.reload(); // Reload the page to reflect changes
+                    location.reload();  // Reload the page to reflect changes
                 } else {
                     alert(data.error || 'An error occurred.');
                 }
@@ -294,6 +314,7 @@
                 }
             })
             .then(response => {
+                console.log('Logout response status:', response.status);
                 if (response.ok) {
                     localStorage.removeItem('authToken');  // Remove token after logout
                     window.location.href = '/login.html';  // Redirect to login page after successful logout
@@ -306,8 +327,9 @@
     });
 
     document.getElementById('go-to-events-btn').addEventListener('click', () => {
-        window.location.href = '/events.html'; // Navigation to events
+        window.location.href = '/events.html';  // Navigation to events
     });
 </script>
+
 </body>
 </html>
