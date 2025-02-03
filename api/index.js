@@ -37,7 +37,7 @@ app.use("/api/login", loginRoutes);
 app.use("/api/profile", profileRoutes);
 // Import user routes
 
-app.use('/user', userRouter); // Use user routes for '/api/user'
+app.use('/api/user', userRouter); // Use user routes for '/api/user'
 
 
 // Test database connection
