@@ -17,7 +17,8 @@ const port = process.env.PORT || 3000;
 app.use(cors({
     origin: 'https://phantasm.onrender.com',  // Replace with your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials:true
 }));
 
 // ✅ Use express.json() to parse JSON request bodies
