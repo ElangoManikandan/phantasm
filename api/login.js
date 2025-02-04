@@ -24,13 +24,12 @@ router.post('/', async (req, res) => {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        // Debugging: Log the password and hashed password from DB
-        console.log('Received password:', password);
-        console.log('User password from DB:', user.password);
+        // Log the entire user object to check the structure
+        console.log('User object from DB:', user);
 
-        // Check if password is a string and not empty
-        if (typeof password !== 'string' || password.trim() === '') {
-            return res.status(400).json({ error: "Password must be a non-empty string" });
+        // Check if password exists in the user object
+        if (!user.password) {
+            return res.status(500).json({ error: "Password not found in database" });
         }
 
         // Compare the hashed password
@@ -59,5 +58,4 @@ router.post('/', async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 });
-
 export default router;
