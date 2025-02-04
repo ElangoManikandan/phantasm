@@ -103,112 +103,121 @@
         </div>
     </div>
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
     try {
-        // Fetch user profile data using cookies (JWT stored in cookies)
-        const response = await fetch('/api/user/profile', {
-            method: 'GET',
-            credentials: 'include', // Ensures cookies (JWT) are sent
+        // Fetch user profile data
+        const response = await fetch("/api/user/profile", {
+            method: "GET",
+            credentials: "include", // Ensures cookies (JWT) are sent
         });
 
         const data = await response.json();
 
         if (!response.ok) {
             console.warn("User not authenticated:", data.error);
-            window.location.href = '/login.html'; // Redirect to login if unauthorized
+            window.location.href = "/login.html"; // Redirect to login if unauthorized
             return;
         }
 
-        // Populate profile data on the page
-        document.getElementById('user-name').textContent = data.name;
-        document.getElementById('profile-name').textContent = data.name;
-        document.getElementById('profile-college').textContent = data.college;
-        document.getElementById('profile-year').textContent = data.year;
-        document.getElementById('profile-accommodation').textContent = data.accommodation;
+        // Check if elements exist before updating them (prevents errors)
+        if (document.getElementById("user-name")) document.getElementById("user-name").textContent = data.name;
+        if (document.getElementById("profile-name")) document.getElementById("profile-name").textContent = data.name;
+        if (document.getElementById("profile-college")) document.getElementById("profile-college").textContent = data.college;
+        if (document.getElementById("profile-year")) document.getElementById("profile-year").textContent = data.year;
+        if (document.getElementById("profile-accommodation")) document.getElementById("profile-accommodation").textContent = data.accommodation;
 
         // Set form fields for editing
-        document.getElementById('name').value = data.name;
-        document.getElementById('college').value = data.college;
-        document.getElementById('year').value = data.year;
-        document.getElementById('accommodation').value = data.accommodation;
+        if (document.getElementById("name")) document.getElementById("name").value = data.name;
+        if (document.getElementById("college")) document.getElementById("college").value = data.college;
+        if (document.getElementById("year")) document.getElementById("year").value = data.year;
+        if (document.getElementById("accommodation")) document.getElementById("accommodation").value = data.accommodation;
 
         // Display QR code if available
-        if (data.qr_code_id) {
-            document.getElementById('qr-code').src = `/api/qrcodes/${data.qr_code_id}`;
-        } else {
-            console.error('QR code not available');
+        const qrCodeElement = document.getElementById("qr-code");
+        if (qrCodeElement && data.qr_code_id) {
+            qrCodeElement.src = `/api/qrcodes/${data.qr_code_id}`;
         }
     } catch (error) {
-        console.error('Error fetching profile:', error);
-        window.location.href = '/login.html'; // Redirect if error occurs
+        console.error("Error fetching profile:", error);
+        window.location.href = "/login.html"; // Redirect if error occurs
     }
 
     // Edit Profile Button Logic
-    const editBtn = document.getElementById('edit-btn');
-    const saveBtn = document.getElementById('save-btn');
-    const profileInfo = document.getElementById('profile-info');
-    const editProfile = document.getElementById('edit-profile');
+    const editBtn = document.getElementById("edit-btn");
+    const saveBtn = document.getElementById("save-btn");
+    const profileInfo = document.getElementById("profile-info");
+    const editProfile = document.getElementById("edit-profile");
 
-    editBtn.addEventListener('click', () => {
-        profileInfo.style.display = 'none';
-        editProfile.style.display = 'block';
-        editBtn.style.display = 'none';
-        saveBtn.style.display = 'inline-block';
-    });
+    if (editBtn && saveBtn && profileInfo && editProfile) {
+        editBtn.addEventListener("click", () => {
+            profileInfo.style.display = "none";
+            editProfile.style.display = "block";
+            editBtn.style.display = "none";
+            saveBtn.style.display = "inline-block";
+        });
 
-    // Save Updated Profile Data
-    saveBtn.addEventListener('click', async () => {
-        const updatedData = {
-            name: document.getElementById('name').value,
-            college: document.getElementById('college').value,
-            year: document.getElementById('year').value,
-            accommodation: document.getElementById('accommodation').value,
-        };
+        // Save Updated Profile Data
+        saveBtn.addEventListener("click", async () => {
+            const updatedData = {
+                name: document.getElementById("name").value,
+                college: document.getElementById("college").value,
+                year: document.getElementById("year").value,
+                accommodation: document.getElementById("accommodation").value,
+            };
 
-        try {
-            const response = await fetch('/api/profile/update-profile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // Ensure cookies are included
-                body: JSON.stringify(updatedData),
-            });
+            try {
+                const response = await fetch("/api/user/update-profile", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include", // Ensure cookies are included
+                    body: JSON.stringify(updatedData),
+                });
 
-            const result = await response.json();
+                const result = await response.json();
 
-            if (response.ok) {
-                alert(result.message);
-                window.location.reload(); // Refresh the page after saving
-            } else {
-                alert(result.error || 'Failed to update profile.');
+                if (response.ok) {
+                    alert(result.message);
+                    window.location.reload(); // Refresh the page after saving
+                } else {
+                    alert(result.error || "Failed to update profile.");
+                }
+            } catch (error) {
+                console.error("Error updating profile:", error);
             }
-        } catch (error) {
-            console.error('Error updating profile:', error);
-        }
-    });
+        });
+    }
 
     // Logout Functionality
-    document.getElementById('logoutbutton').addEventListener('click', async () => {
-        try {
-            const response = await fetch('/api/logout', {
-                method: 'GET',
-                credentials: 'include', // Ensures cookies (JWT) are cleared
-            });
+    const logoutBtn = document.getElementById("logoutbutton");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                const response = await fetch("/api/logout", {
+                    method: "GET",
+                    credentials: "include", // Ensures cookies (JWT) are cleared
+                });
 
-            if (response.ok) {
-                window.location.href = '/login.html'; // Redirect after logout
-            } else {
-                console.error('Logout failed');
+                if (response.ok) {
+                    localStorage.removeItem("authToken"); // Remove token from storage
+                    window.location.href = "/login.html"; // Redirect after logout
+                } else {
+                    console.error("Logout failed");
+                }
+            } catch (error) {
+                console.error("Error during logout:", error);
             }
-        } catch (error) {
-            console.error('Error during logout:', error);
-        }
-    });
+        });
+    }
 
     // Navigate to Events Page
-    document.getElementById('go-to-events-btn').addEventListener('click', () => {
-        window.location.href = '/events.html';
-    });
+    const eventsBtn = document.getElementById("go-to-events-btn");
+    if (eventsBtn) {
+        eventsBtn.addEventListener("click", () => {
+            window.location.href = "/events.html";
+        });
+    }
 });
+
 
 </script>
 </body>
