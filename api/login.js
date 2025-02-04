@@ -24,6 +24,10 @@ router.post('/', async (req, res) => {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
+        // Debugging: Log the password and hashed password from DB
+        console.log('Received password:', password);
+        console.log('User password from DB:', user.password);
+
         // Check if password is a string and not empty
         if (typeof password !== 'string' || password.trim() === '') {
             return res.status(400).json({ error: "Password must be a non-empty string" });
