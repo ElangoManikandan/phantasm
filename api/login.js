@@ -18,16 +18,15 @@ router.post('/', async (req, res) => {
 
     try {
         // Check if user exists
-        const [user] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        const user = rows[0]; // Extract the first row
 
         if (!user) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        // Log the entire user object to check the structure
-        console.log('User object from DB:', user);
+        console.log('User object from DB:', user); // Debugging
 
-        // Check if password exists in the user object
         if (!user.password) {
             return res.status(500).json({ error: "Password not found in database" });
         }
@@ -44,13 +43,12 @@ router.post('/', async (req, res) => {
 
         // Send token as an HTTP-only cookie
         res.cookie('authToken', token, {
-            httpOnly: true, // Makes the cookie inaccessible to JavaScript (for security)
-            secure: process.env.NODE_ENV === 'production', // Ensures cookies are sent over HTTPS
-            maxAge: 3600000, // Cookie expiration time (1 hour)
-            sameSite: 'Strict', // To prevent cross-site request forgery
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 3600000, // 1 hour
+            sameSite: 'Strict',
         });
 
-        // Return a success message
         return res.json({ message: 'Logged in successfully' });
 
     } catch (err) {
@@ -58,4 +56,5 @@ router.post('/', async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 });
+
 export default router;
