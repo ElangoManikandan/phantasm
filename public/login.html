@@ -106,31 +106,33 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const loginForm = document.getElementById('loginForm');
+            
             loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault(); // Prevent form submission
+                e.preventDefault(); // Prevent default form submission
 
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
 
-                const loginData = { email, password };
+                if (!email || !password) {
+                    alert("Please fill in both email and password.");
+                    return;
+                }
 
                 try {
                     const response = await fetch("/api/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(loginData),
+                        body: JSON.stringify({ email, password }),
+                        credentials: "include" // Ensure cookies are sent & received
                     });
 
                     const result = await response.json();
 
                     if (response.ok) {
-                        // Store token in localStorage
-                        localStorage.setItem("authToken", result.token);
-
-                        // Redirect to profile page after successful login
-                        window.location.href = "/profile.html";
+                        alert("Login successful! Redirecting...");
+                        window.location.href = "/profile.html"; // Redirect on success
                     } else {
-                        alert(result.error || "Login failed.");
+                        alert(result.error || "Login failed. Please check your credentials.");
                     }
                 } catch (error) {
                     console.error("Error during login:", error);
