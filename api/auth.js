@@ -56,38 +56,4 @@ router.post("/register", async (req, res) => {
         res.status(500).json({ error: "Server error!" });
     }
 });
-
-// **User Login**
-router.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required!" });
-        }
-
-        const results = await queryDatabase("SELECT * FROM users WHERE email = ?", [email]);
-        if (results.length === 0) {
-            return res.status(404).json({ error: "User not found!" });
-        }
-
-        const user = results[0];
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ error: "Invalid credentials!" });
-        }
-
-        const token = jwt.sign(
-            { id: user.id, name: user.name, email: user.email, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
-
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "Strict", maxAge: 3600000 });
-        res.json({ message: "Login successful!", role: user.role });
-    } catch (error) {
-        console.error("Login Error:", error);
-        res.status(500).json({ error: "Server error!" });
-    }
-});
-
 export default router;
