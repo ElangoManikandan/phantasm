@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import db from "../utils/db.js";
 import dotenv from "dotenv";
-import { promisify } from "util";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -13,12 +12,21 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+    }
+
     try {
         // Check if user exists
         const [user] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
         if (!user) {
             return res.status(401).json({ error: "Invalid credentials" });
+        }
+
+        // Check if password is a string and not empty
+        if (typeof password !== 'string' || password.trim() === '') {
+            return res.status(400).json({ error: "Password must be a non-empty string" });
         }
 
         // Compare the hashed password
@@ -43,8 +51,8 @@ router.post('/', async (req, res) => {
         return res.json({ message: 'Logged in successfully' });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal server error" });
+        console.error('Error in login:', err);
+        return res.status(500).json({ error: "Internal server error" });
     }
 });
 
