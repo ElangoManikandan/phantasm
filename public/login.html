@@ -103,47 +103,113 @@
         </div>
     </div>
 <script>
-    // Login Form JavaScript
-    const loginForm = document.getElementById('loginForm');
-    const emailField = document.getElementById('email');
-    const passwordField = document.getElementById('password');
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Fetch user profile data using cookies (JWT stored in cookies)
+        const response = await fetch('/api/user/profile', {
+            method: 'GET',
+            credentials: 'include', // Ensures cookies (JWT) are sent
+        });
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();  // Prevent default form submission
+        const data = await response.json();
 
-        const email = emailField.value;
-        const password = passwordField.value;
+        if (!response.ok) {
+            console.warn("User not authenticated:", data.error);
+            window.location.href = '/login.html'; // Redirect to login if unauthorized
+            return;
+        }
 
-        // Prepare data to send to the server
-        const loginData = { email, password };
+        // Populate profile data on the page
+        document.getElementById('user-name').textContent = data.name;
+        document.getElementById('profile-name').textContent = data.name;
+        document.getElementById('profile-college').textContent = data.college;
+        document.getElementById('profile-year').textContent = data.year;
+        document.getElementById('profile-accommodation').textContent = data.accommodation;
+
+        // Set form fields for editing
+        document.getElementById('name').value = data.name;
+        document.getElementById('college').value = data.college;
+        document.getElementById('year').value = data.year;
+        document.getElementById('accommodation').value = data.accommodation;
+
+        // Display QR code if available
+        if (data.qr_code_id) {
+            document.getElementById('qr-code').src = `/api/qrcodes/${data.qr_code_id}`;
+        } else {
+            console.error('QR code not available');
+        }
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        window.location.href = '/login.html'; // Redirect if error occurs
+    }
+
+    // Edit Profile Button Logic
+    const editBtn = document.getElementById('edit-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const profileInfo = document.getElementById('profile-info');
+    const editProfile = document.getElementById('edit-profile');
+
+    editBtn.addEventListener('click', () => {
+        profileInfo.style.display = 'none';
+        editProfile.style.display = 'block';
+        editBtn.style.display = 'none';
+        saveBtn.style.display = 'inline-block';
+    });
+
+    // Save Updated Profile Data
+    saveBtn.addEventListener('click', async () => {
+        const updatedData = {
+            name: document.getElementById('name').value,
+            college: document.getElementById('college').value,
+            year: document.getElementById('year').value,
+            accommodation: document.getElementById('accommodation').value,
+        };
 
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/profile/update-profile', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginData),
-                credentials: 'include',  // Ensure cookies (JWT token) are included
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include', // Ensure cookies are included
+                body: JSON.stringify(updatedData),
             });
 
             const result = await response.json();
 
             if (response.ok) {
-                // Handle successful login (redirect based on role)
-                if (result.role === 'admin') {
-                    window.location.href = '/adminprofile.html';
-                } else {
-                    window.location.href = '/profile.html';
-                }
+                alert(result.message);
+                window.location.reload(); // Refresh the page after saving
             } else {
-                alert(result.error || "Login failed. Please try again.");
+                alert(result.error || 'Failed to update profile.');
             }
         } catch (error) {
-            console.error("Error during login:", error);
-            alert("An error occurred. Please try again later.");
+            console.error('Error updating profile:', error);
         }
     });
+
+    // Logout Functionality
+    document.getElementById('logoutbutton').addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include', // Ensures cookies (JWT) are cleared
+            });
+
+            if (response.ok) {
+                window.location.href = '/login.html'; // Redirect after logout
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    });
+
+    // Navigate to Events Page
+    document.getElementById('go-to-events-btn').addEventListener('click', () => {
+        window.location.href = '/events.html';
+    });
+});
+
 </script>
 </body>
 </html>
