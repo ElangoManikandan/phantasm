@@ -174,8 +174,9 @@
     </div>
 
 <script>
+ <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const authToken = localStorage.getItem('authToken');  // Assuming the token is stored in localStorage
+        const authToken = document.cookie.replace(/(?:(?:^|.*;\s*)authToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");  // Retrieve token from cookies
 
         if (!authToken) {
             // If no token is found, redirect to the login page
@@ -316,7 +317,7 @@
             .then(response => {
                 console.log('Logout response status:', response.status);
                 if (response.ok) {
-                    localStorage.removeItem('authToken');  // Remove token after logout
+                    document.cookie = "authToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";  // Clear the cookie
                     window.location.href = '/login.html';  // Redirect to login page after successful logout
                 } else {
                     console.error('Logout failed');
@@ -329,6 +330,8 @@
     document.getElementById('go-to-events-btn').addEventListener('click', () => {
         window.location.href = '/events.html';  // Navigation to events
     });
+</script>
+
 </script>
 
 </body>
