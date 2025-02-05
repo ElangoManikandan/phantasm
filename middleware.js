@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
-import express from "express";
-const router= express.Router();
 
+// Middleware to verify authentication token
 const requireAuth = (req, res, next) => {
     let token;
 
@@ -27,6 +26,7 @@ const requireAuth = (req, res, next) => {
     }
 };
 
+// Middleware to verify admin role
 const requireAdmin = (req, res, next) => {
     if (!req.user || req.user.role !== "admin") {
         return res.status(403).json({ error: "Forbidden: Admins only" });
@@ -34,5 +34,5 @@ const requireAdmin = (req, res, next) => {
     next();
 };
 
-// Export as ESM
-export default router;
+// Export both middleware functions
+export { requireAuth, requireAdmin };
