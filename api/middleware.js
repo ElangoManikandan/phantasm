@@ -1,22 +1,30 @@
 import jwt from "jsonwebtoken";
 
 const requireAuth = (req, res, next) => {
-    const authToken = req.headers.authorization;
+    let token;
 
-    if (!authToken || !authToken.startsWith("Bearer ")) {
+    // 1️⃣ Check for Bearer Token in Headers
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+        token = req.headers.authorization.split(" ")[1];
+    } 
+    // 2️⃣ Check for Token in Cookies
+    else if (req.cookies && req.cookies.authToken) {
+        token = req.cookies.authToken;
+    }
+
+    if (!token) {
         return res.status(401).json({ error: "Unauthorized: No token provided" });
     }
 
-    const token = authToken.split(" ")[1];
-
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Attach decoded user data to request
+        req.user = decoded;
         next();
     } catch (err) {
         return res.status(403).json({ error: "Forbidden: Invalid or expired token" });
     }
 };
+
 
 const requireAdmin = (req, res, next) => {
     if (!req.user || req.user.role !== "admin") {
