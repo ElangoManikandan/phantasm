@@ -42,7 +42,7 @@ app.use("/api/profile", requireAuth, profileRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/events", requireAuth, requireAdmin, eventsRoutes);
 app.use("/api/login", loginRoutes);  
-app.use("/api/user", requireAuth, adminRoutes);// Use user routes for '/api/user'
+app.use("/api/user", requireAuth, userRoutes);// Use user routes for '/api/user'
 
 // Test database connection
 app.get("/test-db", async (req, res) => {
