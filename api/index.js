@@ -10,6 +10,7 @@ import loginRoutes from "./login.js";
 import db from "../utils/db.js";  
 import userRouter from './user.js'; 
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 
 const app = express();
 const port = process.env.PORT || 3000;
