@@ -223,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(error => {
         console.error("Error fetching profile:", error);
     });
-});
 
     // Fetch registered events from the server
     fetch("/api/user/events", {
