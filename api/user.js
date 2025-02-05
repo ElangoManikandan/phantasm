@@ -5,6 +5,58 @@ import { requireAuth } from "./middleware.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
+// Get User Profile Route
+router.get("/get-profile", requireAuth, (req, res) => {
+    const userId = req.user.id; // Access user id from JWT payload
+
+    // Query to fetch the user details
+    db.query(
+        "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
+        [userId],
+        (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Database error!" });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ error: "User not found!" });
+            }
+
+            const user = results[0];
+            user.qr_code_id = `user_${user.id}.png`; // Dynamically add qr_code_id based on user id
+
+            res.json(user); // Send the updated user data
+        }
+    );
+});
+
+// Update User Profile Route
+router.post("/update-profile", requireAuth, (req, res) => {
+    const userId = req.user.id; // Access user id from JWT payload
+    const { name, college, year, accommodation, role } = req.body; // Get updated values from the request body
+
+    // Validate the fields
+    if (!name || !college || !year || !accommodation || !role) {
+        return res.status(400).json({ error: "All fields are required!" });
+    }
+
+    // Query to update the user details
+    db.query(
+        "UPDATE users SET name = ?, college = ?, year = ?, accommodation = ?, role = ? WHERE id = ?",
+        [name, college, year, accommodation, role, userId],
+        (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ error: "Database error!" });
+            }
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ error: "User not found!" });
+            }
+
+            res.status(200).json({ message: "Profile updated successfully!" });
+        }
+    );
+});
 
 // Middleware to authenticate user by verifying JWT
 const authenticateJWT = (req, res, next) => {
@@ -48,36 +100,6 @@ router.get('/profile', requireAuth, async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
-// Route to update user profile information
-router.post('/update-profile', requireAuth, async (req, res) => {
-    try {
-        const userId = req.user.userId; // Retrieved from the JWT
-        const { name, college, year, accommodation } = req.body;
-
-        // Validate inputs
-        if (!name || !college || !year || !accommodation) {
-            return res.status(400).json({ error: 'All fields are required' });
-        }
-
-        const query = `
-            UPDATE users 
-            SET name = ?, college = ?, year = ?, accommodation = ?
-            WHERE id = ?;
-        `;
-        const result = await db.query(query, [name, college, year, accommodation, userId]);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        res.json({ message: 'Profile updated successfully' });
-    } catch (err) {
-        console.error('Error updating profile:', err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
 router.get("/events",requireAuth, async (req, res) => {
     const userId = req.user.id;
 
