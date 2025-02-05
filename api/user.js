@@ -25,7 +25,7 @@ const authenticateJWT = (req, res, next) => {
 };
 
 // Route to get user profile information
-router.get('/profile', authenticateJWT, async (req, res) => {
+router.get('/profile', requireAuth, async (req, res) => {
     try {
         const userId = req.user.userId; // Retrieved from the JWT
         const query = 'SELECT * FROM users WHERE id = ?'; // Query to fetch user data by ID
@@ -50,7 +50,7 @@ router.get('/profile', authenticateJWT, async (req, res) => {
 });
 
 // Route to update user profile information
-router.post('/update-profile', authenticateJWT, async (req, res) => {
+router.post('/update-profile', requireAuth, async (req, res) => {
     try {
         const userId = req.user.userId; // Retrieved from the JWT
         const { name, college, year, accommodation } = req.body;
@@ -78,7 +78,7 @@ router.post('/update-profile', authenticateJWT, async (req, res) => {
     }
 });
 
-router.get("/events",  authenticateJWT, async (req, res) => {
+router.get("/events",requireAuth, async (req, res) => {
     const userId = req.user.id;
 
     const query = `
