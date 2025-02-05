@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Profile data:", data);
         if (data.error) {
             alert(data.error);
-            window.location.href = "/login.html"; // Redirect to login if unauthorized
+            //window.location.href = "/login.html"; // Redirect to login if unauthorized
         } else {
             // Populate profile data on the page
             document.getElementById("user-name").textContent = data.name;
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Display saved QR code
             const qrCodeElement = document.getElementById("qr-code");
             if (data.qr_code_id) {
-                qrCodeElement.src = `/api/qrcodes/${data.qr_code_id}`;
+                qrCodeElement.src = `/public/qrcodes/${data.qr_code_id}`;
             } else {
                 console.error("QR code not available");
             }
