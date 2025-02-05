@@ -40,9 +40,9 @@ app.use("/api/admin", requireAuth, requireAdmin, adminRoutes);
 // Example usage for other routes that require authentication
 app.use("/api/profile", requireAuth, profileRoutes);
 app.use('/api/auth', authRoutes);
-app.use("/api/events", eventsRoutes);
+app.use("/api/events", requireAuth, requireAdmin, eventRoutes);
 app.use("/api/login", loginRoutes);  
-app.use('/api/user', userRouter); // Use user routes for '/api/user'
+app.use("/api/user", requireAuth, adminRoutes);// Use user routes for '/api/user'
 
 // Test database connection
 app.get("/test-db", async (req, res) => {
