@@ -9,9 +9,11 @@ import profileRoutes from "./profile.js";
 import loginRoutes from "./login.js";  
 import db from "../utils/db.js";  
 import userRouter from './user.js'; 
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = process.env.PORT || 3000;
+app.use(cookieParser()); 
 
 // Enable CORS globally (Adjust origin if needed)
 app.use(cors({
