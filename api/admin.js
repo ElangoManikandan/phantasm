@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../utils/db.js"; // Ensure correct path with .js extension
-import {requireAuth,requireAdmin} from "../utils/auth.js";
+import {createSession,verifySession,requireAuth,requireAdmin} from "../utils/auth.js";
 const router = express.Router();
 
 // Login route for admin
