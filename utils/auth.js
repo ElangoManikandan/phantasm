@@ -22,13 +22,13 @@ const verifySession = (token) => {
 
 // Authentication middleware
 const requireAuth = (req, res, next) => {
-  const authHeader = req.headers.authorization
+  const authToken = req.headers.authorization
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authToken || !authToken.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
-  const token = authHeader.split(' ')[1]
+  const token = authToken.split(' ')[1]
 
   try {
     const decoded = verifySession(token)
