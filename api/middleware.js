@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import express from "express";
+const router= express.Router();
 
 const requireAuth = (req, res, next) => {
     let token;
@@ -33,4 +35,4 @@ const requireAdmin = (req, res, next) => {
 };
 
 // Export as ESM
-export default { requireAuth, requireAdmin };
+export default router;
