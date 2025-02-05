@@ -9,12 +9,12 @@ const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 
 // Middleware to authenticate user by verifying JWT
 const authenticateJWT = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader) {
+    const authToken = req.headers['authorization'];
+    if (!authToken) {
         return res.status(401).json({ error: 'No token provided' });
     }
 
-    const token = authHeader.split(' ')[1]; // Extract token from "Bearer token"
+    const token = authToken.split(' ')[1]; // Extract token from "Bearer token"
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
