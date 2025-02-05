@@ -1,7 +1,7 @@
 import express from 'express';
 import db from "../utils/db.js"; // Assuming db.query is your SQL query function
 import jwt from 'jsonwebtoken';
-import middleware from "../middleware.js";
+import middleware from "./middleware.js";
 const { requireAuth } = middleware; // If you're using this somewhere
 
 const router = express.Router();
