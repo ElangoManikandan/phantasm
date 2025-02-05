@@ -79,7 +79,7 @@ router.post('/update-profile', authenticateJWT, async (req, res) => {
     }
 });
 
-app.get("/user/events", requireAuth, (req, res) => {
+router.get("/events", requireAuth, (req, res) => {
     const userId = req.user.id;
 
     const query = `
