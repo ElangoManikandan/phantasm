@@ -3,11 +3,17 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import db from "../utils/db.js";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+    throw new Error("Missing JWT_SECRET in environment variables");
+}
+
 const router = express.Router();
+router.use(cookieParser()); // Enable cookie parsing
 
 router.post('/', async (req, res) => {
     const { email, password } = req.body;
@@ -17,23 +23,22 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        // Check if user exists
-        const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-        const user = rows[0]; // Extract the first row
+        // Ensure DB query returns a valid result
+        const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
 
-        if (!user) {
+        if (!rows || rows.length === 0) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        console.log('User object from DB:', user); // Debugging
+        const user = rows[0]; // Extract user object
 
         if (!user.password) {
-            return res.status(500).json({ error: "Password not found in database" });
+            console.error('Database issue: Password column is missing or null.');
+            return res.status(500).json({ error: "Internal error: Password missing" });
         }
 
-        // Compare the hashed password
+        // Compare password with stored hash
         const passwordMatch = await bcrypt.compare(password, user.password);
-
         if (!passwordMatch) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
@@ -49,7 +54,7 @@ router.post('/', async (req, res) => {
             sameSite: 'Strict',
         });
 
-        return res.json({ message: 'Logged in successfully' });
+        return res.json({ message: "Logged in successfully" });
 
     } catch (err) {
         console.error('Error in login:', err);
