@@ -79,4 +79,20 @@ router.post('/update-profile', authenticateJWT, async (req, res) => {
     }
 });
 
+app.get("/user/events", requireAuth, (req, res) => {
+    const userId = req.user.id;
+
+    const query = `
+        SELECT e.name AS eventName
+        FROM events e
+        INNER JOIN registrations r ON e.id = r.event_id
+        WHERE r.user_id = ?
+    `;
+
+    db.query(query, [userId], (err, results) => {
+        if (err) return res.status(500).json({ error: "Database error!", details: err });
+        res.status(200).json(results);  // Send the event names to the frontend
+    });
+});
+
 export default router;
