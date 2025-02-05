@@ -5,6 +5,8 @@ import db from "../utils/db.js"; // Ensure correct path with .js extension
 import auth from "../utils/auth.js";
 const router = express.Router();
 
+router.use("api/auth",authRoutes);
+
 // Login route for admin
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
