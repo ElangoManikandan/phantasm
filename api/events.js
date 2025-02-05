@@ -1,7 +1,6 @@
 import express from "express";
 import db from "../utils/db.js";
-import middleware from "./middleware.js";
-const { requireAuth } = middleware;
+import { requireAuth } from "./middleware.js"; // Correct import of requireAuth
 
 const router = express.Router();
 
@@ -41,6 +40,7 @@ router.post("/event/register", requireAuth, async (req, res) => {
         return res.status(500).json({ error: "Database error!", details: error });
     }
 });
+
 // 🟢 Get All Events (Public Route)
 router.get("/get-events", async (req, res) => {
     try {
