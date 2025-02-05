@@ -11,6 +11,7 @@ import db from "../utils/db.js";
 import userRouter from './user.js'; 
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import {requireAuth,requireAdmin} from "./middleware.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
