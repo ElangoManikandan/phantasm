@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import express from "express";
 const router= express.Router();
 
-const requireAuth = (req, res, next) => {
+export const requireAuth = (req, res, next) => {
     let token;
 
     // ✅ 1. Check for Token in Cookies
@@ -27,12 +27,9 @@ const requireAuth = (req, res, next) => {
     }
 };
 
-const requireAdmin = (req, res, next) => {
+export const requireAdmin = (req, res, next) => {
     if (!req.user || req.user.role !== "admin") {
         return res.status(403).json({ error: "Forbidden: Admins only" });
     }
     next();
 };
-
-// Export as ESM
-export default router;
