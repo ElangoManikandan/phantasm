@@ -5,6 +5,14 @@ import db from "../utils/db.js"; // Ensure correct path with .js extension
 import authRoutes from "../utils/auth.js";
 const router = express.Router();
 
+// Middleware to verify admin role
+const requireAdmin = (req, res, next) => {
+    if (!req.user || req.user.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden: Admins only" });
+    }
+    next();
+};
+
 // Login route for admin
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
