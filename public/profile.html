@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Fetch user profile data from the server
-    fetch("api/user/profile", {
+    fetch("/api/user/get-profile", { // Change to the correct endpoint
         method: "GET",
         credentials: "include", // ✅ Ensures cookies are sent automatically
     })
@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Fetch registered events from the server
-    fetch("api/user/events", {
+    fetch("/api/user/get-events", { // Change to the correct endpoint
         method: "GET",
         credentials: "include", // Send cookies automatically
     })
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
             accommodation: document.getElementById("accommodation").value,
         };
 
-        fetch("api/profile/update-profile", {
+        fetch("/api/user/update-profile", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -316,6 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "/events.html";
     });
 });
+
 </script>
 </body>
 </html>
