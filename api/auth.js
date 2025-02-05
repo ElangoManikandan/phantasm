@@ -6,7 +6,6 @@ import {createSession,verifySession,requireAuth,requireAdmin} from "../utils/aut
 import db from "../utils/db.js";
 
 const router = express.Router();
-const { requireAuth, requireAdmin } = auth;
 
 // Enable CORS for all routes
 router.use(
