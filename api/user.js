@@ -108,9 +108,8 @@ router.get('/profile', requireAuth, async (req, res) => {
     }
 });
 router.get("/get-events", requireAuth, async (req, res) => {
-    const userId = req.user.id;  
-
-    console.log("Fetching events for user ID:", userId); // 🚀 Debugging  
+    const userId = req.user.id;  // Getting the userId from the decoded JWT token
+    console.log("Fetching events for userId:", userId);
 
     const query = `
         SELECT e.name AS eventName
@@ -119,15 +118,22 @@ router.get("/get-events", requireAuth, async (req, res) => {
         WHERE r.user_id = ?
     `;
 
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            console.error("Database error:", err);
-            return res.status(500).json({ error: "Database error!", details: err });
-        }
+    try {
+        // Use async/await with db query to handle the promise properly
+        const [results] = await db.execute(query, [userId]);
 
-        console.log("Query result:", results); // 🚀 Check if results are correct
-        res.status(200).json(results);  
-    });
+        console.log("Events retrieved:", results);
+        
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No events found for this user." });
+        }
+        
+        res.status(200).json(results);  // Send the event names to the frontend
+    } catch (err) {
+        console.error("Error fetching events:", err);
+        res.status(500).json({ error: "Database error", details: err.message });
+    }
 });
+
 
 export default router;
