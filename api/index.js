@@ -15,6 +15,7 @@ import { requireAuth, requireAdmin } from "../middleware.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
+app.use(cookieParser()); // ✅ Parse cookies before handling requests
 
 // Enable CORS globally (Adjust origin if needed)
 app.use(cors({
