@@ -273,7 +273,7 @@ saveBtn.addEventListener("click", async () => {
     };
 
     try {
-        const response = await fetch("https://phantasm.onrender.com/api/profile/update-profile", { // ✅ Updated route
+        const response = await fetch("https://phantasm.onrender.com/api/user/update-profile", { // ✅ Updated route
             method: "POST",  // ✅ Use POST for updating profile
             headers: {
                 "Content-Type": "application/json",
