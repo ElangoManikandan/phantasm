@@ -108,34 +108,31 @@ router.get('/profile', requireAuth, async (req, res) => {
     }
 });
 router.get("/get-events", requireAuth, async (req, res) => {
-    const userId = req.user?.id;  // Optional chaining to avoid undefined error
+  try {
+    const userId = req.user.id;  // Make sure this is set properly in your JWT validation middleware
     
     if (!userId) {
-        return res.status(400).json({ error: "Invalid or missing userId" });
+      return res.status(400).json({ error: "Invalid or missing userId" });
     }
 
-    console.log("Fetching events for userId:", userId);
+    // Query to fetch events based on userId
+    const [results] = await db.execute(`
+      SELECT e.name AS eventName
+      FROM events e
+      INNER JOIN registrations r ON e.id = r.event_id
+      WHERE r.user_id = ?`, [userId]);
 
-    const query = `
-        SELECT e.name AS eventName
-        FROM events e
-        INNER JOIN registrations r ON e.id = r.event_id
-        WHERE r.user_id = ?
-    `;
-
-    try {
-        const [results] = await db.execute(query, [userId]);
-        console.log("Events retrieved:", results);
-        
-        if (results.length === 0) {
-            return res.status(404).json({ message: "No events found for this user." });
-        }
-        
-        res.status(200).json(results);  // Send the event names to the frontend
-    } catch (err) {
-        console.error("Error fetching events:", err);
-        res.status(500).json({ error: "Database error", details: err.message });
+    // Check if events exist
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No events found" });
     }
+
+    // Return events to the frontend
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
 });
 
 
