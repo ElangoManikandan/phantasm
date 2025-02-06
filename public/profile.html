@@ -222,11 +222,15 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(error => console.error("Error fetching profile:", error));
 
     // Fetch registered events from the server
-fetch("/api/user/get-events", {
+fetch("https://phantasm.onrender.com/api/user/get-events", {
     method: "GET",
-    headers: { "Content-Type": "application/json" }, // ✅ Added headers
-    credentials: "include", // ✅ Ensures cookies (JWT/session) are sent
-}) 
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}` // ✅ Ensure token is sent
+    },
+    credentials: "include"
+})
+
 .then(response => {
     console.log("Events response status:", response.status);
     
