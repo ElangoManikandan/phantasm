@@ -36,7 +36,7 @@ router.get("/update-profile", async (req, res, next) => {
 
         console.log("✅ Profile updated successfully for userId:", userId);
         res.status(200).json({ message: "Profile updated successfully!" });
-export default router;
+
     } catch (err) {
         console.error("❌ Error in /update-profile:", err.message);
         res.status(500).json({ error: "Internal server error" });
@@ -130,3 +130,4 @@ router.get("/get-events",requireAuth, async (req, res) => {
         res.status(200).json(results);  // Send the event names to the frontend
     });
 });
+export default router;
