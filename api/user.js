@@ -110,14 +110,11 @@ router.get('/profile', requireAuth, async (req, res) => {
 router.get("/get-events", async (req, res, next) => {
     console.log("🚀 Route /get-events has been called");
 
-    // Log user to check if it's correctly set
-    console.log("Authenticated user:", req.user);
-
     // Proceed to next middleware (requireAuth) for token validation
     next();
 }, requireAuth, async (req, res) => {
   try {
-    const userId = req.user.userId;  // Correctly access userId here
+    const userId = req.user.id;  // Make sure this is set properly in your JWT validation middleware
     
     if (!userId) {
       return res.status(400).json({ error: "Invalid or missing userId" });
@@ -130,9 +127,9 @@ router.get("/get-events", async (req, res, next) => {
       INNER JOIN registrations r ON e.id = r.event_id
       WHERE r.user_id = ?`, [userId]);
 
-    // Check if events exist
+    // If no events are found, send an appropriate message
     if (results.length === 0) {
-      return res.status(404).json({ message: "No events found" });
+      return res.status(200).json({ message: "No events registered yet." });
     }
 
     // Return events to the frontend
