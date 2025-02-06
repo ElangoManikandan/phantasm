@@ -7,7 +7,13 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 // Get User Profile Route
 router.get("/get-profile", requireAuth, (req, res) => {
-    const userId = req.user.id; // Access user id from JWT payload
+    console.log("req.user in /get-profile:", req.user); // 🔍 Debugging
+
+    if (!req.user || !req.user.userId) {
+        return res.status(401).json({ error: "Unauthorized: No user ID found in token" });
+    }
+
+    const userId = req.user.userId; // Extract userId from token payload
 
     // Query to fetch the user details
     db.query(
@@ -23,12 +29,13 @@ router.get("/get-profile", requireAuth, (req, res) => {
             }
 
             const user = results[0];
-            user.qr_code_id = `user_${user.id}.png`; // Dynamically add qr_code_id based on user id
+            user.qr_code_id = `user_${user.id}.png`; // Dynamically add qr_code_id
 
             res.json(user); // Send the updated user data
         }
     );
 });
+
 
 // Update User Profile Route
 router.post("/update-profile", requireAuth, (req, res) => {
