@@ -108,7 +108,12 @@ router.get('/profile', requireAuth, async (req, res) => {
     }
 });
 router.get("/get-events", requireAuth, async (req, res) => {
-    const userId = req.user.id;  // Getting the userId from the decoded JWT token
+    const userId = req.user?.id;  // Optional chaining to avoid undefined error
+    
+    if (!userId) {
+        return res.status(400).json({ error: "Invalid or missing userId" });
+    }
+
     console.log("Fetching events for userId:", userId);
 
     const query = `
@@ -119,9 +124,7 @@ router.get("/get-events", requireAuth, async (req, res) => {
     `;
 
     try {
-        // Use async/await with db query to handle the promise properly
         const [results] = await db.execute(query, [userId]);
-
         console.log("Events retrieved:", results);
         
         if (results.length === 0) {
