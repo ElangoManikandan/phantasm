@@ -191,33 +191,33 @@
 <script>
 function registerForEvent(eventId) {
     console.log("Starting event registration...");
-    
-    // Retrieve the JWT token from localStorage (or cookies if you're using them)
+
+    // Retrieve the JWT token from localStorage
     const token = localStorage.getItem('authToken');
-    
+    console.log("Retrieved token from localStorage:", token); // Debugging
+
     if (!token) {
         console.log("User is not logged in.");
         alert("You are not logged in. Redirecting to login page.");
-        //window.location.href = '/login.html';
-        return;
+        window.location.href = '/login.html'; // Redirect to login if no token
+        return; // Stop execution if no token
     }
 
     // Include the token in the Authorization header for the API request
-fetch('api/events/register', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`  // Token in Authorization header
-    },
-    body: JSON.stringify({ eventId })
-})
-
+    fetch('api/events/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`  // Token in Authorization header
+        },
+        body: JSON.stringify({ eventId })
+    })
     .then(async response => {
         console.log("Response received:", response.status);
         if (response.status === 401) {
             console.log("Invalid or expired token.");
             alert("Your session has expired. Please log in again.");
-            window.location.href = '/login.html';
+            window.location.href = '/login.html'; // Redirect to login if token expired
             throw new Error("Unauthorized");
         }
         if (!response.ok) {
@@ -230,7 +230,7 @@ fetch('api/events/register', {
     .then(result => {
         console.log("Registration successful:", result);
         alert('Event registered successfully!');
-        window.location.href = '/profile.html';
+        window.location.href = '/profile.html'; // Redirect to profile after success
     })
     .catch(error => {
         console.error("Error occurred:", error);
@@ -239,6 +239,7 @@ fetch('api/events/register', {
         }
     });
 }
+
 </script>
 
 
