@@ -108,14 +108,15 @@ router.get('/profile', requireAuth, async (req, res) => {
     }
 });
 router.get("/get-events", async (req, res, next) => {
-    console.log("🚀 Route /get-events has been called");
+  console.log("🚀 Route /get-events has been called");
 
-    // Proceed to next middleware (requireAuth) for token validation
-    next();
+  // Proceed to next middleware (requireAuth) for token validation
+  next();
 }, requireAuth, async (req, res) => {
   try {
-    const userId = req.user.id;  // Make sure this is set properly in your JWT validation middleware
-    
+    console.log("🚀 req.user in /get-events:", req.user);  // Log the user object to check if it's set
+
+    const userId = req.user.id;  // This should be set in the JWT validation middleware
     if (!userId) {
       return res.status(400).json({ error: "Invalid or missing userId" });
     }
