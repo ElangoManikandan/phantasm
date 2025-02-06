@@ -220,23 +220,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
     .catch(error => console.error("Error fetching profile:", error));
-
-    // Fetch registered events from the server
-fetch("https://phantasm.onrender.com/api/user/get-events", {
+// Fetch registered events from the server
+fetch("/api/user/get-events", {
     method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("token")}` // ✅ Ensure token is sent
-    },
-    credentials: "include"
+    credentials: "include",  // Ensures cookies are sent automatically
 })
-
 .then(response => {
     console.log("Events response status:", response.status);
     
+    // Check if the response is successful
     if (!response.ok) {
         throw new Error(`Failed to fetch events: ${response.status} ${response.statusText}`);
     }
+    
+    // Parse the response as JSON
     return response.json();
 })
 .then(events => {
@@ -244,9 +241,11 @@ fetch("https://phantasm.onrender.com/api/user/get-events", {
 
     const eventsContainer = document.getElementById("registered-events");
     
+    // Check if events array is empty or not
     if (!Array.isArray(events) || events.length === 0) {
         eventsContainer.innerHTML = "<p>No events registered yet.</p>";
     } else {
+        // Create event cards from the fetched events
         const eventCards = events.map(event => `
             <div class="event-card">
                 <h3>${event.eventName}</h3>
@@ -257,9 +256,9 @@ fetch("https://phantasm.onrender.com/api/user/get-events", {
 })
 .catch(error => {
     console.error("Error fetching events:", error);
+    // Display error message in case of failure
     document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
 });
-
 
 // Edit and save profile functionality
     const editBtn = document.getElementById("edit-btn");
