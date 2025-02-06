@@ -100,7 +100,7 @@ router.get('/profile', requireAuth, async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-router.get("/events",requireAuth, async (req, res) => {
+router.get("/get-events",requireAuth, async (req, res) => {
     const userId = req.user.id;
 
     const query = `
