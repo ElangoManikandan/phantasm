@@ -107,7 +107,12 @@ router.get('/profile', requireAuth, async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-router.get("/get-events", requireAuth, async (req, res) => {
+router.get("/get-events", async (req, res, next) => {
+    console.log("🚀 Route /get-events has been called");
+
+    // Proceed to next middleware (requireAuth) for token validation
+    next();
+}, requireAuth, async (req, res) => {
   try {
     const userId = req.user.id;  // Make sure this is set properly in your JWT validation middleware
     
