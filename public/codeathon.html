@@ -189,6 +189,7 @@
     </footer>
 
 <script>
+// Helper function to get the JWT token from cookies
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -200,7 +201,7 @@ function registerForEvent(eventId) {
     console.log("Starting event registration...");
     
     // Retrieve the JWT token from cookies
-    const token = getCookie('authToken'); // Cookie name is 'authToken'
+    const token = getCookie('authToken'); // Token is stored in cookies as 'authToken'
     
     if (!token) {
         console.log("User is not logged in.");
