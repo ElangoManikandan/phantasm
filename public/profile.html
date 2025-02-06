@@ -184,45 +184,84 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Fetch user profile data from the server
-    fetch("/api/user/get-profile", { // Change to the correct endpoint
-        method: "GET",
-        credentials: "include", // ✅ Ensures cookies are sent automatically
-    })
+   // Fetch registered events from the server
+fetch("/api/user/get-events", { // Ensure this is the correct endpoint
+    method: "GET",
+    credentials: "include", // ✅ Ensures cookies are sent automatically
+})
     .then(response => {
-        console.log("Profile response status:", response.status);
-        return handleFetchError(response);
+        console.log("Events response status:", response.status);
+        return handleFetchError(response); // Ensure this function correctly checks for errors
     })
-    .then(data => {
-        console.log("Profile data:", data);
-        if (data.error) {
-            alert(data.error);
-            window.location.href = "/login.html"; // Redirect to login if unauthorized
+    .then(events => {
+        console.log("Events data:", events);
+
+        const eventsContainer = document.getElementById("registered-events");
+        if (events.length === 0) {
+            eventsContainer.innerHTML = "<p>No events registered yet.</p>";
         } else {
-            // Populate profile data on the page
-            document.getElementById("user-name").textContent = data.name;
-            document.getElementById("profile-name").textContent = data.name;
-            document.getElementById("profile-college").textContent = data.college;
-            document.getElementById("profile-year").textContent = data.year;
-            document.getElementById("profile-accommodation").textContent = data.accommodation;
-
-            // Set form fields for editing
-            document.getElementById("name").value = data.name;
-            document.getElementById("college").value = data.college;
-            document.getElementById("year").value = data.year;
-            document.getElementById("accommodation").value = data.accommodation;
-
-            // Display saved QR code
-            const qrCodeElement = document.getElementById("qr-code");
-            if (data.qr_code_id) {
-                qrCodeElement.src = `/public/qrcodes/${data.qr_code_id}`;
-            } else {
-                console.error("QR code not available");
-            }
+            const eventCards = events.map(event => `
+                <div class="event-card">
+                    <h3>${event.eventName}</h3>
+                </div>
+            `).join("");
+            eventsContainer.innerHTML = eventCards;
         }
     })
     .catch(error => {
-        console.error("Error fetching profile:", error);
+        console.error("Error fetching events:", error);
+        const eventsContainer = document.getElementById("registered-events");
+        eventsContainer.innerHTML = "<p>Failed to load events. Please try again later.</p>"; // Show user-friendly error message
     });
+
+// Edit and save profile functionality
+const editBtn = document.getElementById("edit-btn");
+const saveBtn = document.getElementById("save-btn");
+const profileInfo = document.getElementById("profile-info");
+const editProfile = document.getElementById("edit-profile");
+
+editBtn.addEventListener("click", () => {
+    profileInfo.style.display = "none";
+    editProfile.style.display = "flex";
+    editBtn.style.display = "none";
+    saveBtn.style.display = "inline-block";
+});
+
+saveBtn.addEventListener("click", () => {
+    const formData = {
+        name: document.getElementById("name").value,
+        college: document.getElementById("college").value,
+        year: document.getElementById("year").value,
+        accommodation: document.getElementById("accommodation").value,
+    };
+
+    // Send data back to the server to save
+    fetch("/api/user/update-profile", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            return Promise.reject("Failed to update profile");
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Profile updated successfully:", data);
+        // Update profile view with new data if needed
+        document.getElementById("profile-name").textContent = formData.name;
+        document.getElementById("profile-college").textContent = formData.college;
+        document.getElementById("profile-year").textContent = formData.year;
+        document.getElementById("profile-accommodation").textContent = formData.accommodation;
+    })
+    .catch(error => {
+        console.error("Error saving profile:", error);
+    });
+});
 
     // Fetch registered events from the server
     fetch("/api/user/get-events", { // Change to the correct endpoint
@@ -270,29 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
             accommodation: document.getElementById("accommodation").value,
         };
 
-        fetch("/api/user/update-profile", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include", // Send cookies automatically
-            body: JSON.stringify(formData),
-        })
-        .then(response => {
-            console.log("Update profile response status:", response.status);
-            return handleFetchError(response);
-        })
-        .then(data => {
-            if (data.message) {
-                alert(data.message);
-                location.reload(); // Reload page to reflect changes
-            } else {
-                alert(data.error || "An error occurred.");
-            }
-        })
-        .catch(error => console.error("Error updating profile:", error));
-    });
-
+    
     // Logout functionality
     document.getElementById("logoutbutton").addEventListener("click", () => {
         fetch("/api/logout", {
