@@ -6,7 +6,7 @@ import { requireAuth } from "./middleware.js";
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 // Get User Profile Route
-router.get("/get-profile", router.get("/get-profile", (req, res, next) => {
+router.get("/get-profile", (req, res, next) => {
     console.log("🚀 Route /get-profile has been called");
     next();
 }, requireAuth, (req, res) => {
