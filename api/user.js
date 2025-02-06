@@ -5,7 +5,6 @@ import { requireAuth } from "./middleware.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
-import db from "./db"; // Import your database connection
 
 // Get User Profile Route
 router.get("/get-profile", async (req, res, next) => {
