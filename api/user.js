@@ -16,7 +16,7 @@ router.get("/update-profile", async (req, res, next) => {
     try {
         const userId = req.user.id; // Access user id from JWT payload
         const { name, college, year, accommodation} = req.body; // Get updated values from the request body
-
+        console.log("🚀 req.body:", req.body);
         // Validate the fields
         if (!name || !college || !year || !accommodation) {
             return res.status(400).json({ error: "All fields are required!" });
