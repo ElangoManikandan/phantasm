@@ -7,7 +7,7 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 
 // Update User Profile Route
-router.post("/update-profile", async (req, res, next) => {
+router.get("/update-profile", async (req, res, next) => {
     console.log("🚀 Route /update-profile has been called");
 
     // Proceed to next middleware (requireAuth) for token validation
