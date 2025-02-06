@@ -114,7 +114,7 @@ router.get("/get-events", async (req, res, next) => {
     next();
 }, requireAuth, async (req, res) => {
   try {
-    const userId = req.user.id;  // Make sure this is set properly in your JWT validation middleware
+const userId = req.user.userId;  // Make sure this is set properly in your JWT validation middleware
     
     if (!userId) {
       return res.status(400).json({ error: "Invalid or missing userId" });
