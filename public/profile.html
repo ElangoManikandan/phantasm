@@ -220,37 +220,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
     .catch(error => console.error("Error fetching profile:", error));
-// Fetch registered events from the server
-fetch("/api/user/get-events", {
-  method: "GET",
-  credentials: "include",  // Ensure cookies are sent
-})
-.then(response => response.json())
-.then(events => {
-  console.log(events);
-})
-.catch(error => {
-  console.error("Error fetching events:", error);
-});
-  const eventsContainer = document.getElementById("registered-events");
 
-  if (!Array.isArray(events) || events.length === 0) {
-    eventsContainer.innerHTML = "<p>No events registered yet.</p>";
-  } else {
-    const eventCards = events.map(event => `
-      <div class="event-card">
-        <h3>${event.eventName}</h3>
-      </div>
-    `).join("");
-    eventsContainer.innerHTML = eventCards;
-  }
-})
-.catch(error => {
-  console.error("Error fetching events:", error);
-  document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
-});
+    // Fetch registered events from the server
+    fetch("/api/user/get-events", {
+        method: "GET",
+        credentials: "include",  // Ensure cookies are sent
+    })
+    .then(response => {
+        console.log("Events response status:", response.status);
+        return handleFetchError(response);  // Handle errors in fetching events
+    })
+    .then(events => {
+        console.log(events);
+        const eventsContainer = document.getElementById("registered-events");
 
-// Edit and save profile functionality
+        if (!Array.isArray(events) || events.length === 0) {
+            eventsContainer.innerHTML = "<p>No events registered yet.</p>";
+        } else {
+            const eventCards = events.map(event => `
+                <div class="event-card">
+                    <h3>${event.eventName}</h3>
+                </div>
+            `).join("");
+            eventsContainer.innerHTML = eventCards;
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching events:", error);
+        document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
+    });
+
+    // Edit and save profile functionality
     const editBtn = document.getElementById("edit-btn");
     const saveBtn = document.getElementById("save-btn");
     const profileInfo = document.getElementById("profile-info");
@@ -298,6 +298,7 @@ fetch("/api/user/get-events", {
             alert("There was an error saving your profile.");
         }
     });
+
     // Logout functionality
     const logoutButton = document.getElementById("logoutbutton");
     logoutButton.addEventListener("click", () => {
@@ -316,8 +317,10 @@ fetch("/api/user/get-events", {
         })
         .catch(error => console.error("Error during logout:", error));
     });
-document.getElementById('go-to-events-btn').addEventListener('click', () => {
-    window.location.href = 'events.html'; // Navigation to events
+
+    document.getElementById('go-to-events-btn').addEventListener('click', () => {
+        window.location.href = 'events.html'; // Navigation to events
+    });
 });
 </script>
 </body>
