@@ -44,9 +44,6 @@ app.use('/api/auth', authRoutes);
 app.use("/api/events", requireAuth, requireAdmin, eventsRoutes);
 app.use("/api/login", loginRoutes);  
 app.use("/api/user", requireAuth, userRouter);// Use user routes for '/api/user'
-// Import the DB connection pool
-import db from './db.js';
-
 // Test database route
 app.get("/test-db", async (req, res) => {
     const userId = 1;
