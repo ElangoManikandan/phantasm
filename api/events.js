@@ -5,7 +5,7 @@ import { requireAuth } from "./middleware.js"; // Correct import of requireAuth
 const router = express.Router();
 
 // 🟢 Register for Event Route with Duplicate Check
-router.post("/event/register", requireAuth, async (req, res) => {
+router.post("/register", requireAuth, async (req, res) => {
     const { eventId } = req.body;
     const userId = req.user.id;
 
