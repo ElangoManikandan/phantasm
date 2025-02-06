@@ -203,14 +203,15 @@ function registerForEvent(eventId) {
     }
 
     // Include the token in the Authorization header for the API request
-    fetch('api/events/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // JWT Token added here
-        },
-        body: JSON.stringify({ eventId })
-    })
+fetch('api/events/register', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`  // Token in Authorization header
+    },
+    body: JSON.stringify({ eventId })
+})
+
     .then(async response => {
         console.log("Response received:", response.status);
         if (response.status === 401) {
