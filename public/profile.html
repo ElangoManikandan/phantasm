@@ -264,7 +264,7 @@ editBtn.addEventListener("click", () => {
     saveBtn.style.display = "inline-block";
 });
 
-saveBtn.addEventListener("click", () => {
+saveBtn.addEventListener("click", async () => {
     const formData = {
         name: document.getElementById("name").value.trim(),
         college: document.getElementById("college").value.trim(),
@@ -272,22 +272,22 @@ saveBtn.addEventListener("click", () => {
         accommodation: document.getElementById("accommodation").value.trim(),
     };
 
-    // Send data to the server using POST
-    fetch("/api/user/update-profile", {
-        method: "POST", // ✅ Use POST (not GET)
-        headers: {
-            "Content-Type": "application/json",
-        },
-        credentials: "include", // Keep credentials for authentication
-        body: JSON.stringify(formData),
-    })
-    .then(response => {
+    try {
+        const response = await fetch("https://phantasm.onrender.com/api/profile/update-profile", { // ✅ Updated route
+            method: "POST",  // ✅ Use POST for updating profile
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include", // Ensure authentication cookies are sent
+            body: JSON.stringify(formData),
+        });
+
         if (!response.ok) {
-            return response.json().then(err => { throw new Error(err.error || "Failed to update profile"); });
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Failed to update profile");
         }
-        return response.json();
-    })
-    .then(data => {
+
+        const data = await response.json();
         console.log("Profile updated successfully:", data);
 
         // Update profile view with new data
@@ -301,11 +301,11 @@ saveBtn.addEventListener("click", () => {
         editProfile.style.display = "none";
         editBtn.style.display = "inline-block";
         saveBtn.style.display = "none";
-    })
-    .catch(error => {
+
+    } catch (error) {
         console.error("Error saving profile:", error);
         alert("Failed to update profile. Please try again.");
-    });
+    }
 });
 
     // Logout functionality
