@@ -1,5 +1,9 @@
+import express from 'express';
+import db from "../utils/db.js"; // Assuming db.query is your SQL query function
+import jwt from 'jsonwebtoken';
+import { requireAuth } from "./middleware.js"; 
 
-
+const router = express.Router();
 // Update User Profile Route
 router.get("/update-profile", async (req, res, next) => {
     console.log("🚀 Route /update-profile has been called");
@@ -30,7 +34,7 @@ router.get("/update-profile", async (req, res, next) => {
 
         console.log("✅ Profile updated successfully for userId:", userId);
         res.status(200).json({ message: "Profile updated successfully!" });
-
+export default router;
     } catch (err) {
         console.error("❌ Error in /update-profile:", err.message);
         res.status(500).json({ error: "Internal server error" });
