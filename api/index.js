@@ -5,7 +5,6 @@ import bodyParser from "body-parser";
 import adminRoutes from "./admin.js";
 import authRoutes from "./auth.js";
 import eventsRoutes from "./events.js";
-import profileRoutes from "./profile.js";
 import loginRoutes from "./login.js";  
 import db from "../utils/db.js";  
 import userRouter from './user.js'; 
@@ -39,7 +38,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // Example usage for admin routes
 app.use("/api/admin", requireAuth, requireAdmin, adminRoutes);
 // Example usage for other routes that require authentication
-app.use("/api/profile", requireAuth, profileRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/events", requireAuth, requireAdmin, eventsRoutes);
 app.use("/api/login", loginRoutes);  
