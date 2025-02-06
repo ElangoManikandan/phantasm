@@ -18,27 +18,32 @@ router.get("/get-profile", requireAuth, (req, res) => {
     console.log("Fetching profile for userId:", userId); // 🔍 Debugging
 
     // Query to fetch the user details
-    db.query(
-        "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
-        [userId], 
-        (err, results) => {
-            if (err) {
-                console.error("Database error:", err);
-                return res.status(500).json({ error: "Database error!" });
-            }
-            if (results.length === 0) {
-                console.error("❌ No user found in database for ID:", userId);
-                return res.status(404).json({ error: "User not found!" });
-            }
-
-            console.log("✅ User found:", results[0]); // 🔍 Debugging
-
-            const user = results[0];
-            user.qr_code_id = `user_${user.id}.png`; // Dynamically add qr_code_id
-
-            res.json(user); // Send the updated user data
+db.query(
+    "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
+    [userId], 
+    (err, results) => {
+        if (err) {
+            console.error("❌ Database error:", err);
+            return res.status(500).json({ error: "Database error!" });
         }
-    );
+
+        console.log("🛠 SQL Query Executed for userId:", userId);
+        console.log("🔍 Query Results:", results); // Debugging
+
+        if (results.length === 0) {
+            console.error("❌ No user found in database for ID:", userId);
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        console.log("✅ User Found:", results[0]); // Log user data
+
+        const user = results[0];
+        user.qr_code_id = `user_${user.id}.png`; // Add qr_code_id dynamically
+
+        res.json(user); // Send user data
+    }
+);
+
 });
 
 
