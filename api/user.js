@@ -140,5 +140,17 @@ const userId = req.user.userId;  // Make sure this is set properly in your JWT v
   }
 });
 
+router.get("/logout", async (req, res) => {
+    try {
+        // Clear the JWT token or session (depends on how you're managing sessions)
+        res.clearCookie('authToken', { path: '/' }); // If using cookies
+        res.status(200).json({ message: "Successfully logged out" });
+    } catch (error) {
+        console.error("Logout error:", error);
+        res.status(500).json({ error: "Error logging out" });
+    }
+});
+
+
 
 export default router;
