@@ -287,13 +287,6 @@ saveBtn.addEventListener("click", () => {
         }
     })
     .catch(error => console.error("Error fetching events:", error));
-
-    // Edit and save profile functionality
-    const editBtn = document.getElementById("edit-btn");
-    const saveBtn = document.getElementById("save-btn");
-    const profileInfo = document.getElementById("profile-info");
-    const editProfile = document.getElementById("edit-profile");
-
     editBtn.addEventListener("click", () => {
         profileInfo.style.display = "none";
         editProfile.style.display = "flex";
