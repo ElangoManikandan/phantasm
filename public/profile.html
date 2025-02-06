@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Send data back to the server to save
         fetch("/api/user/update-profile", {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
