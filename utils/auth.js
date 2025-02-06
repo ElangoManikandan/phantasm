@@ -20,24 +20,35 @@ export const verifySession = (token) => {
   }
 }
 
-// Authentication middleware
 export const requireAuth = (req, res, next) => {
-  const authToken = req.headers.authorization
+    console.log("Received Cookies:", req.cookies); // 🔍 Debugging
 
-  if (!authToken || !authToken.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Unauthorized' })
-  }
+    let token;
 
-  const token = authToken.split(' ')[1]
+    // ✅ 1. Check for Token in Cookies
+    if (req.cookies && req.cookies.authToken) {
+        token = req.cookies.authToken;
+    } 
+    // ✅ 2. Check for Bearer Token in Headers
+    else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+        token = req.headers.authorization.split(" ")[1];
+    }
 
-  try {
-    const decoded = verifySession(token)
-    req.user = decoded
-    next()
-  } catch (error) {
-    return res.status(401).json({ error: 'Invalid or expired token' })
-  }
-}
+    if (!token) {
+        console.error("No token found in request");
+        return res.status(401).json({ error: "No token provided" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded Token:", decoded); // 🔍 Debugging
+        req.user = decoded;
+        next();
+    } catch (err) {
+        console.error("JWT Verification Failed:", err.message);
+        return res.status(403).json({ error: "Invalid or expired token" });
+    }
+};
 
 // Admin check middleware
 export const requireAdmin = (req, res, next) => {
