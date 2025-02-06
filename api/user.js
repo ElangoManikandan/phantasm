@@ -8,24 +8,21 @@ const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 // Get User Profile Route
 router.get("/get-profile", requireAuth, (req, res) => {
     console.log("req.user in /get-profile:", req.user); // 🔍 Debugging
-    
+
     if (!req.user || !req.user.userId) {
         console.error("❌ No userId in req.user");
         return res.status(401).json({ error: "Unauthorized: No user ID found in token" });
     }
 
-    const userId = req.user.userId;
+    const userId = parseInt(req.user.userId, 10); // ✅ Fixed duplicate declaration
+
     console.log("Fetching profile for userId:", userId); 
-    const userId = parseInt(req.user.userId, 10);// 🔍 Debugging
 
     // Query to fetch the user details
-const sqlQuery = "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?";
-console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
+    const sqlQuery = "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?";
+    console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
 
-db.query(
-    "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
-    [userId], 
-    (err, results) => {
+    db.query(sqlQuery, [userId], (err, results) => {
         if (err) {
             console.error("❌ Database error:", err);
             return res.status(500).json({ error: "Database error!" });
@@ -44,12 +41,7 @@ db.query(
         user.qr_code_id = `user_${user.id}.png`; // Add qr_code_id dynamically
 
         res.json(user); // Send user data
-    }
-);
-
-
-
-
+    });
 });
 
 
