@@ -38,7 +38,6 @@ db.query(
         console.log("✅ User Found:", results[0]); // Log user data
 
         const user = results[0];
-        user.qr_code_id = `user_${user.id}.png`; // Add qr_code_id dynamically
 
         res.json(user); // Send user data
     }
