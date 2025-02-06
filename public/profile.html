@@ -251,54 +251,62 @@ document.addEventListener("DOMContentLoaded", () => {
         eventsContainer.innerHTML = "<p>Failed to load events. Please try again later.</p>";
     });
 
-    // Edit and save profile functionality
-    const editBtn = document.getElementById("edit-btn");
-    const saveBtn = document.getElementById("save-btn");
-    const profileInfo = document.getElementById("profile-info");
-    const editProfile = document.getElementById("edit-profile");
+// Edit and save profile functionality
+const editBtn = document.getElementById("edit-btn");
+const saveBtn = document.getElementById("save-btn");
+const profileInfo = document.getElementById("profile-info");
+const editProfile = document.getElementById("edit-profile");
 
-    editBtn.addEventListener("click", () => {
-        profileInfo.style.display = "none";
-        editProfile.style.display = "flex";
-        editBtn.style.display = "none";
-        saveBtn.style.display = "inline-block";
+editBtn.addEventListener("click", () => {
+    profileInfo.style.display = "none";
+    editProfile.style.display = "flex";
+    editBtn.style.display = "none";
+    saveBtn.style.display = "inline-block";
+});
+
+saveBtn.addEventListener("click", () => {
+    const formData = {
+        name: document.getElementById("name").value.trim(),
+        college: document.getElementById("college").value.trim(),
+        year: document.getElementById("year").value.trim(),
+        accommodation: document.getElementById("accommodation").value.trim(),
+    };
+
+    // Send data to the server using POST
+    fetch("/api/user/update-profile", {
+        method: "POST", // ✅ Use POST (not GET)
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include", // Keep credentials for authentication
+        body: JSON.stringify(formData),
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.error || "Failed to update profile"); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Profile updated successfully:", data);
+
+        // Update profile view with new data
+        document.getElementById("profile-name").textContent = formData.name;
+        document.getElementById("profile-college").textContent = formData.college;
+        document.getElementById("profile-year").textContent = formData.year;
+        document.getElementById("profile-accommodation").textContent = formData.accommodation;
+
+        // Hide edit mode & show updated profile
+        profileInfo.style.display = "block";
+        editProfile.style.display = "none";
+        editBtn.style.display = "inline-block";
+        saveBtn.style.display = "none";
+    })
+    .catch(error => {
+        console.error("Error saving profile:", error);
+        alert("Failed to update profile. Please try again.");
     });
-
-    saveBtn.addEventListener("click", () => {
-        const formData = {
-            name: document.getElementById("name").value,
-            college: document.getElementById("college").value,
-            year: document.getElementById("year").value,
-            accommodation: document.getElementById("accommodation").value,
-        };
-
-        // Send data back to the server to save
-        fetch("/api/user/update-profile", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include", // Keep credentials for authentication
-            body: JSON.stringify(formData),
-        })
-        .then(response => {
-            if (!response.ok) {
-                return Promise.reject("Failed to update profile");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Profile updated successfully:", data);
-            // Update profile view with new data if needed
-            document.getElementById("profile-name").textContent = formData.name;
-            document.getElementById("profile-college").textContent = formData.college;
-            document.getElementById("profile-year").textContent = formData.year;
-            document.getElementById("profile-accommodation").textContent = formData.accommodation;
-        })
-        .catch(error => {
-            console.error("Error saving profile:", error);
-        });
-    });
+});
 
     // Logout functionality
     const logoutButton = document.getElementById("logoutbutton");
