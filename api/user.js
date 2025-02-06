@@ -57,7 +57,12 @@ router.get("/get-profile", async (req, res, next) => {
 
 
 // Update User Profile Route
-router.post("/update-profile", requireAuth, async (req, res) => {
+router.get("/update-profile", async (req, res, next) => {
+    console.log("🚀 Route /update-profile has been called");
+
+    // Proceed to next middleware (requireAuth) for token validation
+    next();
+}, requireAuth, async (req, res) => {
     try {
         const userId = req.user.id; // Access user id from JWT payload
         const { name, college, year, accommodation, role } = req.body; // Get updated values from the request body
