@@ -18,7 +18,7 @@ router.get("/get-profile", requireAuth, (req, res) => {
     // Query to fetch the user details
     db.query(
         "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
-        [userId],
+       [parseInt(userId)],
         (err, results) => {
             if (err) {
                 console.error("Database error:", err);
