@@ -190,11 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     };
 
-    // Set the username (replace with dynamic fetch if needed)
-    const username = "Elango";  // Hardcoded for now
-    document.getElementById("user-name").textContent = username; // Set username dynamically
-
-    // Fetch user profile data from the server
+    // Fetch user profile data from the server to get the username
     fetch("/api/user/get-profile", {
         method: "GET",
         credentials: "include", // Ensures cookies are sent automatically
@@ -205,6 +201,10 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(data => {
         console.log("Profile data:", data);
+
+        // Set the username dynamically
+        const username = data.username || data.name || "Guest";  // Fallback to "Guest" if no username is found
+        document.getElementById("user-name").textContent = username; // Set username in the header
 
         // Update profile info
         document.getElementById("profile-name").textContent = data.name || "No name available";
