@@ -5,36 +5,37 @@ import { requireAuth } from "./middleware.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
+import db from "./db"; // Import your database connection
+
 // Get User Profile Route
-router.get("/get-profile", (req, res, next) => {
+router.get("/get-profile", async (req, res, next) => {
     console.log("🚀 Route /get-profile has been called");
+
+    // Proceed to next middleware (requireAuth) for token validation
     next();
-}, requireAuth, (req, res) => {
-    console.log("✅ Passed authentication, now fetching user...");
-    console.log("req.user in /get-profile:", req.user); // 🔍 Debugging
+}, requireAuth, async (req, res) => {
+    try {
+        console.log("✅ Passed authentication, now fetching user...");
+        console.log("req.user in /get-profile:", req.user); // Debugging
 
-    if (!req.user || !req.user.userId) {
-        console.error("❌ No userId in req.user");
-        return res.status(401).json({ error: "Unauthorized: No user ID found in token" });
-    }
-
-    const userId = parseInt(req.user.userId, 10); // ✅ Fixed duplicate declaration
-
-
-    console.log("Fetching profile for userId:", userId); 
-
-    // Query to fetch the user details
-    const sqlQuery = "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?";
-    console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
-    console.log("🔍 Checking Database Connection State:", db.state);
-
-    db.query(sqlQuery, [userId], (err, results) => {
-        if (err) {
-            console.error("❌ Database error:", err);
-            return res.status(500).json({ error: "Database error!" });
+        // Ensure req.user and req.user.userId exist
+        if (!req.user || !req.user.userId) {
+            console.error("❌ No userId in req.user");
+            return res.status(401).json({ error: "Unauthorized: No user ID found in token" });
         }
 
-        console.log("🔍 Query Results:", results); // Log raw query response
+        const userId = parseInt(req.user.userId, 10); // Ensure we are using a number for the query
+        console.log("Fetching profile for userId:", userId);
+
+        // Prepare the SQL query
+        const sqlQuery = "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?";
+        console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
+
+        // Check the state of the database connection
+        console.log("🔍 Checking Database Connection State:", db.state);
+
+        // Use async/await for the query
+        const [results] = await db.query(sqlQuery, [userId]);
 
         if (!results || results.length === 0) {
             console.error("❌ No user found in database for ID:", userId);
@@ -44,10 +45,14 @@ router.get("/get-profile", (req, res, next) => {
         console.log("✅ User Found:", results[0]); // Log user data
 
         const user = results[0];
-        user.qr_code_id = `user_${user.id}.png`; // Add qr_code_id dynamically
+        user.qr_code_id = `user_${user.id}.png`; // Dynamically add qr_code_id
 
-        res.json(user); // Send user data
-    });
+        // Send user data as JSON response
+        res.json(user);
+    } catch (err) {
+        console.error("❌ Error in /get-profile:", err.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
 
