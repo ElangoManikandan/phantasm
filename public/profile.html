@@ -307,7 +307,7 @@ fetch("/api/user/get-events", {
 const logoutButton = document.getElementById("logoutbutton");
 
 logoutButton.addEventListener("click", () => {
-    fetch("/api/logout", {
+    fetch("/api/user/logout", {
         method: "GET",
         credentials: "include",  // Ensure cookies are sent
     })
