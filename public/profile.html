@@ -303,24 +303,28 @@ fetch("/api/user/get-events", {
         }
     });
 
-    // Logout functionality
-    const logoutButton = document.getElementById("logoutbutton");
-    logoutButton.addEventListener("click", () => {
-        fetch("/api/logout", {
-            method: "GET",
-            credentials: "include", // Send cookies automatically
-        })
-        .then(response => {
-            console.log("Logout response status:", response.status);
-            if (response.ok) {
-                document.cookie = "authToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"; // Clear the cookie
-                window.location.href = "/login.html"; // Redirect to login
-            } else {
-                console.error("Logout failed");
-            }
-        })
-        .catch(error => console.error("Error during logout:", error));
+// Frontend JavaScript to handle logout
+const logoutButton = document.getElementById("logoutbutton");
+
+logoutButton.addEventListener("click", () => {
+    fetch("/api/logout", {
+        method: "GET",
+        credentials: "include",  // Ensure cookies are sent
+    })
+    .then(response => {
+        console.log("Logout response status:", response.status);
+        if (response.ok) {
+            // Clear the auth token cookie manually, if necessary
+            document.cookie = "authToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"; // For additional safety
+            window.location.href = "/login.html"; // Redirect to the login page after logout
+        } else {
+            console.error("Logout failed");
+        }
+    })
+    .catch(error => {
+        console.error("Error during logout:", error);
     });
+});
 
     document.getElementById('go-to-events-btn').addEventListener('click', () => {
         window.location.href = 'events.html'; // Navigation to events
