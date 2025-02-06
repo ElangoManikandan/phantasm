@@ -15,19 +15,19 @@ router.get("/update-profile", async (req, res, next) => {
 }, requireAuth, async (req, res) => {
     try {
         const userId = req.user.id; // Access user id from JWT payload
-        const { name, college, year, accommodation, role } = req.body; // Get updated values from the request body
+        const { name, college, year, accommodation} = req.body; // Get updated values from the request body
 
         // Validate the fields
-        if (!name || !college || !year || !accommodation || !role) {
+        if (!name || !college || !year || !accommodation) {
             return res.status(400).json({ error: "All fields are required!" });
         }
 
         // Query to update the user details
-        const sqlQuery = "UPDATE users SET name = ?, college = ?, year = ?, accommodation = ?, role = ? WHERE id = ?";
+        const sqlQuery = "UPDATE users SET name = ?, college = ?, year = ?, accommodation = ? WHERE id = ?";
         console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
 
         // Use async/await for the query
-        const [results] = await db.query(sqlQuery, [name, college, year, accommodation, role, userId]);
+        const [results] = await db.query(sqlQuery, [name, college, year, accommodation, userId]);
 
         if (results.affectedRows === 0) {
             console.error("❌ User not found for ID:", userId);
