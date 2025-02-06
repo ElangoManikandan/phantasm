@@ -30,7 +30,7 @@ db.query(
         console.log("🛠 SQL Query Executed for userId:", userId);
         console.log("🔍 Query Results:", results); // Debugging
 
-        if (results.length === 0) {
+        if (!results || results.length === 0) {
             console.error("❌ No user found in database for ID:", userId);
             return res.status(404).json({ error: "User not found!" });
         }
@@ -43,6 +43,7 @@ db.query(
         res.json(user); // Send user data
     }
 );
+
 
 });
 
