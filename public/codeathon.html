@@ -191,18 +191,31 @@
 <script>
 function registerForEvent(eventId) {
     console.log("Starting event registration...");
+    
+    // Retrieve the JWT token from localStorage (or cookies if you're using them)
+    const token = localStorage.getItem('jwtToken');
+    
+    if (!token) {
+        console.log("User is not logged in.");
+        alert("You are not logged in. Redirecting to login page.");
+        window.location.href = '/login.html';
+        return;
+    }
+
+    // Include the token in the Authorization header for the API request
     fetch('/event/register', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // JWT Token added here
         },
         body: JSON.stringify({ eventId })
     })
     .then(async response => {
         console.log("Response received:", response.status);
         if (response.status === 401) {
-            console.log("User is not logged in.");
-            alert("You are not logged in. Redirecting to login page.");
+            console.log("Invalid or expired token.");
+            alert("Your session has expired. Please log in again.");
             window.location.href = '/login.html';
             throw new Error("Unauthorized");
         }
@@ -225,8 +238,8 @@ function registerForEvent(eventId) {
         }
     });
 }
-
 </script>
+
 
 </body>
 </html>
