@@ -46,14 +46,31 @@ app.use("/api/login", loginRoutes);
 app.use("/api/user", requireAuth, userRouter);// Use user routes for '/api/user'
 
 // Test database connection
-app.get("/test-db", async (req, res) => {
-  try {
-    const [results] = await db.query("SELECT 1");
-    res.status(200).json({ message: "Database connected successfully!", results });
-  } catch (err) {
-    res.status(500).json({ error: "Database connection failed!" });
-  }
+app.get("/test-db", (req, res) => {
+    const userId = 1; // Replace with the userId you want to test with
+
+    db.query(
+        "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
+        [userId], 
+        (err, results) => {
+            if (err) {
+                console.error("❌ Database query error:", err);
+                return res.status(500).json({ error: "Database error!" });
+            }
+
+            console.log("🔍 Full Query Results:", results); // Log the full result object
+            console.log("🔍 Column Names:", Object.keys(results[0])); // Check the column names
+
+            if (!results || results.length === 0) {
+                console.error("❌ No user found for ID:", userId);
+                return res.status(404).json({ error: "User not found!" });
+            }
+
+            res.json(results[0]);
+        }
+    );
 });
+
 
 // Serve index.html for root
 app.get("/", (req, res) => {
