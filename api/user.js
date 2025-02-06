@@ -87,25 +87,6 @@ router.post("/update-profile", requireAuth, async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
-
-// Middleware to authenticate user by verifying JWT
-const authenticateJWT = (req, res, next) => {
-    const authToken = req.headers['authorization'];
-    if (!authToken) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
-
-    const token = authToken.split(' ')[1]; // Extract token from "Bearer token"
-
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(401).json({ error: 'Invalid or expired token' });
-        }
-        req.user = user; // Attach user info to the request object
-        next();
-    });
-};
-
 // Route to get user profile information
 router.get('/profile', requireAuth, async (req, res) => {
     try {
