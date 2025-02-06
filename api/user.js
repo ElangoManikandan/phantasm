@@ -6,42 +6,34 @@ import { requireAuth } from "./middleware.js";
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 
-// Update User Profile Route
-router.get("/update-profile", async (req, res, next) => {
-    console.log("🚀 Route /update-profile has been called");
-
-    // Proceed to next middleware (requireAuth) for token validation
-    next();
-}, requireAuth, async (req, res) => {
+// Modify the existing update-profile route to handle POST requests
+router.post("/update-profile", async (req, res, next) => {
     try {
-        const userId = req.user.id; // Access user id from JWT payload
-        const { name, college, year, accommodation} = req.body; // Get updated values from the request body
-        console.log("🚀 req.body:", req.body);
-        // Validate the fields
+        const { name, college, year, accommodation } = req.body;
+        const userId = req.user.userId;
+
         if (!name || !college || !year || !accommodation) {
             return res.status(400).json({ error: "All fields are required!" });
         }
 
-        // Query to update the user details
-        const sqlQuery = "UPDATE users SET name = ?, college = ?, year = ?, accommodation = ? WHERE id = ?";
+        // Log the query for debugging
+        const sqlQuery = `UPDATE users SET name = ?, college = ?, year = ?, accommodation = ? WHERE id = ?`;
         console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
-
-        // Use async/await for the query
-        const [results] = await db.query(sqlQuery, [name, college, year, accommodation, userId]);
+        
+        // Database query to update profile
+        const results = await db.query(sqlQuery, [name, college, year, accommodation, userId]);
 
         if (results.affectedRows === 0) {
-            console.error("❌ User not found for ID:", userId);
-            return res.status(404).json({ error: "User not found!" });
+            return res.status(400).json({ error: "Failed to update profile. Please try again." });
         }
 
-        console.log("✅ Profile updated successfully for userId:", userId);
-        res.status(200).json({ message: "Profile updated successfully!" });
-
+        res.json({ message: "Profile updated successfully" });
     } catch (err) {
-        console.error("❌ Error in /update-profile:", err.message);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Error updating profile:", err);
+        res.status(500).json({ error: "An error occurred while updating the profile." });
     }
 });
+
 // Get User Profile Route
 router.get("/get-profile", async (req, res, next) => {
     console.log("🚀 Route /get-profile has been called");
