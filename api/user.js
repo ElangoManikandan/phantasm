@@ -108,30 +108,26 @@ router.get('/profile', requireAuth, async (req, res) => {
     }
 });
 router.get("/get-events", requireAuth, async (req, res) => {
-    try {
-        if (!req.user || !req.user.id) {
-            return res.status(401).json({ error: "Unauthorized access" });
+    const userId = req.user.id;  
+
+    console.log("Fetching events for user ID:", userId); // 🚀 Debugging  
+
+    const query = `
+        SELECT e.name AS eventName
+        FROM events e
+        INNER JOIN registrations r ON e.id = r.event_id
+        WHERE r.user_id = ?
+    `;
+
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error!", details: err });
         }
 
-        const userId = req.user.id;
-        console.log(`Fetching events for user ID: ${userId}`);
-
-        const query = `
-            SELECT e.name AS eventName
-            FROM events e
-            INNER JOIN registrations r ON e.id = r.event_id
-            WHERE r.user_id = ?
-        `;
-
-        // ✅ Use `db.execute()` instead of `db.query()` to avoid callback issues
-        const [results] = await db.execute(query, [userId]);
-
-        console.log("Events fetched:", results);
-        res.status(200).json(results);
-    } catch (err) {
-        console.error("Database Error:", err);
-        res.status(500).json({ error: "Database error!", details: err.message });
-    }
+        console.log("Query result:", results); // 🚀 Check if results are correct
+        res.status(200).json(results);  
+    });
 });
 
 export default router;
