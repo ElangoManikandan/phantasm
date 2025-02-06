@@ -190,10 +190,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     };
 
+    // Set the username (replace with dynamic fetch if needed)
+    const username = "Elango";  // Hardcoded for now
+    document.getElementById("user-name").textContent = username; // Set username dynamically
+
     // Fetch user profile data from the server
-    fetch("/api/user/get-profile", { // Change to the correct endpoint
+    fetch("/api/user/get-profile", {
         method: "GET",
-        credentials: "include", // ✅ Ensures cookies are sent automatically
+        credentials: "include", // Ensures cookies are sent automatically
     })
     .then(response => {
         console.log("Profile response status:", response.status);
@@ -218,9 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(error => console.error("Error fetching profile:", error));
 
     // Fetch registered events from the server
-    fetch("/api/user/get-events", { // Ensure this is the correct endpoint
+    fetch("/api/user/get-events", {
         method: "GET",
-        credentials: "include", // ✅ Ensures cookies are sent automatically
+        credentials: "include", // Ensures cookies are sent automatically
     })
     .then(response => {
         console.log("Events response status:", response.status);
@@ -315,6 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => console.error("Error during logout:", error));
     });
 });
+
 </script>
 </body>
 </html>
