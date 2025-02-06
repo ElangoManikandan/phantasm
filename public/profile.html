@@ -252,62 +252,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 // Edit and save profile functionality
-const editBtn = document.getElementById("edit-btn");
-const saveBtn = document.getElementById("save-btn");
-const profileInfo = document.getElementById("profile-info");
-const editProfile = document.getElementById("edit-profile");
+    const editBtn = document.getElementById("edit-btn");
+    const saveBtn = document.getElementById("save-btn");
+    const profileInfo = document.getElementById("profile-info");
+    const editProfile = document.getElementById("edit-profile");
 
-editBtn.addEventListener("click", () => {
-    profileInfo.style.display = "none";
-    editProfile.style.display = "flex";
-    editBtn.style.display = "none";
-    saveBtn.style.display = "inline-block";
-});
+    editBtn.addEventListener("click", () => {
+        profileInfo.style.display = "none";
+        editProfile.style.display = "flex";
+        editBtn.style.display = "none";
+        saveBtn.style.display = "inline-block";
+    });
 
-saveBtn.addEventListener("click", async () => {
-    const formData = {
-        name: document.getElementById("name").value.trim(),
-        college: document.getElementById("college").value.trim(),
-        year: document.getElementById("year").value.trim(),
-        accommodation: document.getElementById("accommodation").value.trim(),
-    };
+    saveBtn.addEventListener("click", async () => {
+        const formData = {
+            name: document.getElementById("name").value.trim(),
+            college: document.getElementById("college").value.trim(),
+            year: document.getElementById("year").value.trim(),
+            accommodation: document.getElementById("accommodation").value.trim(),
+        };
 
-    try {
-        const response = await fetch("https://phantasm.onrender.com/api/user/update-profile", { // ✅ Updated route
-            method: "POST",  // ✅ Use POST for updating profile
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include", // Ensure authentication cookies are sent
-            body: JSON.stringify(formData),
-        });
+        try {
+            const response = await fetch("/api/user/update-profile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(formData),
+            });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Failed to update profile");
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById("profile-name").textContent = formData.name;
+                document.getElementById("profile-college").textContent = formData.college;
+                document.getElementById("profile-year").textContent = formData.year;
+                document.getElementById("profile-accommodation").textContent = formData.accommodation;
+
+                profileInfo.style.display = "block";
+                editProfile.style.display = "none";
+                saveBtn.style.display = "none";
+                editBtn.style.display = "inline-block";
+            } else {
+                alert("Error updating profile: " + data.error);
+            }
+        } catch (error) {
+            console.error("Error saving profile:", error);
+            alert("There was an error saving your profile.");
         }
-
-        const data = await response.json();
-        console.log("Profile updated successfully:", data);
-
-        // Update profile view with new data
-        document.getElementById("profile-name").textContent = formData.name;
-        document.getElementById("profile-college").textContent = formData.college;
-        document.getElementById("profile-year").textContent = formData.year;
-        document.getElementById("profile-accommodation").textContent = formData.accommodation;
-
-        // Hide edit mode & show updated profile
-        profileInfo.style.display = "block";
-        editProfile.style.display = "none";
-        editBtn.style.display = "inline-block";
-        saveBtn.style.display = "none";
-
-    } catch (error) {
-        console.error("Error saving profile:", error);
-        alert("Failed to update profile. Please try again.");
-    }
-});
-
+    });
     // Logout functionality
     const logoutButton = document.getElementById("logoutbutton");
     logoutButton.addEventListener("click", () => {
