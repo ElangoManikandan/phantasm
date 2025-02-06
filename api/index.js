@@ -74,6 +74,7 @@ app.get("/test-db", async (req, res) => {
     }
 });
 
+console.log("🔍 Checking Database Connection State:", db);
 
 
 // Serve index.html for root
