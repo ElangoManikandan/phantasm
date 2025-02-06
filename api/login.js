@@ -15,7 +15,8 @@ if (!JWT_SECRET) {
 const router = express.Router();
 router.use(cookieParser()); // Enable cookie parsing
 
-router.post('/', async (req, res) => {
+// Login route
+router.post("/", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -23,7 +24,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        // Ensure DB query returns a valid result
+        // Query to find user by email
         const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
 
         if (!rows || rows.length === 0) {
@@ -46,13 +47,14 @@ router.post('/', async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
 
-     // Set the token in a cookie
-            res.cookie("authToken", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production", // Ensure it’s secure in production
-                sameSite: "Strict", // For security against CSRF
-                maxAge: 60 * 60 * 1000, // Token expiration time (1 hour in ms)
-            });
+        // Set the token in a cookie
+        res.cookie("authToken", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // Ensure it’s secure in production
+            sameSite: "Strict", // For security against CSRF
+            maxAge: 60 * 60 * 1000, // Token expiration time (1 hour in ms)
+        });
+
         return res.json({ message: "Logged in successfully" });
 
     } catch (err) {
