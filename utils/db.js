@@ -2,8 +2,11 @@ import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
 dotenv.config();
-// CA certificate from the .env file
-const caCert = Buffer.from(process.env.TIDB_CA_CERT, 'base64'); // Assuming base64 encoding for certificate
+
+// Decode the CA certificate from the .env file (Base64 format)
+const caCert = process.env.TIDB_CA_CERT
+  ? Buffer.from(process.env.TIDB_CA_CERT, "base64")
+  : null;
 
 const db = mysql.createPool({
   host: process.env.TIDB_HOST,
@@ -12,10 +15,20 @@ const db = mysql.createPool({
   database: process.env.TIDB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  ssl: {
-    ca: caCert,  // Using only the CA certificate for server verification
-    rejectUnauthorized: true
-  },
+  ssl: caCert ? { ca: caCert, rejectUnauthorized: true } : undefined, // Only use SSL if CA exists
 });
+
+// ✅ Test Database Connection on Startup
+async function testDbConnection() {
+  try {
+    const connection = await db.getConnection();
+    console.log("✅ Database connected successfully!");
+    connection.release();
+  } catch (err) {
+    console.error("❌ Database connection failed:", err.message);
+  }
+}
+
+testDbConnection();
 
 export default db;
