@@ -189,18 +189,24 @@
     </footer>
 
 <script>
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
 function registerForEvent(eventId) {
     console.log("Starting event registration...");
-
-    // Retrieve the JWT token from localStorage
-    const token = localStorage.getItem('authToken');
-    console.log("Retrieved token from localStorage:", token); // Debugging
-
+    
+    // Retrieve the JWT token from cookies
+    const token = getCookie('authToken'); // Cookie name is 'authToken'
+    
     if (!token) {
         console.log("User is not logged in.");
         alert("You are not logged in. Redirecting to login page.");
-        window.location.href = '/login.html'; // Redirect to login if no token
-        return; // Stop execution if no token
+        window.location.href = '/login.html';  // Redirect to login page if no token
+        return;
     }
 
     // Include the token in the Authorization header for the API request
@@ -208,7 +214,7 @@ function registerForEvent(eventId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`  // Token in Authorization header
+            'Authorization': `Bearer ${token}`  // JWT token in Authorization header
         },
         body: JSON.stringify({ eventId })
     })
@@ -217,7 +223,7 @@ function registerForEvent(eventId) {
         if (response.status === 401) {
             console.log("Invalid or expired token.");
             alert("Your session has expired. Please log in again.");
-            window.location.href = '/login.html'; // Redirect to login if token expired
+            window.location.href = '/login.html';
             throw new Error("Unauthorized");
         }
         if (!response.ok) {
@@ -230,7 +236,7 @@ function registerForEvent(eventId) {
     .then(result => {
         console.log("Registration successful:", result);
         alert('Event registered successfully!');
-        window.location.href = '/profile.html'; // Redirect to profile after success
+        window.location.href = '/profile.html';
     })
     .catch(error => {
         console.error("Error occurred:", error);
