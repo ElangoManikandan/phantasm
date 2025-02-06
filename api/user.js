@@ -15,7 +15,8 @@ router.get("/get-profile", requireAuth, (req, res) => {
     }
 
     const userId = req.user.userId;
-    console.log("Fetching profile for userId:", userId); // 🔍 Debugging
+    console.log("Fetching profile for userId:", userId); 
+    const userId = parseInt(req.user.userId, 10);// 🔍 Debugging
 
     // Query to fetch the user details
 const sqlQuery = "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?";
