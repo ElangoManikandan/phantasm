@@ -20,11 +20,13 @@ router.get("/get-profile", (req, res, next) => {
 
     const userId = parseInt(req.user.userId, 10); // ✅ Fixed duplicate declaration
 
+
     console.log("Fetching profile for userId:", userId); 
 
     // Query to fetch the user details
     const sqlQuery = "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?";
     console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
+    console.log("🔍 Checking Database Connection State:", db.state);
 
     db.query(sqlQuery, [userId], (err, results) => {
         if (err) {
