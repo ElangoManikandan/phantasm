@@ -203,7 +203,7 @@ function registerForEvent(eventId) {
     }
 
     // Include the token in the Authorization header for the API request
-    fetch('/event/register', {
+    fetch('api/events/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
