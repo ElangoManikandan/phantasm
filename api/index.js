@@ -44,47 +44,40 @@ app.use('/api/auth', authRoutes);
 app.use("/api/events", requireAuth, requireAdmin, eventsRoutes);
 app.use("/api/login", loginRoutes);  
 app.use("/api/user", requireAuth, userRouter);// Use user routes for '/api/user'
+// Import the DB connection pool
+import db from './db.js';
 
-app.get("/test-db", (req, res) => {
-    const userId = 1; // Replace with the userId you want to test with
+// Test database route
+app.get("/test-db", async (req, res) => {
+    const userId = 1;
 
-    const start = Date.now();  // Start time tracking for the query
+    try {
+        console.log("🚀 Starting Database Query for userId:", userId);
 
-    console.log("🚀 Starting Database Query for userId:", userId);
+        // Ensure db is available and connected
+        const connection = await db.getConnection();
+        console.log("✅ Connection acquired from pool");
 
-    // Log database connection state (check if it's connected)
-    console.log("Database Client State:", db.state);
+        // Running the query
+        const [results] = await connection.execute(
+            "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
+            [userId]
+        );
 
-    db.query(
-        "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?",
-        [userId], 
-        (err, results) => {
-            const end = Date.now();  // End time tracking for the query
-            console.log("Query Execution Time:", end - start, "ms"); // Log the query execution time
+        console.log("🔍 Query Results:", results);
 
-            if (err) {
-                console.error("❌ Database query error:", err);
-                return res.status(500).json({ error: "Database error!" });
-            }
-
-            // Log the raw query results to check if anything unexpected is returned
-            console.log("🔍 Full Query Results:", results);
-            if (results && results.length > 0) {
-                console.log("🔍 Column Names:", Object.keys(results[0])); // Check the column names
-            }
-
-            // Check if results are empty or not
-            if (!results || results.length === 0) {
-                console.error("❌ No user found for ID:", userId);
-                return res.status(404).json({ error: "User not found!" });
-            }
-
-            // Log the response before sending it back
-            console.log("✅ User Found:", results[0]);
-
-            res.json(results[0]);
+        if (!results || results.length === 0) {
+            console.error("❌ No user found for ID:", userId);
+            return res.status(404).json({ error: "User not found!" });
         }
-    );
+
+        res.json(results[0]);
+        connection.release();  // Don't forget to release the connection back to the pool
+
+    } catch (err) {
+        console.error("❌ Database query error:", err);
+        res.status(500).json({ error: "Database error!" });
+    }
 });
 
 
