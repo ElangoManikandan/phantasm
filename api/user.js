@@ -130,6 +130,3 @@ router.get("/get-events",requireAuth, async (req, res) => {
         res.status(200).json(results);  // Send the event names to the frontend
     });
 });
-
-
-export default router;
