@@ -35,4 +35,4 @@ const requireAdmin = (req, res, next) => {
 };
 
 // Export both middleware functions
-export { requireAuth, requireAdmin };
+export { requireAuth };
