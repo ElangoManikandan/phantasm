@@ -221,7 +221,19 @@ function registerForEvent(eventId) {
         alert('Event registered successfully!');
         
         // ✅ Instead of reloading, update the profile page dynamically
-        updateRegisteredEvents();
+       if (typeof updateRegisteredEvents === "function") {
+    updateRegisteredEvents();
+} else {
+    console.warn("updateRegisteredEvents is not available yet. Trying again after a delay...");
+    setTimeout(() => {
+        if (typeof updateRegisteredEvents === "function") {
+            updateRegisteredEvents();
+        } else {
+            console.error("updateRegisteredEvents is still not defined.");
+        }
+    }, 1000); // Retry after 1 second
+}
+
     })
     .catch(error => {
         console.error("Error occurred:", error);
