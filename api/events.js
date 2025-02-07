@@ -3,15 +3,19 @@ import db from "../utils/db.js";
 import { requireAuth } from "./middleware.js"; // Correct import of requireAuth
 const router = express.Router();
 
-// 🟢 Register for Event Route with Duplicate Check
 router.post("/register", requireAuth, async (req, res) => {
+    console.log("User data in request:", req.user); // 🔍 Debugging user session
     const { eventId } = req.body;
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    if (!userId) {
+        return res.status(401).json({ error: "Unauthorized: User ID missing!" });
+    }
 
     if (!eventId) {
         return res.status(400).json({ error: "Event ID is required!" });
     }
-
+    
     try {
         // Check if the event exists
         const [eventExists] = await db.query("SELECT id FROM events WHERE id = ?", [eventId]);
