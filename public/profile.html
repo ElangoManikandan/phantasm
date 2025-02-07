@@ -220,35 +220,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Function to fetch and update registered events
-    function updateRegisteredEvents() {
-        fetch("/api/user/get-events", {
-            method: "GET",
-            credentials: "include",
-        })
-        .then(response => {
-            console.log("Events response status:", response.status);
-            return handleFetchError(response);
-        })
-        .then(events => {
-            console.log("Fetched events:", events);
-            const eventsContainer = document.getElementById("registered-events");
+window.updateRegisteredEvents = function () {
+    fetch("/api/user/get-events", {
+        method: "GET",
+        credentials: "include",
+    })
+    .then(response => {
+        console.log("Events response status:", response.status);
+        return handleFetchError(response);
+    })
+    .then(events => {
+        console.log("Fetched events:", events);
+        const eventsContainer = document.getElementById("registered-events");
 
-            if (!events || events.length === 0) {
-                eventsContainer.innerHTML = "<p>No events registered yet.</p>";
-            } else {
-                const eventCards = events.map(event => `
-                    <div class="event-card">
-                        <h3>${event.eventName}</h3>
-                    </div>
-                `).join("");
-                eventsContainer.innerHTML = eventCards;
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching events:", error);
-            document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
-        });
-    }
+        if (!events || events.length === 0) {
+            eventsContainer.innerHTML = "<p>No events registered yet.</p>";
+        } else {
+            const eventCards = events.map(event => `
+                <div class="event-card">
+                    <h3>${event.eventName}</h3>
+                </div>
+            `).join("");
+            eventsContainer.innerHTML = eventCards;
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching events:", error);
+        document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
+    });
+};
 
     // Function to handle profile edit
     function handleProfileEdit() {
