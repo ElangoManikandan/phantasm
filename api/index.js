@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Define routes
 // Example usage for admin routes
-app.use("/api/admin", requireAuth, requireAdmin, adminRoutes);
+app.use("/api/admin", requireAuth, adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/events", requireAuth, eventsRoutes);
 app.use("/api/login", loginRoutes);  
