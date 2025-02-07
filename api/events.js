@@ -1,3 +1,4 @@
+import express from "express";
 import db from "../utils/db.js";
 import { requireAuth } from "./middleware.js"; // Correct import of requireAuth
 const router = express.Router();
