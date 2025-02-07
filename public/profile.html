@@ -220,7 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Function to fetch and update registered events
-window.updateRegisteredEvents = function () {
+// Function to fetch and update registered events
+function updateRegisteredEvents() {
     fetch("/api/user/get-events", {
         method: "GET",
         credentials: "include",
@@ -248,7 +249,11 @@ window.updateRegisteredEvents = function () {
         console.error("Error fetching events:", error);
         document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
     });
-};
+}
+
+// ✅ Attach function to `window` for global access
+window.updateRegisteredEvents = updateRegisteredEvents;
+
 
     // Function to handle profile edit
     function handleProfileEdit() {
