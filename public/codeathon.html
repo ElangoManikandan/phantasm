@@ -221,28 +221,27 @@ function registerForEvent(eventId) {
         alert('Event registered successfully!');
         
         // ✅ Instead of reloading, update the profile page dynamically
-       if (typeof updateRegisteredEvents === "function") {
-    updateRegisteredEvents();
-} else {
-    console.warn("updateRegisteredEvents is not available yet. Trying again after a delay...");
-    setTimeout(() => {
-        if (typeof updateRegisteredEvents === "function") {
-            updateRegisteredEvents();
-        } else {
-            console.error("updateRegisteredEvents is still not defined.");
-        }
-    }, 1000); // Retry after 1 second
-}
-
+        attemptToUpdateRegisteredEvents(3); // Try updating events (max 3 attempts)
     })
     .catch(error => {
         console.error("Error occurred:", error);
         alert(error.message || "An error occurred. Please try again.");
     });
 }
+
+// ✅ Function to check and retry updateRegisteredEvents()
+function attemptToUpdateRegisteredEvents(attempts) {
+    if (typeof window.updateRegisteredEvents === "function") {
+        console.log("Calling updateRegisteredEvents...");
+        window.updateRegisteredEvents();
+    } else if (attempts > 0) {
+        console.warn(`updateRegisteredEvents is not available yet. Retrying in 1 second... (${attempts} attempts left)`);
+        setTimeout(() => attemptToUpdateRegisteredEvents(attempts - 1), 1000);
+    } else {
+        console.error("updateRegisteredEvents is still not defined after multiple attempts.");
+    }
+}
 </script>
-
-
 
 </body>
 </html>
