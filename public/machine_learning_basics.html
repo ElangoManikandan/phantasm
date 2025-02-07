@@ -185,44 +185,49 @@
         <p>&copy; 2024 PHANTASM'25 Symposium. All rights reserved.</p>
     </footer>
 
-    <script>
+<script>
 function registerForEvent(eventId) {
     console.log("Starting event registration...");
-    fetch('/event/register', {
+
+    fetch('/api/events/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ eventId })
     })
     .then(async response => {
         console.log("Response received:", response.status);
+        
         if (response.status === 401) {
-            console.log("User is not logged in.");
-            alert("You are not logged in. Redirecting to login page.");
+            alert("Your session has expired. Please log in again.");
             window.location.href = '/login.html';
             throw new Error("Unauthorized");
         }
+
         if (!response.ok) {
             const errorData = await response.json();
-            console.log("Error response:", errorData);
             throw new Error(errorData.error || "Unknown error");
         }
+
         return response.json();
     })
     .then(result => {
         console.log("Registration successful:", result);
         alert('Event registered successfully!');
-        window.location.href = '/profile.html';
+
+        // ✅ Set a flag in localStorage so profile.html can detect and update events
+        localStorage.setItem("updateEvents", "true");
+
+        // Redirect user to profile page where updateRegisteredEvents() is defined
+        window.location.href = "/profile.html";
     })
     .catch(error => {
         console.error("Error occurred:", error);
-        if (error.message !== "Unauthorized") {
-            alert(error.message || "An error occurred. Please try again.");
-        }
+        alert(error.message || "An error occurred. Please try again.");
     });
 }
-
-    </script>
+</script>
 </body>
 </html>
