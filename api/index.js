@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Example usage for admin routes
 app.use("/api/admin", requireAuth, requireAdmin, adminRoutes);
 app.use('/api/auth', authRoutes);
-app.use("/api/events", requireAuth, requireAdmin, eventsRoutes);
+app.use("/api/events", requireAuth, eventsRoutes);
 app.use("/api/login", loginRoutes);  
 app.use("/api/user", requireAuth, userRouter);// Use user routes for '/api/user'
 // Test database route
