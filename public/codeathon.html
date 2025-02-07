@@ -219,27 +219,17 @@ function registerForEvent(eventId) {
     .then(result => {
         console.log("Registration successful:", result);
         alert('Event registered successfully!');
-        
-        // ✅ Instead of reloading, update the profile page dynamically
-        attemptToUpdateRegisteredEvents(3); // Try updating events (max 3 attempts)
+
+        // ✅ Set a flag in localStorage so profile.html can detect and update events
+        localStorage.setItem("updateEvents", "true");
+
+        // Redirect user to profile page where updateRegisteredEvents() is defined
+        window.location.href = "/profile.html";
     })
     .catch(error => {
         console.error("Error occurred:", error);
         alert(error.message || "An error occurred. Please try again.");
     });
-}
-
-// ✅ Function to check and retry updateRegisteredEvents()
-function attemptToUpdateRegisteredEvents(attempts) {
-    if (typeof window.updateRegisteredEvents === "function") {
-        console.log("Calling updateRegisteredEvents...");
-        window.updateRegisteredEvents();
-    } else if (attempts > 0) {
-        console.warn(`updateRegisteredEvents is not available yet. Retrying in 1 second... (${attempts} attempts left)`);
-        setTimeout(() => attemptToUpdateRegisteredEvents(attempts - 1), 1000);
-    } else {
-        console.error("updateRegisteredEvents is still not defined after multiple attempts.");
-    }
 }
 </script>
 
