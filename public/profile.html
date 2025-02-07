@@ -181,155 +181,163 @@
     </div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+
     // Function to handle fetch errors
-    const handleFetchError = async (response) => {
+    async function handleFetchError(response) {
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(`Error ${response.status}: ${errorData.error}`);
         }
         return response.json();
-    };
-
-    // Fetch user profile data from the server to get the username
-    fetch("/api/user/get-profile", {
-        method: "GET",
-        credentials: "include", // Ensures cookies are sent automatically
-    })
-    .then(response => {
-        console.log("Profile response status:", response.status);
-        return handleFetchError(response); // Ensure this function correctly checks for errors
-    })
-    .then(data => {
-        console.log("Profile data:", data);
-
-        // Set the username dynamically
-        const username = data.username || data.name || "Guest";  // Fallback to "Guest" if no username is found
-        document.getElementById("user-name").textContent = username; // Set username in the header
-
-        // Update profile info
-        document.getElementById("profile-name").textContent = data.name || "No name available";
-        document.getElementById("profile-college").textContent = data.college || "No college available";
-        document.getElementById("profile-year").textContent = data.year || "N/A";
-        document.getElementById("profile-accommodation").textContent = data.accommodation || "No info";
-
-        // Display QR code if available
-        if (data.qr_code_id) {
-            document.getElementById("qr-code").src = `/public/qrcodes/${data.qr_code_id}`;
-        } else {
-            console.error("QR code not available");
-        }
-    })
-    .catch(error => console.error("Error fetching profile:", error));
-
-// Fetch registered events from the server
-fetch("/api/user/get-events", {
-    method: "GET",
-    credentials: "include",  // Ensure cookies are sent
-})
-.then(response => {
-    console.log("Events response status:", response.status);
-    return handleFetchError(response);  // Handle errors in fetching events
-})
-.then(events => {
-    console.log(events);
-    const eventsContainer = document.getElementById("registered-events");
-
-    // Check if no events are registered
-    if (events.message && events.message === "No events registered yet.") {
-        eventsContainer.innerHTML = "<p>No events registered yet.</p>";
-    } else if (Array.isArray(events) && events.length === 0) {
-        // In case the query returns an empty set (empty array)
-        eventsContainer.innerHTML = "<p>No events registered yet.</p>";
-    } else {
-        // Generate event cards if there are events
-        const eventCards = events.map(event => `
-            <div class="event-card">
-                <h3>${event.eventName}</h3>
-            </div>
-        `).join("");
-        eventsContainer.innerHTML = eventCards;
     }
-})
-.catch(error => {
-    console.error("Error fetching events:", error);
-    document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
-});
-    // Edit and save profile functionality
-    const editBtn = document.getElementById("edit-btn");
-    const saveBtn = document.getElementById("save-btn");
-    const profileInfo = document.getElementById("profile-info");
-    const editProfile = document.getElementById("edit-profile");
 
-    editBtn.addEventListener("click", () => {
-        profileInfo.style.display = "none";
-        editProfile.style.display = "flex";
-        editBtn.style.display = "none";
-        saveBtn.style.display = "inline-block";
-    });
+    // Function to fetch user profile
+    function fetchUserProfile() {
+        fetch("/api/user/get-profile", {
+            method: "GET",
+            credentials: "include",
+        })
+        .then(response => {
+            console.log("Profile response status:", response.status);
+            return handleFetchError(response);
+        })
+        .then(data => {
+            console.log("Profile data:", data);
+            
+            // Set profile info
+            document.getElementById("user-name").textContent = data.username || data.name || "Guest";
+            document.getElementById("profile-name").textContent = data.name || "No name available";
+            document.getElementById("profile-college").textContent = data.college || "No college available";
+            document.getElementById("profile-year").textContent = data.year || "N/A";
+            document.getElementById("profile-accommodation").textContent = data.accommodation || "No info";
 
-    saveBtn.addEventListener("click", async () => {
-        const formData = {
-            name: document.getElementById("name").value.trim(),
-            college: document.getElementById("college").value.trim(),
-            year: document.getElementById("year").value.trim(),
-            accommodation: document.getElementById("accommodation").value.trim(),
-        };
-
-        try {
-            const response = await fetch("/api/user/update-profile", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(formData),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                document.getElementById("profile-name").textContent = formData.name;
-                document.getElementById("profile-college").textContent = formData.college;
-                document.getElementById("profile-year").textContent = formData.year;
-                document.getElementById("profile-accommodation").textContent = formData.accommodation;
-
-                profileInfo.style.display = "block";
-                editProfile.style.display = "none";
-                saveBtn.style.display = "none";
-                editBtn.style.display = "inline-block";
-            } else {
-                alert("Error updating profile: " + data.error);
+            // Display QR code if available
+            if (data.qr_code_id) {
+                document.getElementById("qr-code").src = `/public/qrcodes/${data.qr_code_id}`;
             }
-        } catch (error) {
-            console.error("Error saving profile:", error);
-            alert("There was an error saving your profile.");
-        }
-    });
+        })
+        .catch(error => console.error("Error fetching profile:", error));
+    }
 
-// Frontend JavaScript to handle logout
-const logoutButton = document.getElementById("logoutbutton");
+    // Function to fetch and update registered events
+    function updateRegisteredEvents() {
+        fetch("/api/user/get-events", {
+            method: "GET",
+            credentials: "include",
+        })
+        .then(response => {
+            console.log("Events response status:", response.status);
+            return handleFetchError(response);
+        })
+        .then(events => {
+            console.log("Fetched events:", events);
+            const eventsContainer = document.getElementById("registered-events");
 
-logoutButton.addEventListener("click", () => {
-    fetch("/api/user/logout", {
-        method: "GET",
-        credentials: "include",  // Ensure cookies are sent
-    })
-    .then(response => {
-        console.log("Logout response status:", response.status);
-        if (response.ok) {
-            // Clear the auth token cookie manually, if necessary
-            document.cookie = "authToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"; // For additional safety
-            window.location.href = "/login.html"; // Redirect to the login page after logout
-        } else {
-            console.error("Logout failed");
-        }
-    })
-    .catch(error => {
-        console.error("Error during logout:", error);
-    });
-});
+            if (!events || events.length === 0) {
+                eventsContainer.innerHTML = "<p>No events registered yet.</p>";
+            } else {
+                const eventCards = events.map(event => `
+                    <div class="event-card">
+                        <h3>${event.eventName}</h3>
+                    </div>
+                `).join("");
+                eventsContainer.innerHTML = eventCards;
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching events:", error);
+            document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
+        });
+    }
 
-    document.getElementById('go-to-events-btn').addEventListener('click', () => {
-        window.location.href = 'events.html'; // Navigation to events
-    });
+    // Function to handle profile edit
+    function handleProfileEdit() {
+        const editBtn = document.getElementById("edit-btn");
+        const saveBtn = document.getElementById("save-btn");
+        const profileInfo = document.getElementById("profile-info");
+        const editProfile = document.getElementById("edit-profile");
+
+        editBtn.addEventListener("click", () => {
+            profileInfo.style.display = "none";
+            editProfile.style.display = "flex";
+            editBtn.style.display = "none";
+            saveBtn.style.display = "inline-block";
+        });
+
+        saveBtn.addEventListener("click", async () => {
+            const formData = {
+                name: document.getElementById("name").value.trim(),
+                college: document.getElementById("college").value.trim(),
+                year: document.getElementById("year").value.trim(),
+                accommodation: document.getElementById("accommodation").value.trim(),
+            };
+
+            try {
+                const response = await fetch("/api/user/update-profile", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(formData),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById("profile-name").textContent = formData.name;
+                    document.getElementById("profile-college").textContent = formData.college;
+                    document.getElementById("profile-year").textContent = formData.year;
+                    document.getElementById("profile-accommodation").textContent = formData.accommodation;
+
+                    profileInfo.style.display = "block";
+                    editProfile.style.display = "none";
+                    saveBtn.style.display = "none";
+                    editBtn.style.display = "inline-block";
+                } else {
+                    alert("Error updating profile: " + data.error);
+                }
+            } catch (error) {
+                console.error("Error saving profile:", error);
+                alert("There was an error saving your profile.");
+            }
+        });
+    }
+
+    // Function to handle user logout
+    function handleLogout() {
+        document.getElementById("logoutbutton").addEventListener("click", () => {
+            fetch("/api/user/logout", {
+                method: "GET",
+                credentials: "include",
+            })
+            .then(response => {
+                console.log("Logout response status:", response.status);
+                if (response.ok) {
+                    document.cookie = "authToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+                    window.location.href = "/login.html";
+                } else {
+                    console.error("Logout failed");
+                }
+            })
+            .catch(error => {
+                console.error("Error during logout:", error);
+            });
+        });
+    }
+
+    // Function to navigate to events page
+    function setupEventNavigation() {
+        document.getElementById("go-to-events-btn").addEventListener("click", () => {
+            window.location.href = "events.html";
+        });
+    }
+
+    // ✅ Initialize all functions on page load
+    fetchUserProfile();
+    updateRegisteredEvents();
+    handleProfileEdit();
+    handleLogout();
+    setupEventNavigation();
 });
 </script>
+
 </body>
 </html>
