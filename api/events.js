@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/register", requireAuth, async (req, res) => {
     console.log("User data in request:", req.user); // 🔍 Debugging user session
     const { eventId } = req.body;
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
 
     if (!userId) {
         return res.status(401).json({ error: "Unauthorized: User ID missing!" });
