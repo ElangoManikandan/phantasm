@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
 
     try {
         // Query to find user by email
-        const [rows] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+        const [rows] = await db.execute('SELECT id, email, password, role FROM users WHERE email = ?', [email]);
 
         if (!rows || rows.length === 0) {
             return res.status(401).json({ error: "Invalid credentials" });
@@ -44,8 +44,12 @@ router.post("/", async (req, res) => {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        // Generate JWT token
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
+        // ✅ FIX: Generate JWT token WITH `role`
+        const token = jwt.sign(
+            { userId: user.id, role: user.role }, // 👀 Include `role`
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
         // Set the token in a cookie
         res.cookie("authToken", token, {
@@ -55,7 +59,7 @@ router.post("/", async (req, res) => {
             maxAge: 60 * 60 * 1000, // Token expiration time (1 hour in ms)
         });
 
-        return res.json({ message: "Logged in successfully" });
+        return res.json({ message: "Logged in successfully", role: user.role }); // 👀 Return role for debugging
 
     } catch (err) {
         console.error('Error in login:', err);
