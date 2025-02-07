@@ -192,20 +192,18 @@
 function registerForEvent(eventId) {
     console.log("Starting event registration...");
 
-    // Send API request with credentials to include cookies
     fetch('/api/events/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        credentials: 'include',  // Ensures cookies are sent automatically
+        credentials: 'include',
         body: JSON.stringify({ eventId })
     })
     .then(async response => {
         console.log("Response received:", response.status);
         
         if (response.status === 401) {
-            console.log("Invalid or expired token.");
             alert("Your session has expired. Please log in again.");
             window.location.href = '/login.html';
             throw new Error("Unauthorized");
@@ -213,7 +211,6 @@ function registerForEvent(eventId) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            console.log("Error response:", errorData);
             throw new Error(errorData.error || "Unknown error");
         }
 
@@ -222,13 +219,13 @@ function registerForEvent(eventId) {
     .then(result => {
         console.log("Registration successful:", result);
         alert('Event registered successfully!');
-        window.location.href = '/profile.html';
+        
+        // ✅ Instead of reloading, update the profile page dynamically
+        updateRegisteredEvents();
     })
     .catch(error => {
         console.error("Error occurred:", error);
-        if (error.message !== "Unauthorized") {
-            alert(error.message || "An error occurred. Please try again.");
-        }
+        alert(error.message || "An error occurred. Please try again.");
     });
 }
 </script>
