@@ -7,38 +7,30 @@ const router = express.Router();
 export const requireAuth = (req, res, next) => {
     console.log("🚀 [Middleware] requireAuth Executing...");
 
-    let token = null;
-
-    // ✅ 1. Check for Token in Cookies
-    if (req.cookies && req.cookies.authToken) {
-        token = req.cookies.authToken;
-    } 
-    // ✅ 2. Check for Bearer Token in Headers
-    else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-        token = req.headers.authorization.split(" ")[1];
-    }
+    let token = req.cookies?.authToken || req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-        console.error("❌ [Middleware] No token found in request");
-        return res.status(401).json({ error: "Unauthorized: No token provided" });
+        console.error("❌ No token found");
+        return res.status(401).json({ error: "No token provided" });
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("✅ [Middleware] Decoded Token:", decoded);  
+        console.log("✅ [Middleware] Decoded Token:", decoded);
 
-        if (!decoded.role) {
-            console.error("❌ [Middleware] Missing role in decoded token. Check your JWT generation.");
-            return res.status(403).json({ error: "Forbidden: Invalid token data" });
+        if (!decoded.id || !decoded.role) {
+            console.error("❌ Token missing `id` or `role`");
+            return res.status(403).json({ error: "Invalid token structure" });
         }
 
-        req.user = decoded; // Attach user data to request object
-        next(); // Proceed to the next middleware or route
+        req.user = decoded; // Ensure `req.user` is properly set
+        next();
     } catch (err) {
-        console.error("❌ [Middleware] JWT Verification Failed:", err.message);
-        return res.status(403).json({ error: "Forbidden: Invalid or expired token" });
+        console.error("❌ JWT Verification Failed:", err.message);
+        return res.status(403).json({ error: "Invalid or expired token" });
     }
 };
+
 
 // ✅ Middleware: Restrict access to Admins only
 export const requireAdmin = (req, res, next) => {
