@@ -35,6 +35,7 @@ router.post("/update-profile", async (req, res, next) => {
 });
 
 // Get User Profile Route
+// Get User Profile Route
 router.get("/get-profile", async (req, res, next) => {
     console.log("🚀 Route /get-profile has been called");
 
@@ -43,25 +44,21 @@ router.get("/get-profile", async (req, res, next) => {
 }, requireAuth, async (req, res) => {
     try {
         console.log("✅ Passed authentication, now fetching user...");
-        console.log("req.user in /get-profile:", req.user); // Debugging
 
         // Ensure req.user and req.user.userId exist
         if (!req.user || !req.user.userId) {
-            console.error("❌ No userId in req.user");
+            console.error("❌ Unauthorized: No user ID found in token");
             return res.status(401).json({ error: "Unauthorized: No user ID found in token" });
         }
 
-        const userId = parseInt(req.user.userId, 10); // Ensure we are using a number for the query
-        console.log("Fetching profile for userId:", userId);
+        const userId = parseInt(req.user.userId, 10);
+        console.log("🔍 Fetching profile for userId:", userId);
 
-        // Prepare the SQL query
-        const sqlQuery = "SELECT id, name, college, year, accommodation, role FROM users WHERE id = ?";
+        // SQL query to fetch user data including qr_code_id
+        const sqlQuery = "SELECT id, name, college, year, accommodation, role, qr_code_id FROM users WHERE id = ?";
         console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
 
-        // Check the state of the database connection
-        console.log("🔍 Checking Database Connection State:", db.state);
-
-        // Use async/await for the query
+        // Execute query
         const [results] = await db.query(sqlQuery, [userId]);
 
         if (!results || results.length === 0) {
@@ -69,15 +66,24 @@ router.get("/get-profile", async (req, res, next) => {
             return res.status(404).json({ error: "User not found!" });
         }
 
-        console.log("✅ User Found:", results[0]); // Log user data
+        let user = results[0];
 
-        const user = results[0];
-        user.qr_code_id = `user_${user.id}.png`; // Dynamically add qr_code_id
+        // Generate qr_code_id dynamically if it doesn't exist in the database
+        if (!user.qr_code_id) {
+            user.qr_code_id = `PSM_${user.id}`;
+
+            // Update the database with the generated qr_code_id
+            await db.query("UPDATE users SET qr_code_id = ? WHERE id = ?", [user.qr_code_id, user.id]);
+
+            console.log(`🔄 Assigned new QR Code ID: ${user.qr_code_id}`);
+        }
+
+        console.log("✅ User Found:", user);
 
         // Send user data as JSON response
         res.json(user);
     } catch (err) {
-        console.error("❌ Error in /get-profile:", err.message);
+        console.error("❌ Error in /get-profile:", err);
         res.status(500).json({ error: "Internal server error" });
     }
 });
