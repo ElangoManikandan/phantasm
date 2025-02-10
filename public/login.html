@@ -102,44 +102,49 @@
             <a href="forgot-password.html">Forgot Password?</a>
         </div>
     </div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById('loginForm');
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const loginForm = document.getElementById('loginForm');
-            
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault(); // Prevent default form submission
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Prevent default form submission
 
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-                if (!email || !password) {
-                    alert("Please fill in both email and password.");
-                    return;
-                }
+        if (!email || !password) {
+            alert("Please fill in both email and password.");
+            return;
+        }
 
-                try {
-                    const response = await fetch("/api/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email, password }),
-                        credentials: "include" // Ensure cookies are sent & received
-                    });
-
-                    const result = await response.json();
-
-                    if (response.ok) {
-                        alert("Login successful! Redirecting...");
-                        window.location.href = "/profile.html"; // Redirect on success
-                    } else {
-                        alert(result.error || "Login failed. Please check your credentials.");
-                    }
-                } catch (error) {
-                    console.error("Error during login:", error);
-                    alert("Something went wrong, please try again.");
-                }
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+                credentials: "include" // Ensure cookies are sent & received
             });
-        });
-    </script>
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Login successful! Redirecting...");
+
+                // Check the role and redirect accordingly
+                if (result.role === "admin") {
+                    window.location.href = "/adminprofile.html"; // Redirect for admins
+                } else {
+                    window.location.href = "/profile.html"; // Redirect for normal users
+                }
+            } else {
+                alert(result.error || "Login failed. Please check your credentials.");
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            alert("Something went wrong, please try again.");
+        }
+    });
+});
+</script>
 </body>
 </html>
