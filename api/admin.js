@@ -54,7 +54,7 @@ router.post("/mark-attendance", requireAuth, requireAdmin, async (req, res) => {
 router.get("/get-admin-profile", requireAuth, requireAdmin, async (req, res) => {
     try {
         const adminId = req.user.id;
-        const [[admin]] = await db.promise().query("SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'", [adminId]);
+        const [[admin]] = await db.query("SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'", [adminId]);
 
         if (!admin) return res.status(404).json({ error: "Admin not found!" });
 
