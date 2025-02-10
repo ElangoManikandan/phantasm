@@ -397,27 +397,39 @@ function markAttendanceManually() {
 async function fetchAttendanceDetails() {
     try {
         const response = await fetch("/api/admin/attendance", { credentials: "include" });
-
         if (!response.ok) throw new Error("Failed to fetch attendance records.");
-        
-        const result = await response.json(); // Convert response to JSON
-        console.log("Attendance API Response:", result); // Debugging log
 
-        // ✅ Correctly extract the `data` array
+        const result = await response.json();
         const data = result.data;
 
-        // ✅ Ensure `data` is an array before using forEach
         if (!Array.isArray(data)) {
             console.error("Unexpected data format:", data);
             return;
         }
 
+        const tableBody = document.getElementById("attendanceTableBody");
+        tableBody.innerHTML = ""; // Clear existing table content
+
+        if (data.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No attendance records found.</td></tr>';
+            return;
+        }
+
+        // Populate table dynamically
         data.forEach(record => {
-            console.log("Attendance Record:", record);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${record.event_name || "N/A"}</td>
+                <td>${record.participant_name || "N/A"}</td>
+                <td>${record.status || "Present"}</td>
+                <td>${new Date(record.timestamp).toLocaleString()}</td>
+            `;
+            tableBody.appendChild(row);
         });
 
     } catch (error) {
         console.error("Error fetching attendance details:", error);
+        document.getElementById("attendanceTableBody").innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error loading attendance.</td></tr>';
     }
 }
 
