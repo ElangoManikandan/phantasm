@@ -54,24 +54,33 @@ router.get("/get-admin-profile", requireAuth, requireAdmin, async (req, res) => 
 });
 
 // ✅ Get Admin's Attendance Records
-router.get("/attendance", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const adminId = req.user.id;
-        const [attendanceRecords] = await db.promise().query(
-            `SELECT events.name AS event_name, users.name AS participant_name, 
-            attendance.attendance_status, attendance.marked_at
-            FROM attendance
-            JOIN events ON attendance.event_id = events.id
-            JOIN users ON attendance.user_id = users.id
-            WHERE attendance.admin_id = ?`,
-            [adminId]
-        );
+router.get('/attendance', requireAuth, requireAdmin, async (req, res) => {
+    const adminId = req.user.id; // Get admin's ID from the decoded JWT
+    console.log(`🔍 Fetching attendance for Admin ID: ${adminId}`);
 
-        res.json(attendanceRecords);
+    const query = `
+        SELECT events.name AS event_name, users.name AS participant_name, 
+               attendance.attendance_status, attendance.marked_at
+        FROM attendance
+        JOIN events ON attendance.event_id = events.id
+        JOIN users ON attendance.user_id = users.id
+        WHERE attendance.admin_id = ?`;
+
+    try {
+        const [results] = await db.promise().query(query, [adminId]);
+
+        console.log("✅ Attendance Data Fetched:", results);
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No attendance records found for this admin." });
+        }
+
+        res.json(results);
     } catch (err) {
-        console.error("Database error:", err);
-        res.status(500).json({ error: "Database error!" });
+        console.error("❌ Database Query Error:", err);
+        res.status(500).json({ error: "Database error!", details: err.message });
     }
 });
+
 
 export default router;
