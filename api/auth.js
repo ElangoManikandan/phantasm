@@ -2,8 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cors from "cors";
-import {createSession,requireAuth} from "../utils/auth.js";
-import {verifySession} from "../middleware.js";
+import {requireAuth} from "../middleware.js";
 import db from "../utils/db.js";
 
 const router = express.Router();
