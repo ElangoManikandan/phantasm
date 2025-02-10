@@ -400,37 +400,24 @@ async function fetchAttendanceDetails() {
 
         if (!response.ok) throw new Error("Failed to fetch attendance records.");
         
-        const data = await response.json();
-        console.log("Attendance API Response:", data); // Debugging log
+        const result = await response.json(); // Convert response to JSON
+        console.log("Attendance API Response:", result); // Debugging log
 
-        // Ensure data is an array before iterating
+        // ✅ Correctly extract the `data` array
+        const data = result.data;
+
+        // ✅ Ensure `data` is an array before using forEach
         if (!Array.isArray(data)) {
             console.error("Unexpected data format:", data);
-            document.getElementById("attendanceTableBody").innerHTML = `
-                <tr><td colspan="4" style="text-align: center;">Invalid data format</td></tr>`;
-            return;
-        }
-
-        const tbody = document.getElementById("attendanceTableBody");
-        tbody.innerHTML = "";
-
-        if (data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">No records found</td></tr>`;
             return;
         }
 
         data.forEach(record => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${record.event_name || "N/A"}</td>
-                    <td>${record.participant_name || "N/A"}</td>
-                    <td>${record.attendance_status || "N/A"}</td>
-                    <td>${new Date(record.marked_at).toLocaleString()}</td>
-                </tr>`;
+            console.log("Attendance Record:", record);
         });
+
     } catch (error) {
         console.error("Error fetching attendance details:", error);
-        alert("Error fetching attendance details. Please try again.");
     }
 }
 
