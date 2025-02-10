@@ -6,15 +6,6 @@ import {createSession,verifySession,requireAuth} from "../utils/auth.js";
 import db from "../utils/db.js";
 
 const router = express.Router();
-
-// Enable CORS for all routes
-router.use(
-    cors({
-        origin: process.env.CLIENT_URL,
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-    })
-);
 const requireAdmin = (req, res, next) => {
     if (!req.user || req.user.role !== "admin") {
         return res.status(403).json({ error: "Forbidden: Admins only" });
