@@ -62,4 +62,4 @@ const verifySession = (req, res, next) => {
 
 
 // Export both middleware functions
-export { requireAuth };
+export { requireAuth,verifySession };
