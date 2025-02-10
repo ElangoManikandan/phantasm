@@ -397,6 +397,7 @@ function markAttendanceManually() {
 async function fetchAttendanceDetails() {
     try {
         const response = await fetch("/api/admin/attendance", { credentials: "include" });
+
         if (!response.ok) throw new Error("Failed to fetch attendance records.");
 
         const result = await response.json();
@@ -411,27 +412,51 @@ async function fetchAttendanceDetails() {
         tableBody.innerHTML = ""; // Clear existing table content
 
         if (data.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No attendance records found.</td></tr>';
+            tableBody.innerHTML = `
+                <tr><td colspan="4" style="text-align: center;">No attendance records found.</td></tr>
+            `;
             return;
         }
 
         // Populate table dynamically
         data.forEach(record => {
             const row = document.createElement("tr");
+
+            // Format date correctly
+            let formattedDate = "Invalid Date";
+            if (record.marked_at) {
+                const dateObj = new Date(record.marked_at);
+                formattedDate = isNaN(dateObj.getTime())
+                    ? "Invalid Date"
+                    : dateObj.toLocaleString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true
+                      });
+            }
+
             row.innerHTML = `
                 <td>${record.event_name || "N/A"}</td>
                 <td>${record.participant_name || "N/A"}</td>
-                <td>${record.status || "Present"}</td>
-                <td>${new Date(record.timestamp).toLocaleString()}</td>
+                <td>${record.attendance_status || "Present"}</td>
+                <td>${formattedDate}</td>
             `;
+
             tableBody.appendChild(row);
         });
 
     } catch (error) {
         console.error("Error fetching attendance details:", error);
-        document.getElementById("attendanceTableBody").innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error loading attendance.</td></tr>';
+        document.getElementById("attendanceTableBody").innerHTML = `
+            <tr><td colspan="4" style="text-align: center; color: red;">Error loading attendance.</td></tr>
+        `;
     }
 }
+
 
 
 // Fetch Event Names
