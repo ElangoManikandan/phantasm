@@ -65,12 +65,17 @@ router.get("/get-admin-profile", requireAuth, requireAdmin, async (req, res) => 
     }
 });
 
-// ✅ Get Admin's Attendance Records
+// ✅ Get Admin's Attendance Records with Enhanced Debugging
 router.get('/attendance', requireAuth, requireAdmin, async (req, res) => {
-    const adminId = req.user.id; 
-    console.log(`🔍 Fetching attendance for Admin ID: ${adminId}`);
+    const startTime = Date.now(); // Start time for performance tracking
+    console.log("🚀 [Request] GET /api/admin/attendance");
+    
+    const adminId = req.user?.id; 
+    console.log(`🔍 [Middleware] Extracted Admin ID: ${adminId}`);
 
+    // Validate adminId before proceeding
     if (!adminId) {
+        console.warn("⚠️ [Error] Missing or Invalid admin ID in Token!");
         return res.status(400).json({ error: "Invalid admin ID in token!" });
     }
 
@@ -83,20 +88,32 @@ router.get('/attendance', requireAuth, requireAdmin, async (req, res) => {
         WHERE attendance.admin_id = ?`;
 
     try {
-        const [results] = await db.query(query, [adminId]);
+        console.log("⏳ [DB] Executing Query...");
+        console.log("🔹 [DB Query] ", query);
+        console.log("🔸 [DB Params] ", [adminId]);
 
-        console.log("✅ Attendance Data Fetched:", results);
+        const [results] = await db.query(query, [adminId]);
+        
+        const queryTime = Date.now() - startTime; // Calculate execution time
+        console.log(`✅ [DB] Attendance Data Fetched in ${queryTime}ms`);
+        console.table(results); // Logs the results in a readable table format
 
         if (results.length === 0) {
+            console.warn("⚠️ [Warning] No attendance records found for this admin.");
             return res.status(404).json({ message: "No attendance records found for this admin." });
         }
 
-        res.json(results);
+        res.json({ success: true, data: results });
+
     } catch (err) {
-        console.error("❌ Database Query Error:", err);
+        console.error("❌ [DB Error] Database Query Failed!");
+        console.error("🔴 [Error Details]", err.message);
+        console.error("🔴 [Stack Trace]", err.stack);
+
         res.status(500).json({ error: "Database error!", details: err.message });
     }
 });
+
 
 
 export default router;
