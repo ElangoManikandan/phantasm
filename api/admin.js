@@ -5,34 +5,6 @@ import db from "../utils/db.js";
 import { requireAuth, requireAdmin } from "../middleware.js";
 
 const router = express.Router();
-
-// ✅ Admin Login Route
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        const [admin] = await db.promise().query(
-            "SELECT * FROM users WHERE email = ? AND role = 'admin'",
-            [email]
-        );
-
-        if (admin.length === 0 || !bcrypt.compareSync(password, admin[0].password)) {
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
-        }
-
-        const token = jwt.sign(
-            { id: admin[0].id, role: admin[0].role },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
-
-        res.status(200).json({ success: true, message: "Admin logged in successfully.", token });
-    } catch (err) {
-        console.error("Error during login:", err);
-        res.status(500).json({ success: false, message: "Server error during login" });
-    }
-});
-
 // ✅ Mark Attendance Route (Admin Only)
 router.post("/mark-attendance", requireAuth, requireAdmin, async (req, res) => {
     const { qr_code_id, event_id } = req.body;
