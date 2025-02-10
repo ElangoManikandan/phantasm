@@ -1,8 +1,13 @@
 import jwt from "jsonwebtoken";
+import express from "express";
 
-// Middleware to verify authentication token
-const requireAuth = (req, res, next) => {
-    let token;
+const router = express.Router();
+
+// ✅ Middleware: Authenticate any logged-in user (User/Admin)
+export const requireAuth = (req, res, next) => {
+    console.log("🚀 [Middleware] requireAuth Executing...");
+
+    let token = null;
 
     // ✅ 1. Check for Token in Cookies
     if (req.cookies && req.cookies.authToken) {
@@ -14,52 +19,42 @@ const requireAuth = (req, res, next) => {
     }
 
     if (!token) {
-        return res.status(401).json({ error: "No token provided" });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(403).json({ error: "Invalid or expired token" });
-    }
-};
-
-// Middleware to verify admin role
-const requireAdmin = (req, res, next) => {
-    if (!req.user || req.user.role !== "admin") {
-        return res.status(403).json({ error: "Forbidden: Admins only" });
-    }
-    next();
-};
-
-const verifySession = (req, res, next) => {
-    console.log("Incoming request headers:", req.headers);
-
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        console.error("❌ [Middleware] No token found in request");
         return res.status(401).json({ error: "Unauthorized: No token provided" });
     }
 
-    const token = authHeader.split(" ")[1];
-
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Decoded Token:", decoded); // Debug log
-        req.user = decoded; // Attach user data to request
+        console.log("✅ [Middleware] Decoded Token:", decoded);  
 
-        if (!req.user.id) {
-            return res.status(401).json({ error: "Unauthorized: Admin ID missing" });
+        if (!decoded.role) {
+            console.error("❌ [Middleware] Missing role in decoded token. Check your JWT generation.");
+            return res.status(403).json({ error: "Forbidden: Invalid token data" });
         }
 
-        next();
+        req.user = decoded; // Attach user data to request object
+        next(); // Proceed to the next middleware or route
     } catch (err) {
-        console.error("JWT Verification Failed:", err);
-        return res.status(401).json({ error: "Unauthorized: Invalid token" });
+        console.error("❌ [Middleware] JWT Verification Failed:", err.message);
+        return res.status(403).json({ error: "Forbidden: Invalid or expired token" });
     }
 };
 
+// ✅ Middleware: Restrict access to Admins only
+export const requireAdmin = (req, res, next) => {
+    console.log("🚀 [Middleware] requireAdmin Executing...");
 
-// Export both middleware functions
-export { requireAuth,verifySession };
+    // Ensure requireAuth has already attached the user
+    if (!req.user) {
+        console.error("❌ [Middleware] No authenticated user found");
+        return res.status(401).json({ error: "Unauthorized: Authentication required" });
+    }
+
+    if (req.user.role !== "admin") {
+        console.error("❌ [Middleware] Access Denied - User is not an admin");
+        return res.status(403).json({ error: "Forbidden: Admins only" });
+    }
+
+    console.log("✅ [Middleware] Admin authentication successful");
+    next(); // Proceed to the next middleware or route
+};
