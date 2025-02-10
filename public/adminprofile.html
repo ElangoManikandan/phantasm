@@ -401,6 +401,16 @@ async function fetchAttendanceDetails() {
         if (!response.ok) throw new Error("Failed to fetch attendance records.");
         
         const data = await response.json();
+        console.log("Attendance API Response:", data); // Debugging log
+
+        // Ensure data is an array before iterating
+        if (!Array.isArray(data)) {
+            console.error("Unexpected data format:", data);
+            document.getElementById("attendanceTableBody").innerHTML = `
+                <tr><td colspan="4" style="text-align: center;">Invalid data format</td></tr>`;
+            return;
+        }
+
         const tbody = document.getElementById("attendanceTableBody");
         tbody.innerHTML = "";
 
@@ -423,6 +433,7 @@ async function fetchAttendanceDetails() {
         alert("Error fetching attendance details. Please try again.");
     }
 }
+
 
 // Fetch Event Names
 async function fetchEventNames() {
