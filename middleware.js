@@ -33,22 +33,25 @@ export const requireAuth = (req, res, next) => {
 };
 
 
-
-// ✅ Middleware: Restrict access to Admins only
 export const requireAdmin = (req, res, next) => {
     console.log("🚀 [Middleware] requireAdmin Executing...");
 
-    // Ensure requireAuth has already attached the user
     if (!req.user) {
-        console.error("❌ [Middleware] No authenticated user found");
-        return res.status(401).json({ error: "Unauthorized: Authentication required" });
+        console.error("❌ No user in request. `requireAuth` might have failed.");
+        return res.status(403).json({ error: "Unauthorized access!" });
+    }
+
+    if (!req.user.id || !req.user.role) {
+        console.error("❌ Admin token missing `id` or `role`.");
+        return res.status(403).json({ error: "Invalid admin token!" });
     }
 
     if (req.user.role !== "admin") {
-        console.error("❌ [Middleware] Access Denied - User is not an admin");
-        return res.status(403).json({ error: "Forbidden: Admins only" });
+        console.error(`❌ Access denied. Role found: ${req.user.role}`);
+        return res.status(403).json({ error: "Admin access required!" });
     }
 
     console.log("✅ [Middleware] Admin authentication successful");
-    next(); // Proceed to the next middleware or route
+    next();
 };
+
