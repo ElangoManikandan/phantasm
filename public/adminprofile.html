@@ -330,6 +330,8 @@ function toggleScanner() {
 
 // Scan QR Code
 function scanQRCode() {
+    if (!isScannerOn) return;
+
     if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA) {
         qrCanvasContext.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
         const imageData = qrCanvasContext.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
@@ -337,16 +339,15 @@ function scanQRCode() {
 
         if (qrCode && qrCode.data !== lastScannedCode) {
             lastScannedCode = qrCode.data;
+            console.log("QR Code detected:", qrCode.data);
+
             const event_id = prompt("Enter Event ID to mark attendance:");
-            if (event_id) {
-                markAttendance(qrCode.data, event_id);
-            }
+            if (event_id) markAttendance(qrCode.data, event_id);
         }
     }
-    if (isScannerOn) {
-        requestAnimationFrame(scanQRCode);
-    }
+    requestAnimationFrame(scanQRCode); // Keep scanning
 }
+
 
 // Mark Attendance (QR Scanner)
 async function markAttendance(qr_code_id, event_id) {
