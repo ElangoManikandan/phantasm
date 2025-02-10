@@ -427,8 +427,7 @@ async function fetchAttendanceDetails() {
 // Fetch Event Names
 async function fetchEventNames() {
     try {
-        const response = await fetch("/api/events");
-
+        const response = await fetch("/api/events/get-events");
         if (!response.ok) throw new Error("Failed to load events.");
 
         const events = await response.json();
