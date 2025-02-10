@@ -190,25 +190,26 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
     }
 
-    function fetchUserProfile() {
-        fetch("/api/user/get-profile", {
-            method: "GET",
-            credentials: "include",
-        })
-        .then(response => handleFetchError(response))
-        .then(data => {
-            document.getElementById("user-name").textContent = data.username || data.name || "Guest";
-            document.getElementById("profile-name").textContent = data.name || "No name available";
-            document.getElementById("profile-college").textContent = data.college || "No college available";
-            document.getElementById("profile-year").textContent = data.year || "N/A";
-            document.getElementById("profile-accommodation").textContent = data.accommodation || "No info";
-            
-            if (data.qr_code_id) {
-                document.getElementById("qr-code").src = `/public/qrcodes/${data.qr_code_id}`;
-            }
-        })
-        .catch(error => console.error("Error fetching profile:", error));
-    }
+function fetchUserProfile() {
+    fetch("/api/user/get-profile", {
+        method: "GET",
+        credentials: "include",
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("user-name").textContent = data.name || "Guest";
+        document.getElementById("profile-name").textContent = data.name || "No name available";
+        document.getElementById("profile-college").textContent = data.college || "No college available";
+        document.getElementById("profile-year").textContent = data.year || "N/A";
+        document.getElementById("profile-accommodation").textContent = data.accommodation || "No info";
+
+        // Display QR Code ID
+        if (data.qr_code_id) {
+            document.getElementById("qr-code").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.qr_code_id}`;
+        }
+    })
+    .catch(error => console.error("Error fetching profile:", error));
+}
 
     function updateRegisteredEvents() {
         fetch("/api/user/get-events", {
