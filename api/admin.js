@@ -110,24 +110,31 @@ router.post('/admin/mark-attendance', requireAdmin, async (req, res) => {
 });
 
 // Admin Profile Route
-router.get('/get-admin-profile', requireAdmin, (req, res) => {
-    const adminId = req.user.id; // Get admin's ID from the decoded JWT
-
-    db.query(
-        "SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'",
-        [adminId],
-        (err, results) => {
-            if (err) {
-                console.error("Database error:", err);
-                return res.status(500).json({ error: "Database error!" });
-            }
-            if (results.length === 0) {
-                return res.status(404).json({ error: "Admin not found!" });
-            }
-            res.json(results[0]); // Return the admin profile data
+router.get('/get-admin-profile', requireAdmin, async (req, res) => {
+    try {
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ error: "Unauthorized: Admin ID missing" });
         }
-    );
+
+        const adminId = req.user.id;
+
+        // Run the query asynchronously
+        const [results] = await db.promise().query(
+            "SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'",
+            [adminId]
+        );
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: "Admin not found!" });
+        }
+
+        res.json(results[0]); // Return admin profile data
+    } catch (error) {
+        console.error("Error fetching admin profile:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
+
 
 // Admin Attendance Details Route
 router.get('/attendance', requireAdmin, (req, res) => {
