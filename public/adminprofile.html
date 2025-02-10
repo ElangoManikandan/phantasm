@@ -262,9 +262,13 @@ td {
             </table>
         </div>
 
-        <div class="logout">
-            <a href="/logout" class="btn">Logout</a>
-        </div>
+<a href="/logout" class="btn" onclick="return confirmLogout()">Logout</a>
+<script>
+function confirmLogout() {
+    return confirm("Are you sure you want to log out?");
+}
+</script>
+
     </div>
 <script>
 const qrVideo = document.getElementById("qrVideo");
