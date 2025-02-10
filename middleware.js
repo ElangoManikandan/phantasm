@@ -34,5 +34,32 @@ const requireAdmin = (req, res, next) => {
     next();
 };
 
+const verifySession = (req, res, next) => {
+    console.log("Incoming request headers:", req.headers);
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Unauthorized: No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded Token:", decoded); // Debug log
+        req.user = decoded; // Attach user data to request
+
+        if (!req.user.id) {
+            return res.status(401).json({ error: "Unauthorized: Admin ID missing" });
+        }
+
+        next();
+    } catch (err) {
+        console.error("JWT Verification Failed:", err);
+        return res.status(401).json({ error: "Unauthorized: Invalid token" });
+    }
+};
+
+
 // Export both middleware functions
 export { requireAuth };
