@@ -1,16 +1,16 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import db from "../utils/db.js"; // Ensure correct path with .js extension
-import {createSession,verifySession,requireAuth,requireAdmin} from "../utils/auth.js";
+import db from "../utils/db.js";
+import { requireAuth, requireAdmin } from "../middleware.js";
+
 const router = express.Router();
 
-// Login route for admin
-router.post('/login', async (req, res) => {
+// ✅ Admin Login Route
+router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Fetch the admin from the database
         const [admin] = await db.promise().query(
             "SELECT * FROM users WHERE email = ? AND role = 'admin'",
             [email]
@@ -20,87 +20,44 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ success: false, message: "Invalid credentials" });
         }
 
-        // Create a JWT token with the admin's ID and role
         const token = jwt.sign(
             { id: admin[0].id, role: admin[0].role },
             process.env.JWT_SECRET,
-            { expiresIn: "1h" } // Token expires in 1 hour
+            { expiresIn: "1h" }
         );
 
-        // Send the token in the response
-        res.status(200).json({
-            success: true,
-            message: "Admin logged in successfully.",
-            token: token, // The token will be sent to the client
-        });
+        res.status(200).json({ success: true, message: "Admin logged in successfully.", token });
     } catch (err) {
         console.error("Error during login:", err);
         res.status(500).json({ success: false, message: "Server error during login" });
     }
 });
 
-// Admin Attendance Route
-router.post('/admin/mark-attendance', requireAdmin, async (req, res) => {
+// ✅ Mark Attendance Route (Admin Only)
+router.post("/mark-attendance", requireAuth, requireAdmin, async (req, res) => {
     const { qr_code_id, event_id } = req.body;
-    const adminId = req.user.id; // Get admin's ID from the decoded JWT
+    const adminId = req.user.id;
 
     if (!qr_code_id || !event_id) {
         return res.status(400).json({ success: false, message: "QR Code ID and Event ID are required." });
     }
 
     try {
-        // Check if the user exists
-        const [userResults] = await db.promise().query(
-            `SELECT id FROM users WHERE qr_code_id = ?`,
-            [qr_code_id]
-        );
+        const [[user]] = await db.promise().query("SELECT id FROM users WHERE qr_code_id = ?", [qr_code_id]);
+        if (!user) return res.status(404).json({ success: false, message: "QR Code ID not found!" });
 
-        if (userResults.length === 0) {
-            return res.status(404).json({ success: false, message: "QR Code ID not found!" });
+        const [[event]] = await db.promise().query("SELECT id FROM events WHERE id = ?", [event_id]);
+        if (!event) return res.status(404).json({ success: false, message: "Event ID not found!" });
+
+        const [[registration]] = await db.promise().query("SELECT id FROM registrations WHERE user_id = ? AND event_id = ?", [user.id, event_id]);
+        if (!registration) {
+            await db.promise().query("INSERT INTO registrations (user_id, event_id) VALUES (?, ?)", [user.id, event_id]);
         }
 
-        const userId = userResults[0].id;
+        const [[attendance]] = await db.promise().query("SELECT id FROM attendance WHERE event_id = ? AND user_id = ?", [event_id, user.id]);
+        if (attendance) return res.status(400).json({ success: false, message: "Attendance already marked!" });
 
-        // Check if the event exists
-        const [eventResults] = await db.promise().query(
-            `SELECT id FROM events WHERE id = ?`,
-            [event_id]
-        );
-
-        if (eventResults.length === 0) {
-            return res.status(404).json({ success: false, message: "Event ID not found!" });
-        }
-
-        // Check if the user is registered for the event
-        const [registrationResults] = await db.promise().query(
-            `SELECT id FROM registrations WHERE user_id = ? AND event_id = ?`,
-            [userId, event_id]
-        );
-
-        if (registrationResults.length === 0) {
-            // Register the user for the event
-            await db.promise().query(
-                `INSERT INTO registrations (user_id, event_id) VALUES (?, ?)`,
-                [userId, event_id]
-            );
-        }
-
-        // Check if attendance is already marked
-        const [attendanceResults] = await db.promise().query(
-            `SELECT id FROM attendance WHERE event_id = ? AND user_id = ?`,
-            [event_id, userId]
-        );
-
-        if (attendanceResults.length > 0) {
-            return res.status(400).json({ success: false, message: "Attendance already marked!" });
-        }
-
-        // Mark attendance
-        await db.promise().query(
-            `INSERT INTO attendance (event_id, user_id, admin_id, attendance_status) 
-             VALUES (?, ?, ?, 'present')`,
-            [event_id, userId, adminId]
-        );
+        await db.promise().query("INSERT INTO attendance (event_id, user_id, admin_id, attendance_status) VALUES (?, ?, ?, 'present')", [event_id, user.id, adminId]);
 
         res.json({ success: true, message: "User registered and attendance marked successfully!" });
     } catch (err) {
@@ -109,53 +66,40 @@ router.post('/admin/mark-attendance', requireAdmin, async (req, res) => {
     }
 });
 
-// Admin Profile Route
-router.get('/get-admin-profile', requireAdmin, async (req, res) => {
+// ✅ Get Admin Profile Route
+router.get("/get-admin-profile", requireAuth, requireAdmin, async (req, res) => {
     try {
-        if (!req.user || !req.user.id) {
-            return res.status(401).json({ error: "Unauthorized: Admin ID missing" });
-        }
-
         const adminId = req.user.id;
+        const [[admin]] = await db.promise().query("SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'", [adminId]);
 
-        // Run the query asynchronously
-        const [results] = await db.promise().query(
-            "SELECT name, email, college FROM users WHERE id = ? AND role = 'admin'",
-            [adminId]
-        );
+        if (!admin) return res.status(404).json({ error: "Admin not found!" });
 
-        if (results.length === 0) {
-            return res.status(404).json({ error: "Admin not found!" });
-        }
-
-        res.json(results[0]); // Return admin profile data
+        res.json(admin);
     } catch (error) {
         console.error("Error fetching admin profile:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
+// ✅ Get Admin's Attendance Records
+router.get("/attendance", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const adminId = req.user.id;
+        const [attendanceRecords] = await db.promise().query(
+            `SELECT events.name AS event_name, users.name AS participant_name, 
+            attendance.attendance_status, attendance.marked_at
+            FROM attendance
+            JOIN events ON attendance.event_id = events.id
+            JOIN users ON attendance.user_id = users.id
+            WHERE attendance.admin_id = ?`,
+            [adminId]
+        );
 
-// Admin Attendance Details Route
-router.get('/attendance', requireAdmin, (req, res) => {
-    const adminId = req.user.id; // Get admin's ID from the decoded JWT
-
-    db.query(
-        `SELECT events.name AS event_name, users.name AS participant_name, 
-        attendance.attendance_status, attendance.marked_at
-        FROM attendance
-        JOIN events ON attendance.event_id = events.id
-        JOIN users ON attendance.user_id = users.id
-        WHERE attendance.admin_id = ?`,
-        [adminId],
-        (err, results) => {
-            if (err) {
-                console.error("Database error:", err);
-                return res.status(500).json({ error: "Database error!" });
-            }
-            res.json(results); // Return the attendance details
-        }
-    );
+        res.json(attendanceRecords);
+    } catch (err) {
+        console.error("Database error:", err);
+        res.status(500).json({ error: "Database error!" });
+    }
 });
 
-export default router;  // Use export default for ES module
+export default router;
