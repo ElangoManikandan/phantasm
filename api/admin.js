@@ -8,35 +8,47 @@ const router = express.Router();
 // ✅ Mark Attendance Route (Admin Only)
 router.post("/mark-attendance", requireAuth, requireAdmin, async (req, res) => {
     const { qr_code_id, event_id } = req.body;
-    const adminId = req.user.id;
+    const adminId = req.user?.id;  // Ensure adminId is extracted properly
 
     if (!qr_code_id || !event_id) {
         return res.status(400).json({ success: false, message: "QR Code ID and Event ID are required." });
     }
 
     try {
-        const [[user]] = await db.promise().query("SELECT id FROM users WHERE qr_code_id = ?", [qr_code_id]);
-        if (!user) return res.status(404).json({ success: false, message: "QR Code ID not found!" });
+        // ✅ Fetch user by QR Code
+        const [user] = await db.query("SELECT id FROM users WHERE qr_code_id = ?", [qr_code_id]);
+        if (user.length === 0) return res.status(404).json({ success: false, message: "QR Code ID not found!" });
 
-        const [[event]] = await db.promise().query("SELECT id FROM events WHERE id = ?", [event_id]);
-        if (!event) return res.status(404).json({ success: false, message: "Event ID not found!" });
+        // ✅ Fetch event
+        const [event] = await db.query("SELECT id FROM events WHERE id = ?", [event_id]);
+        if (event.length === 0) return res.status(404).json({ success: false, message: "Event ID not found!" });
 
-        const [[registration]] = await db.promise().query("SELECT id FROM registrations WHERE user_id = ? AND event_id = ?", [user.id, event_id]);
-        if (!registration) {
-            await db.promise().query("INSERT INTO registrations (user_id, event_id) VALUES (?, ?)", [user.id, event_id]);
-        }
+        const userId = user[0].id;
 
-        const [[attendance]] = await db.promise().query("SELECT id FROM attendance WHERE event_id = ? AND user_id = ?", [event_id, user.id]);
-        if (attendance) return res.status(400).json({ success: false, message: "Attendance already marked!" });
+        // ✅ Insert registration if not exists
+        await db.query(`
+            INSERT INTO registrations (user_id, event_id) 
+            SELECT ?, ? FROM DUAL 
+            WHERE NOT EXISTS (
+                SELECT 1 FROM registrations WHERE user_id = ? AND event_id = ?
+            )`, [userId, event_id, userId, event_id]);
 
-        await db.promise().query("INSERT INTO attendance (event_id, user_id, admin_id, attendance_status) VALUES (?, ?, ?, 'present')", [event_id, user.id, adminId]);
+        // ✅ Check if attendance is already marked
+        const [attendance] = await db.query("SELECT id FROM attendance WHERE event_id = ? AND user_id = ?", [event_id, userId]);
+        if (attendance.length > 0) return res.status(400).json({ success: false, message: "Attendance already marked!" });
+
+        // ✅ Mark attendance
+        await db.query("INSERT INTO attendance (event_id, user_id, admin_id, attendance_status) VALUES (?, ?, ?, 'present')", 
+            [event_id, userId, adminId]);
 
         res.json({ success: true, message: "User registered and attendance marked successfully!" });
+
     } catch (err) {
-        console.error("Database error:", err);
+        console.error("❌ Database error:", err);
         res.status(500).json({ success: false, message: "Database error!" });
     }
 });
+
 
 // ✅ Get Admin Profile Route
 router.get("/get-admin-profile", requireAuth, requireAdmin, async (req, res) => {
