@@ -279,8 +279,10 @@ function fetchUserProfile() {
         });
     }
 
-    function handleLogout() {
-        document.getElementById("logoutbutton").addEventListener("click", () => {
+function handleLogout() {
+    document.getElementById("logoutbutton").addEventListener("click", () => {
+        const confirmLogout = confirm("Are you sure you want to logout?");
+        if (confirmLogout) {
             fetch("/api/user/logout", {
                 method: "GET",
                 credentials: "include",
@@ -294,8 +296,10 @@ function fetchUserProfile() {
                 }
             })
             .catch(error => console.error("Error during logout:", error));
-        });
-    }
+        }
+    });
+}
+
 
     function setupEventNavigation() {
         document.getElementById("go-to-events-btn").addEventListener("click", () => {
