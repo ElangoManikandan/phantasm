@@ -40,19 +40,37 @@ router.post("/register", async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await queryDatabase(
+
+        // Insert user data into the database (excluding qr_code_id initially)
+        const result = await queryDatabase(
             `INSERT INTO users (name, college, year, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [name, college, year, email, hashedPassword, accommodation, role]
         );
 
+        // Get the newly inserted user's ID
+        const userId = result.insertId;
+
+        // Generate QR Code ID (format: PSM_<id>)
+        const qrCodeId = `PSM_${userId}`;
+
+        // Update the user's record with the generated qr_code_id
+        await queryDatabase(
+            `UPDATE users SET qr_code_id = ? WHERE id = ?`,
+            [qrCodeId, userId]
+        );
+
+        // Generate JWT Token
         const token = jwt.sign({ email, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
         res.status(201).json({
             message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
             token,
+            qr_code_id: qrCodeId
         });
     } catch (error) {
         console.error("Registration Error:", error);
         res.status(500).json({ error: "Server error!" });
     }
 });
+
 export default router;
