@@ -55,8 +55,12 @@ router.get("/get-admin-profile", requireAuth, requireAdmin, async (req, res) => 
 
 // ✅ Get Admin's Attendance Records
 router.get('/attendance', requireAuth, requireAdmin, async (req, res) => {
-    const adminId = req.user.id; // Get admin's ID from the decoded JWT
+    const adminId = req.user.id; 
     console.log(`🔍 Fetching attendance for Admin ID: ${adminId}`);
+
+    if (!adminId) {
+        return res.status(400).json({ error: "Invalid admin ID in token!" });
+    }
 
     const query = `
         SELECT events.name AS event_name, users.name AS participant_name, 
@@ -67,7 +71,7 @@ router.get('/attendance', requireAuth, requireAdmin, async (req, res) => {
         WHERE attendance.admin_id = ?`;
 
     try {
-        const [results] = await db.promise().query(query, [adminId]);
+        const [results] = await db.query(query, [adminId]);
 
         console.log("✅ Attendance Data Fetched:", results);
 
