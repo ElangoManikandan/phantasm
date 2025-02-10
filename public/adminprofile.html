@@ -272,32 +272,30 @@ const qrCanvas = document.getElementById("qrCanvas");
 const qrCanvasContext = qrCanvas.getContext("2d");
 const scanStatus = document.getElementById("scanStatus");
 const toggleScannerBtn = document.getElementById("toggleScannerBtn");
-let lastScannedCode = null; // To avoid repeated scans of the same QR code
+
+let lastScannedCode = null; // Avoid duplicate scans
 let scannerStream = null;
 let isScannerOn = false;
 
-
+// Start QR Scanner
 async function startScanner() {
     try {
         console.log("Starting camera...");
         scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         qrVideo.srcObject = scannerStream;
         qrVideo.hidden = false;
-
-        // Add the class to ensure correct styling when turned on
-        qrVideo.classList.remove("toggled");
         qrVideo.classList.add("scanner");
+        qrVideo.classList.remove("toggled");
 
         console.log("Video stream started successfully.");
+        scanStatus.textContent = "Scanner is on. Scanning...";
+        scanStatus.style.color = "green";
 
         qrVideo.addEventListener("play", () => {
             qrCanvas.width = qrVideo.videoWidth;
             qrCanvas.height = qrVideo.videoHeight;
             scanQRCode();
         });
-
-        scanStatus.textContent = "Scanner is on. Scanning...";
-        scanStatus.style.color = "green";
     } catch (error) {
         console.error("Error accessing camera:", error);
         scanStatus.textContent = "Error accessing camera: " + error.message;
@@ -305,21 +303,20 @@ async function startScanner() {
     }
 }
 
+// Stop QR Scanner
 function stopScanner() {
     if (scannerStream) {
-        const tracks = scannerStream.getTracks();
-        tracks.forEach(track => track.stop());
+        scannerStream.getTracks().forEach(track => track.stop());
         scannerStream = null;
     }
     qrVideo.hidden = true;
-    scanStatus.textContent = "Scanner is off.";
-    scanStatus.style.color = "black";
-
-    // Remove the class when turned off
     qrVideo.classList.remove("scanner");
     qrVideo.classList.add("toggled");
+    scanStatus.textContent = "Scanner is off.";
+    scanStatus.style.color = "black";
 }
 
+// Toggle Scanner
 function toggleScanner() {
     if (isScannerOn) {
         stopScanner();
@@ -331,6 +328,7 @@ function toggleScanner() {
     isScannerOn = !isScannerOn;
 }
 
+// Scan QR Code
 function scanQRCode() {
     if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA) {
         qrCanvasContext.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
@@ -350,103 +348,129 @@ function scanQRCode() {
     }
 }
 
-const markAttendance = (qr_code_id, event_id) => {
-    scanStatus.textContent = "Marking attendance...";
-    fetch("/admin/mark-attendance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ qr_code_id, event_id }),
-    })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                alert("Attendance marked successfully!");
-                scanStatus.textContent = "Attendance marked successfully.";
-                scanStatus.style.color = "green";
-                fetchAttendanceDetails();
-            } else {
-                alert(`Error: ${result.message}`);
-                scanStatus.textContent = `Error: ${result.message}`;
-                scanStatus.style.color = "red";
-            }
-            lastScannedCode = null; // Reset for next scan
-        })
-        .catch(error => {
-            console.error("Error marking attendance:", error);
-            scanStatus.textContent = "Error marking attendance. Try again.";
-            scanStatus.style.color = "red";
-            lastScannedCode = null; // Reset for next scan
-        });
-};
+// Mark Attendance (QR Scanner)
+async function markAttendance(qr_code_id, event_id) {
+    try {
+        scanStatus.textContent = "Marking attendance...";
+        scanStatus.style.color = "black";
 
-const markAttendanceManually = () => {
+        const response = await fetch("/api/admin/mark-attendance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ qr_code_id, event_id }),
+            credentials: "include"
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("Attendance marked successfully!");
+            scanStatus.textContent = "Attendance marked successfully.";
+            scanStatus.style.color = "green";
+            fetchAttendanceDetails();
+        } else {
+            throw new Error(result.message || "Failed to mark attendance.");
+        }
+    } catch (error) {
+        console.error("Error marking attendance:", error);
+        scanStatus.textContent = `Error: ${error.message}`;
+        scanStatus.style.color = "red";
+    } finally {
+        lastScannedCode = null; // Reset for next scan
+    }
+}
+
+// Manual Attendance Marking
+function markAttendanceManually() {
     const qr_code_id = document.getElementById("manualQrCode").value.trim();
     const event_id = document.getElementById("manualEventId").value.trim();
-    if (qr_code_id && event_id) {
-        markAttendance(qr_code_id, event_id);
-    } else {
+    
+    if (!qr_code_id || !event_id) {
         alert("Please provide both QR Code ID and Event ID.");
+        return;
     }
-};
 
-const fetchAttendanceDetails = () => {
-    fetch("/admin/attendance")
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.getElementById("attendanceTableBody");
-            tbody.innerHTML = "";
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">No records found</td></tr>`;
-            } else {
-                data.forEach(record => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${record.event_name}</td>
-                            <td>${record.participant_name}</td>
-                            <td>${record.attendance_status}</td>
-                            <td>${new Date(record.marked_at).toLocaleString()}</td>
-                        </tr>`;
-                });
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching attendance details:", error);
-            alert("Error fetching attendance details. Please try again.");
+    markAttendance(qr_code_id, event_id);
+}
+
+// Fetch Attendance Details
+async function fetchAttendanceDetails() {
+    try {
+        const response = await fetch("/api/admin/attendance", { credentials: "include" });
+
+        if (!response.ok) throw new Error("Failed to fetch attendance records.");
+        
+        const data = await response.json();
+        const tbody = document.getElementById("attendanceTableBody");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">No records found</td></tr>`;
+            return;
+        }
+
+        data.forEach(record => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${record.event_name || "N/A"}</td>
+                    <td>${record.participant_name || "N/A"}</td>
+                    <td>${record.attendance_status || "N/A"}</td>
+                    <td>${new Date(record.marked_at).toLocaleString()}</td>
+                </tr>`;
         });
-};
+    } catch (error) {
+        console.error("Error fetching attendance details:", error);
+        alert("Error fetching attendance details. Please try again.");
+    }
+}
 
-const fetchEventNames = () => {
-    fetch("/get-events")
-        .then(response => response.json())
-        .then(events => {
-            const eventSelect = document.getElementById("manualEventId");
-            eventSelect.innerHTML = ""; // Clear existing options
-            events.forEach(event => {
-                const option = document.createElement("option");
-                option.value = event.id; // Use the event ID as the value
-                option.textContent = `${event.name} (${event.date} at ${event.time})`;
-                eventSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error("Error fetching events:", error);
-            alert("Error loading events. Please try again.");
+// Fetch Event Names
+async function fetchEventNames() {
+    try {
+        const response = await fetch("/api/events");
+
+        if (!response.ok) throw new Error("Failed to load events.");
+
+        const events = await response.json();
+        const eventSelect = document.getElementById("manualEventId");
+        eventSelect.innerHTML = '<option value="" disabled selected>Select Event</option>';
+
+        events.forEach(event => {
+            const option = document.createElement("option");
+            option.value = event.id;
+            option.textContent = `${event.name} (${event.date} at ${event.time})`;
+            eventSelect.appendChild(option);
         });
-};
+    } catch (error) {
+        console.error("Error fetching events:", error);
+        alert("Error loading events. Please try again.");
+    }
+}
 
-// Fetch admin profile and initialize components
-fetch("/get-admin-profile")
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("adminName").textContent = data.name;
-        document.getElementById("adminEmail").textContent = data.email;
-        document.getElementById("adminCollege").textContent = data.college;
-    })
-    .catch(error => console.error("Error fetching admin details:", error));
+// Fetch Admin Profile
+async function fetchAdminProfile() {
+    try {
+        const response = await fetch("/api/admin/get-admin-profile", { credentials: "include" });
 
-// Fetch initial attendance details and event names
-fetchAttendanceDetails();
-fetchEventNames();
+        if (!response.ok) throw new Error("Failed to load admin profile.");
+
+        const data = await response.json();
+        document.getElementById("adminName").textContent = data.name || "N/A";
+        document.getElementById("adminEmail").textContent = data.email || "N/A";
+        document.getElementById("adminCollege").textContent = data.college || "N/A";
+    } catch (error) {
+        console.error("Error fetching admin details:", error);
+    }
+}
+
+// Initialize Components
+document.addEventListener("DOMContentLoaded", () => {
+    fetchAdminProfile();
+    fetchAttendanceDetails();
+    fetchEventNames();
+});
+
+document.getElementById("toggleScannerBtn").addEventListener("click", toggleScanner);
+document.getElementById("manualAttendanceBtn").addEventListener("click", markAttendanceManually);
 
 </script>
 
