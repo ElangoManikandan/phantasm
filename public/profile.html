@@ -83,6 +83,34 @@
             background: #a71d2a;
         }
 
+        .events-section {
+            margin-top: 40px;
+        }
+
+        .events-section h2 {
+            margin-bottom: 20px;
+        }
+
+        .event-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9ff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-card h3 {
+            margin: 0 0 10px;
+            font-size: 1.2em;
+        }
+
+        .event-card p {
+            margin: 5px 0;
+            font-size: 0.95em;
+            color: #555;
+        }
+
         .qr-code img {
             max-width: 150px;
             height: auto;
@@ -96,7 +124,7 @@
         <div class="header">
             <h1>Welcome, <span id="user-name">User Name</span></h1>
             <div class="qr-code">
-                <img id="qr-code" alt="QR Code" />
+               <img id="qr-code" alt="QR Code" />
             </div>
         </div>
 
@@ -119,10 +147,6 @@
                     <span>Accommodation:</span>
                     <span id="profile-accommodation">Yes</span>
                 </div>
-                <div class="profile-item">
-                    <span>Phone:</span>
-                    <span id="profile-phone">+91 9876543210</span>
-                </div>
             </div>
 
             <div class="edit-profile" id="edit-profile">
@@ -138,37 +162,76 @@
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                 </select>
-                <label for="phone">Phone:</label>
-                <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="Enter 10-digit phone number" required>
             </div>
         </div>
 
         <div class="buttons">
             <button id="edit-btn">Edit Profile</button>
             <button id="save-btn" style="display: none;">Save Changes</button>
+            <button id="go-to-events-btn">Go to Events</button>
+            <button class="logout" id="logoutbutton">Logout</button>
+        </div>
+
+        <div class="events-section">
+            <h2>Registered Events</h2>
+            <div id="registered-events">
+                <p>Loading your registered events...</p>
+            </div>
         </div>
     </div>
-
     <script>
 document.addEventListener("DOMContentLoaded", () => {
-
-    function fetchUserProfile() {
-        fetch("/api/user/get-profile", { method: "GET", credentials: "include" })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("user-name").textContent = data.name || "Guest";
-            document.getElementById("profile-name").textContent = data.name || "No name available";
-            document.getElementById("profile-college").textContent = data.college || "No college available";
-            document.getElementById("profile-year").textContent = data.year || "N/A";
-            document.getElementById("profile-accommodation").textContent = data.accommodation || "No info";
-            document.getElementById("profile-phone").textContent = data.phone || "No phone available";
-
-            if (data.qr_code_id) {
-                document.getElementById("qr-code").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.qr_code_id}`;
-            }
-        })
-        .catch(error => console.error("Error fetching profile:", error));
+    
+    async function handleFetchError(response) {
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error ${response.status}: ${errorData.error}`);
+        }
+        return response.json();
     }
+
+function fetchUserProfile() {
+    fetch("/api/user/get-profile", {
+        method: "GET",
+        credentials: "include",
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("user-name").textContent = data.name || "Guest";
+        document.getElementById("profile-name").textContent = data.name || "No name available";
+        document.getElementById("profile-college").textContent = data.college || "No college available";
+        document.getElementById("profile-year").textContent = data.year || "N/A";
+        document.getElementById("profile-accommodation").textContent = data.accommodation || "No info";
+
+        // Display QR Code ID
+        if (data.qr_code_id) {
+            document.getElementById("qr-code").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.qr_code_id}`;
+        }
+    })
+    .catch(error => console.error("Error fetching profile:", error));
+}
+
+    function updateRegisteredEvents() {
+        fetch("/api/user/get-events", {
+            method: "GET",
+            credentials: "include",
+        })
+        .then(response => handleFetchError(response))
+        .then(events => {
+            const eventsContainer = document.getElementById("registered-events");
+            eventsContainer.innerHTML = events.length ? events.map(event => `
+                <div class="event-card">
+                    <h3>${event.eventName}</h3>
+                </div>
+            `).join("") : "<p>No events registered yet.</p>";
+        })
+        .catch(error => {
+            console.error("Error fetching events:", error);
+            document.getElementById("registered-events").innerHTML = "<p>Failed to load events. Please try again later.</p>";
+        });
+    }
+    
+    window.updateRegisteredEvents = updateRegisteredEvents;
 
     function handleProfileEdit() {
         const editBtn = document.getElementById("edit-btn");
@@ -189,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 college: document.getElementById("college").value.trim(),
                 year: document.getElementById("year").value.trim(),
                 accommodation: document.getElementById("accommodation").value.trim(),
-                phone: document.getElementById("phone").value.trim(),
             };
 
             try {
@@ -199,13 +261,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     credentials: "include",
                     body: JSON.stringify(formData),
                 });
-
+                
                 if (!response.ok) throw new Error("Failed to update profile");
-
+                
                 Object.keys(formData).forEach(key => {
                     document.getElementById(`profile-${key}`).textContent = formData[key] || "N/A";
                 });
-
+                
                 profileInfo.style.display = "block";
                 editProfile.style.display = "none";
                 saveBtn.style.display = "none";
@@ -217,9 +279,41 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+function handleLogout() {
+    document.getElementById("logoutbutton").addEventListener("click", () => {
+        const confirmLogout = confirm("Are you sure you want to logout?");
+        if (confirmLogout) {
+            fetch("/api/user/logout", {
+                method: "GET",
+                credentials: "include",
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.cookie = "authToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+                    window.location.href = "/login.html";
+                } else {
+                    console.error("Logout failed");
+                }
+            })
+            .catch(error => console.error("Error during logout:", error));
+        }
+    });
+}
+
+
+    function setupEventNavigation() {
+        document.getElementById("go-to-events-btn").addEventListener("click", () => {
+            window.location.href = "events.html";
+        });
+    }
+
     fetchUserProfile();
+    updateRegisteredEvents();
     handleProfileEdit();
+    handleLogout();
+    setupEventNavigation();
 });
+
 </script>
 
 </body>
