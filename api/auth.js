@@ -5,41 +5,56 @@ import cors from "cors";
 import {requireAuth} from "../middleware.js";
 import db from "../utils/db.js";
 import crypto from "crypto";
-import nodemailer from "nodemailer"; // For sending emails
+import nodemailer from "nodemailer";
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+const router = express.Router();
+
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+// Forgot Password Route
+router.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    try {
+        const [user] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        if (user.length === 0) return res.json({ success: false, message: 'Email not found' });
+
+        // Generate Token
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        const expires = Date.now() + 3600000; // 1 hour expiry
+
+        // Store the token in the database
+        await db.query('UPDATE users SET reset_token = ?, reset_expires = ? WHERE email = ?', [resetToken, expires, email]);
+
+        // Send Email
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Password Reset Request',
+            text: `Use the following token to reset your password: ${resetToken}\n\nThis token is valid for 1 hour.`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.json({ success: true, message: 'Reset token sent to your email.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error, please try again later.' });
+    }
+});
 const router = express.Router();
 
 // Temporary store for reset tokens (use a database in production)
 const resetTokens = {};
-
-/**
- * 📌 Forgot Password Route - Sends a reset link to the user
- */
-router.post("/forgot-password", async (req, res) => {
-    try {
-        const { email } = req.body;
-
-        // Check if email exists
-        const [user] = await db.execute("SELECT id FROM users WHERE email = ?", [email]);
-
-        if (user.length === 0) {
-            return res.status(404).json({ success: false, message: "Email not found!" });
-        }
-
-        // Generate a reset token (valid for 15 minutes)
-        const resetToken = crypto.randomBytes(32).toString("hex");
-        resetTokens[email] = resetToken;
-
-        // (Mock) Send email (Replace with real email service)
-        console.log(`📧 Reset Token for ${email}: ${resetToken}`);
-
-        return res.json({ success: true, message: "Reset link sent! Check console for token." });
-
-    } catch (error) {
-        console.error("Error in forgot password:", error);
-        return res.status(500).json({ success: false, message: "Server error. Try again later." });
-    }
-});
 
 /**
  * 📌 Reset Password Route - Updates user's password
