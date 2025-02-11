@@ -69,8 +69,6 @@ router.post("/reset-password", async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error. Try again later." });
     }
 });
-
-const router = express.Router();
 const requireAdmin = (req, res, next) => {
     if (!req.user || req.user.role !== "admin") {
         return res.status(403).json({ error: "Forbidden: Admins only" });
