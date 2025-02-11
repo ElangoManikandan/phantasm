@@ -26,22 +26,31 @@ const queryDatabase = async (query, values) => {
 // **User Registration**
 router.post("/register", async (req, res) => {
     try {
-        const { name, college, year, email, password, accommodation, role, admin_key } = req.body;
+        const { name, college, year, phone, email, password, accommodation, role, admin_key } = req.body;
 
-        if (!name || !college || !year || !email || !password || !accommodation || !role) {
+        // Validate required fields
+        if (!name || !college || !year || !phone || !email || !password || !accommodation || !role) {
             return res.status(400).json({ error: "All fields are required!" });
         }
 
+        // Validate phone number format (10 digits)
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(phone)) {
+            return res.status(400).json({ error: "Invalid phone number! Must be 10 digits." });
+        }
+
+        // Validate admin key if role is "admin"
         if (role === "admin" && admin_key !== process.env.ADMIN_KEY) {
             return res.status(400).json({ error: "Invalid admin key!" });
         }
 
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Insert user data into the database (excluding qr_code_id initially)
         const result = await queryDatabase(
-            `INSERT INTO users (name, college, year, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [name, college, year, email, hashedPassword, accommodation, role]
+            `INSERT INTO users (name, college, year, phone, email, password, accommodation, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [name, college, year, phone, email, hashedPassword, accommodation, role]
         );
 
         // Get the newly inserted user's ID
