@@ -12,16 +12,22 @@ router.post("/update-profile", async (req, res, next) => {
         const { name, college, year, accommodation, phone } = req.body;
         const userId = req.user.userId;
 
+        console.log("📩 Received update request:", { name, college, year, accommodation, phone, userId });
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized. User ID is missing." });
+        }
+        
         if (!name || !college || !year || !accommodation || !phone) {
             return res.status(400).json({ error: "All fields are required!" });
         }
 
-        // Log the query for debugging
         const sqlQuery = `UPDATE users SET name = ?, college = ?, year = ?, accommodation = ?, phone = ? WHERE id = ?`;
         console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
-        
-        // Database query to update profile
+
         const results = await db.query(sqlQuery, [name, college, year, accommodation, phone, userId]);
+        
+        console.log("📌 Query execution result:", results);
 
         if (results.affectedRows === 0) {
             return res.status(400).json({ error: "Failed to update profile. Please try again." });
@@ -29,11 +35,10 @@ router.post("/update-profile", async (req, res, next) => {
 
         res.json({ message: "Profile updated successfully" });
     } catch (err) {
-        console.error("Error updating profile:", err);
+        console.error("❌ Error updating profile:", err);
         res.status(500).json({ error: "An error occurred while updating the profile." });
     }
 });
-
 
 // Get User Profile Route
 // Get User Profile Route
