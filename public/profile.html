@@ -262,12 +262,14 @@ function fetchUserProfile() {
         });
 
         saveBtn.addEventListener("click", async () => {
-            const formData = {
-                name: document.getElementById("name").value.trim(),
-                college: document.getElementById("college").value.trim(),
-                year: document.getElementById("year").value.trim(),
-                accommodation: document.getElementById("accommodation").value.trim(),
-            };
+const formData = {
+    name: document.getElementById("name").value.trim(),
+    college: document.getElementById("college").value.trim(),
+    year: document.getElementById("year").value.trim(),
+    accommodation: document.getElementById("accommodation").value.trim(),
+    phone: document.getElementById("phone").value.trim(), // Add this
+};
+
 
             try {
                 const response = await fetch("/api/user/update-profile", {
