@@ -9,19 +9,19 @@ const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 // Modify the existing update-profile route to handle POST requests
 router.post("/update-profile", async (req, res, next) => {
     try {
-        const { name, college, year, accommodation } = req.body;
+        const { name, college, year, accommodation, phone } = req.body;
         const userId = req.user.userId;
 
-        if (!name || !college || !year || !accommodation) {
+        if (!name || !college || !year || !accommodation || !phone) {
             return res.status(400).json({ error: "All fields are required!" });
         }
 
         // Log the query for debugging
-        const sqlQuery = `UPDATE users SET name = ?, college = ?, year = ?, accommodation = ? WHERE id = ?`;
+        const sqlQuery = `UPDATE users SET name = ?, college = ?, year = ?, accommodation = ?, phone = ? WHERE id = ?`;
         console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
         
         // Database query to update profile
-        const results = await db.query(sqlQuery, [name, college, year, accommodation, userId]);
+        const results = await db.query(sqlQuery, [name, college, year, accommodation, phone, userId]);
 
         if (results.affectedRows === 0) {
             return res.status(400).json({ error: "Failed to update profile. Please try again." });
@@ -33,6 +33,7 @@ router.post("/update-profile", async (req, res, next) => {
         res.status(500).json({ error: "An error occurred while updating the profile." });
     }
 });
+
 
 // Get User Profile Route
 // Get User Profile Route
