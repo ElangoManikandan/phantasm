@@ -91,6 +91,10 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required pattern="[0-9]{10}">
+            </div>
+            <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
             </div>
@@ -142,6 +146,13 @@
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault(); // Prevent default form submission
+
+            // Validate phone number (ensure it's exactly 10 digits)
+            const phoneInput = document.getElementById('phone');
+            if (!/^\d{10}$/.test(phoneInput.value)) {
+                alert("Please enter a valid 10-digit phone number.");
+                return;
+            }
 
             // If role is admin, ensure admin_key is not empty
             if (roleSelect.value === 'admin' && !adminKeyInput.value) {
