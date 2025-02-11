@@ -6,39 +6,43 @@ import { requireAuth } from "./middleware.js";
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 
-// Modify the existing update-profile route to handle POST requests
 router.post("/update-profile", async (req, res, next) => {
     try {
         const { name, college, year, accommodation, phone } = req.body;
-        const userId = req.user.userId;
-
-        console.log("📩 Received update request:", { name, college, year, accommodation, phone, userId });
+        const userId = req.user?.userId; // ✅ Get from middleware, not body
 
         if (!userId) {
-            return res.status(401).json({ error: "Unauthorized. User ID is missing." });
+            console.error("❌ Error: User ID is undefined!");
+            return res.status(401).json({ error: "Unauthorized: User ID is missing." });
         }
-        
+
         if (!name || !college || !year || !accommodation || !phone) {
+            console.error("❌ Error: Missing fields!", req.body);
             return res.status(400).json({ error: "All fields are required!" });
         }
 
-        const sqlQuery = `UPDATE users SET name = ?, college = ?, year = ?, accommodation = ?, phone = ? WHERE id = ?`;
-        console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
+        // Log for debugging
+        console.log(`🛠 SQL Query: UPDATE users SET name=?, college=?, year=?, accommodation=?, phone=? WHERE id=?`);
+        console.log("📝 Values:", [name, college, year, accommodation, phone, userId]);
 
-        const results = await db.query(sqlQuery, [name, college, year, accommodation, phone, userId]);
-        
-        console.log("📌 Query execution result:", results);
+        // Execute query
+        const [results] = await db.execute(
+            "UPDATE users SET name = ?, college = ?, year = ?, accommodation = ?, phone = ? WHERE id = ?",
+            [name, college, year, accommodation, phone, userId]
+        );
 
         if (results.affectedRows === 0) {
-            return res.status(400).json({ error: "Failed to update profile. Please try again." });
+            console.error("⚠️ No rows updated! Check if user exists.");
+            return res.status(400).json({ error: "Profile update failed." });
         }
 
         res.json({ message: "Profile updated successfully" });
     } catch (err) {
-        console.error("❌ Error updating profile:", err);
+        console.error("❌ Server Error:", err);
         res.status(500).json({ error: "An error occurred while updating the profile." });
     }
 });
+
 
 // Get User Profile Route
 // Get User Profile Route
