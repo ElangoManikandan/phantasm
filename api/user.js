@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 router.post("/update-profile", async (req, res, next) => {
     try {
         const { name, college, year, accommodation, phone } = req.body;
-        const userId = req.user?.userId; // ✅ Get from middleware, not body
+        const userId = req.user?.id; // ✅ Get from middleware, not body
 
         if (!userId) {
             console.error("❌ Error: User ID is undefined!");
