@@ -54,8 +54,8 @@ router.get("/get-profile", async (req, res, next) => {
         const userId = parseInt(req.user.userId, 10);
         console.log("🔍 Fetching profile for userId:", userId);
 
-        // SQL query to fetch user data including qr_code_id
-        const sqlQuery = "SELECT id, name, college, year, accommodation, role, qr_code_id FROM users WHERE id = ?";
+        // SQL query to fetch user data including qr_code_id and phone
+        const sqlQuery = "SELECT id, name, college, year, accommodation, role, phone, qr_code_id FROM users WHERE id = ?";
         console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
 
         // Execute query
@@ -87,6 +87,7 @@ router.get("/get-profile", async (req, res, next) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 
 // Route to get user profile information
