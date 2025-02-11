@@ -281,9 +281,11 @@ const formData = {
                 
                 if (!response.ok) throw new Error("Failed to update profile");
                 
-                Object.keys(formData).forEach(key => {
-                    document.getElementById(`profile-${key}`).textContent = formData[key] || "N/A";
-                });
+        Object.entries(formData).forEach(([key, value]) => {
+            const profileField = document.getElementById(`profile-${key}`);
+            if (profileField) profileField.textContent = value || "N/A";
+        });
+
                 
                 profileInfo.style.display = "block";
                 editProfile.style.display = "none";
