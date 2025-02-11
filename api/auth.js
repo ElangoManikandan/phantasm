@@ -51,37 +51,31 @@ router.post('/forgot-password', async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error, please try again later.' });
     }
 });
-const router = express.Router();
+router.post('/reset-password', async (req, res) => {
+    const { email, resetToken, newPassword } = req.body;
 
-// Temporary store for reset tokens (use a database in production)
-const resetTokens = {};
-
-/**
- * 📌 Reset Password Route - Updates user's password
- */
-router.post("/reset-password", async (req, res) => {
     try {
-        const { email, newPassword, resetToken } = req.body;
+        // Verify user & token
+        const [user] = await db.query('SELECT * FROM users WHERE email = ? AND reset_token = ?', [email, resetToken]);
 
-        // Validate reset token
-        if (!resetTokens[email] || resetTokens[email] !== resetToken) {
-            return res.status(400).json({ success: false, message: "Invalid or expired token." });
+        if (user.length === 0) {
+            return res.json({ success: false, message: 'Invalid token or email.' });
         }
 
-        // Hash new password
+        // Check if token is expired
+        if (Date.now() > user[0].reset_expires) {
+            return res.json({ success: false, message: 'Token expired, request a new one.' });
+        }
+
+        // Hash new password and update DB
         const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await db.query('UPDATE users SET password = ?, reset_token = NULL, reset_expires = NULL WHERE email = ?', [hashedPassword, email]);
 
-        // Update password in the database
-        await db.execute("UPDATE users SET password = ? WHERE email = ?", [hashedPassword, email]);
-
-        // Delete token after use
-        delete resetTokens[email];
-
-        return res.json({ success: true, message: "Password reset successfully!" });
+        res.json({ success: true, message: 'Password successfully reset. You can now log in.' });
 
     } catch (error) {
-        console.error("Error resetting password:", error);
-        return res.status(500).json({ success: false, message: "Server error. Try again later." });
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server error, please try again later.' });
     }
 });
 const requireAdmin = (req, res, next) => {
