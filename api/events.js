@@ -42,7 +42,7 @@ router.post("/register", requireAuth, async (req, res) => {
         const [user] = await db.query("SELECT name, email FROM users WHERE id = ?", [userId]);
 
         // Send confirmation email
-        await sendRegistrationEmail(user[0].name, user[0].email, eventExists[0]);
+ await sendRegistrationEmail(user[0].name, user[0].email, user[0].qr_code_id, eventExists[0]);
 
         return res.status(201).json({ message: "Event registration successful!" });
 
