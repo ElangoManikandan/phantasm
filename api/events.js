@@ -5,8 +5,6 @@ const router = express.Router();
 import nodemailer from "nodemailer";
 
 
-const nodemailer = require("nodemailer");
-
 router.post("/register", requireAuth, async (req, res) => {
     console.log("User data in request:", req.user); // Debugging user session
     const { eventId } = req.body;
