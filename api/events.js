@@ -4,14 +4,13 @@ import { requireAuth } from "./middleware.js"; // Correct import of requireAuth
 const router = express.Router();
 import nodemailer from "nodemailer";
 
-
 router.post("/register", requireAuth, async (req, res) => {
     console.log("User data in request:", req.user); // Debugging user session
     const { eventId } = req.body;
     const userId = req.user?.userId;
 
     if (!userId) {      
-        return res.status(401).json({ error: "Unauthorized:" });
+        return res.status(401).json({ error: "Unauthorized" });
     }
 
     if (!eventId) {
@@ -39,10 +38,16 @@ router.post("/register", requireAuth, async (req, res) => {
         await db.query("INSERT INTO registrations (user_id, event_id) VALUES (?, ?)", [userId, eventId]);
 
         // Fetch user details
-        const [user] = await db.query("SELECT name, email FROM users WHERE id = ?", [userId]);
+        const [user] = await db.query("SELECT name, email, qr_code_id FROM users WHERE id = ?", [userId]);
 
-        // Send confirmation email
- await sendRegistrationEmail(user[0].name, user[0].email, user[0].qr_code_id, eventExists[0]);
+        // ✅ Handle case where no user is found
+        if (user.length === 0) {
+            console.error("Error: User not found in database.");
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        // Send confirmation email (Pass userId explicitly)
+        await sendRegistrationEmail(user[0].name, user[0].email, userId, eventExists[0]);
 
         return res.status(201).json({ message: "Event registration successful!" });
 
@@ -52,7 +57,7 @@ router.post("/register", requireAuth, async (req, res) => {
     }
 });
 
-async function sendRegistrationEmail(name, email, event) {
+async function sendRegistrationEmail(name, email, userId, event) {
     const transporter = nodemailer.createTransport({
         service: "Gmail",
         auth: {
@@ -65,21 +70,20 @@ async function sendRegistrationEmail(name, email, event) {
         from: process.env.EMAIL_USER,
         to: email,
         subject: `You're Officially Registered! 🎉 – ${event.name}`,
-    html: `
-        <p>Dear ${name},</p>
-        <p>We’re excited to welcome you to <strong>${event.name}</strong> on <strong>${event.date}</strong> at <strong>${event.venue}</strong>! Your registration has been confirmed, and we can’t wait to see you there.</p>
-        <h3>✅ Your Registration Details:</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Event Registered:</strong> ${event.name}</p>
-        <p><strong>user ID:</strong> ${userId}</p>
-        <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
-        <p>Got questions? Feel free to reach out at [Contact Email/Phone]. Stay updated by visiting [Website URL].</p>
-        <p>See you soon!</p>
-        <p><strong>Best Regards,</strong></p>
-        <p>[Symposium Team]</p>
-    `,
-};
-
+        html: `
+            <p>Dear ${name},</p>
+            <p>We’re excited to welcome you to <strong>${event.name}</strong> on <strong>${event.date}</strong> at <strong>${event.venue}</strong>! Your registration has been confirmed, and we can’t wait to see you there.</p>
+            <h3>✅ Your Registration Details:</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Event Registered:</strong> ${event.name}</p>
+            <p><strong>User ID:</strong> ${userId}</p>
+            <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
+            <p>Got questions? Feel free to reach out at [Contact Email/Phone]. Stay updated by visiting [Website URL].</p>
+            <p>See you soon!</p>
+            <p><strong>Best Regards,</strong></p>
+            <p>[Symposium Team]</p>
+        `,
+    };
 
     await transporter.sendMail(mailOptions);
 }
