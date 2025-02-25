@@ -65,19 +65,21 @@ async function sendRegistrationEmail(name, email, event) {
         from: process.env.EMAIL_USER,
         to: email,
         subject: `You're Officially Registered! 🎉 – ${event.name}`,
-        html: `
-            <p>Dear ${name},</p>
-            <p>We’re excited to welcome you to <strong>${event.name}</strong> on <strong>${event.date}</strong> at <strong>${event.venue}</strong>! Your registration has been confirmed, and we can’t wait to see you there.</p>
-            <h3>✅ Your Registration Details:</h3>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Event Registered:</strong> ${event.name}</p>
-            <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
-            <p>Got questions? Feel free to reach out at [Contact Email/Phone]. Stay updated by visiting www.phantasm2k25.vercel.app.</p>
-            <p>See you soon!</p>
-            <p><strong>Best Regards,</strong></p>
-            <p>[Symposium Team]</p>
-        `,
-    };
+    html: `
+        <p>Dear ${name},</p>
+        <p>We’re excited to welcome you to <strong>${event.name}</strong> on <strong>${event.date}</strong> at <strong>${event.venue}</strong>! Your registration has been confirmed, and we can’t wait to see you there.</p>
+        <h3>✅ Your Registration Details:</h3>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Event Registered:</strong> ${event.name}</p>
+        <p><strong>user ID:</strong> ${qrCodeId}</p>
+        <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
+        <p>Got questions? Feel free to reach out at [Contact Email/Phone]. Stay updated by visiting [Website URL].</p>
+        <p>See you soon!</p>
+        <p><strong>Best Regards,</strong></p>
+        <p>[Symposium Team]</p>
+    `,
+};
+
 
     await transporter.sendMail(mailOptions);
 }
