@@ -71,7 +71,7 @@ async function sendRegistrationEmail(name, email, event) {
         <h3>✅ Your Registration Details:</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Event Registered:</strong> ${event.name}</p>
-        <p><strong>user ID:</strong> ${qrCodeId}</p>
+        <p><strong>user ID:</strong> ${userId}</p>
         <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
         <p>Got questions? Feel free to reach out at [Contact Email/Phone]. Stay updated by visiting [Website URL].</p>
         <p>See you soon!</p>
