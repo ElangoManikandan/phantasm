@@ -95,7 +95,6 @@ const queryDatabase = async (query, values) => {
     }
 };
 // **User Registration**
-const nodemailer = require("nodemailer");
 
 router.post("/register", async (req, res) => {
     try {
