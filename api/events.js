@@ -3,7 +3,6 @@ import db from "../utils/db.js";
 import { requireAuth } from "./middleware.js"; // Correct import of requireAuth
 const router = express.Router();
 import nodemailer from "nodemailer";
-
 router.post("/register", requireAuth, async (req, res) => {
     console.log("User data in request:", req.user); // Debugging user session
     const { eventId } = req.body;
@@ -46,8 +45,8 @@ router.post("/register", requireAuth, async (req, res) => {
             return res.status(404).json({ error: "User not found!" });
         }
 
-        // Send confirmation email (Pass userId explicitly)
-        await sendRegistrationEmail(user[0].name, user[0].email, userId, eventExists[0]);
+        // Send confirmation email (Pass qr_code_id instead of userId)
+        await sendRegistrationEmail(user[0].name, user[0].email, user[0].qr_code_id, eventExists[0]);
 
         return res.status(201).json({ message: "Event registration successful!" });
 
@@ -57,7 +56,7 @@ router.post("/register", requireAuth, async (req, res) => {
     }
 });
 
-async function sendRegistrationEmail(name, email, userId, event) {
+async function sendRegistrationEmail(name, email, qrCodeId, event) {
     const transporter = nodemailer.createTransport({
         service: "Gmail",
         auth: {
@@ -76,7 +75,7 @@ async function sendRegistrationEmail(name, email, userId, event) {
             <h3>✅ Your Registration Details:</h3>
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Event Registered:</strong> ${event.name}</p>
-            <p><strong>User ID:</strong> ${userId}</p>
+            <p><strong>QR Code ID:</strong> ${qrCodeId}</p>
             <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
             <p>Got questions? Feel free to reach out at [Contact Email/Phone]. Stay updated by visiting [Website URL].</p>
             <p>See you soon!</p>
