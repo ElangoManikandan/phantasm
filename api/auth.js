@@ -140,30 +140,6 @@ router.post("/register", async (req, res) => {
         // Generate JWT Token
         const token = jwt.sign({ email, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        // Send confirmation email
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: "You're Officially Registered! 🎉 – Symposium",
-            text: `Dear ${name},\n\nWe’re excited to welcome you to the symposium! Your registration has been confirmed.\n\n✅ Your Registration Details:\n\nName: ${name}\nRegistration ID: ${qrCodeId}\nEvent(s) Registered: [List of Events]\n\nWe’ve attached the symposium poster with all the details—make sure to check it out!\n\nGot questions? Feel free to reach out.\n\nBest Regards, Symposium Team.`
-        };
-
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error("Email Sending Error:", error);
-            } else {
-                console.log("Email sent:", info.response);
-            }
-        });
-
         res.status(201).json({
             message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
             token,
