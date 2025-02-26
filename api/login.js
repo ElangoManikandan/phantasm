@@ -1,47 +1,68 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import  db  from "../utils/db.js"; // Assuming this is your database connection
+import db from "../utils/db.js";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error("Missing JWT_SECRET in environment variables");
+}
 
 const router = express.Router();
+router.use(cookieParser()); // Enable cookie parsing
 
+// Login route
 router.post("/", async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email and password are required" });
+    }
+
     try {
-        const { email, password } = req.body;
+        // Query to find user by email
+        const [rows] = await db.execute('SELECT id, email, password, role FROM users WHERE email = ?', [email]);
 
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email and password are required" });
-        }
-
-        // ✅ Check if user exists in the database
-        const [user] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-
-        if (!user) {
+        if (!rows || rows.length === 0) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        // ✅ Compare password with hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const user = rows[0]; // Extract user object
 
-        if (!isPasswordValid) {
+        if (!user.password) {
+            console.error('Database issue: Password column is missing or null.');
+            return res.status(500).json({ error: "Internal error: Password missing" });
+        }
+
+        // Compare password with stored hash
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        // ✅ Generate JWT token
+        // ✅ Generate JWT token WITH `role`
         const token = jwt.sign(
             { userId: user.id, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "2h" }
+            JWT_SECRET,
+            { expiresIn: '1h' }
         );
 
-        console.log("✅ Login successful. Token generated.");
+        // Set the token in a cookie
+        res.cookie("authToken", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // Ensure it’s secure in production
+            sameSite: "Strict", // For security against CSRF
+            maxAge: 60 * 60 * 1000, // Token expiration time (1 hour in ms)
+        });
 
-        // ✅ Send response with token and role
-        res.json({ token, role: user.role });
-
-    } catch (error) {
-        console.error("❌ Login error:", error);
-        res.status(500).json({ error: "Server error. Please try again." });
+        return res.json({ message: "Logged in successfully", role: user.role }); // Return role for frontend handling
+    } catch (err) {
+        console.error('Error in login:', err);
+        return res.status(500).json({ error: "Internal server error" });
     }
 });
 
