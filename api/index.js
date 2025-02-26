@@ -17,17 +17,20 @@ const port = process.env.PORT || 3000;
 app.use(cookieParser()); // ✅ Parse cookies before handling requests
 
 const allowedOrigins = [
-    "https://phantasm2025.vercel.app",
-    "https://phantasm2025-3s07ifyxj-elangos-projects-6b0f607b.vercel.app"
+    "https://phantasm2025.vercel.app", // ✅ Main production domain
 ];
+
+// Allow all Vercel preview deployments dynamically
+const vercelRegex = /^https:\/\/phantasm2025-[a-z0-9-]+-elangos-projects-[a-z0-9]+\.vercel\.app$/;
 
 app.use(cors({
     origin: function (origin, callback) {
-        console.log("Origin:", origin); // 🔍 Debug: Check incoming origin
-        if (!origin || allowedOrigins.includes(origin)) {
+        console.log("Incoming Origin:", origin || "No Origin"); // 🔍 Debugging log
+
+        if (!origin || allowedOrigins.includes(origin) || vercelRegex.test(origin)) {
             callback(null, true);
         } else {
-            console.error("❌ CORS Blocked:", origin); // 🔴 Debug log
+            console.error("❌ CORS Blocked:", origin); // 🔴 Log blocked origins
             callback(new Error("Not allowed by CORS"));
         }
     },
@@ -35,6 +38,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
+
 
 
 // ✅ Parse JSON request bodies
