@@ -2,10 +2,14 @@ import jwt from "jsonwebtoken";
 import express from "express";
 
 export const requireAuth = (req, res, next) => {
-    console.log("🚀 [Middleware] requireAuth Executing...");
+    console.log("\n🚀 [Middleware] requireAuth Executing...");
 
+    console.log("🔍 Incoming Headers:", req.headers);
+    console.log("🔍 Incoming Cookies:", req.cookies);
+    
     // Extract token from cookies or Authorization header
     let token = req.cookies?.authToken || req.headers.authorization?.split(" ")[1];
+    console.log("🔍 Extracted Token:", token ? "[Token Present]" : "[No Token]");
 
     if (!token) {
         console.error("❌ No token found in request");
@@ -35,7 +39,9 @@ export const requireAuth = (req, res, next) => {
 };
 
 export const requireAdmin = (req, res, next) => {
-    console.log("🚀 [Middleware] requireAdmin Executing...");
+    console.log("\n🚀 [Middleware] requireAdmin Executing...");
+
+    console.log("🔍 User Object in Request:", req.user);
 
     if (!req.user) {
         console.error("❌ No user in request. `requireAuth` might have failed.");
