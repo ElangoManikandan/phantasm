@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 export const requireAuth = (req, res, next) => {
     console.log("\n🚀 [Middleware] requireAuth Executing...");
 
-    // ✅ Extract token from Authorization header (Since cookies are not used)
+    // ✅ Extract token from Authorization header
     let token = req.headers.authorization?.split(" ")[1];
     console.log("🔍 Extracted Token:", token ? "[Token Present]" : "[No Token]");
 
@@ -41,6 +41,7 @@ export const requireAuth = (req, res, next) => {
         return res.status(403).json({ error: "Authentication failed." });
     }
 };
+
 
 export const requireAdmin = (req, res, next) => {
     console.log("\n🚀 [Middleware] requireAdmin Executing...");
