@@ -2,13 +2,15 @@ import jwt from "jsonwebtoken";
 
 export const requireAuth = (req, res, next) => {
     console.log("\n🚀 [Middleware] requireAuth Executing...");
+    console.log(`📌 [Route]: ${req.method} ${req.originalUrl}`);
+    console.log(`🌍 [Origin]: ${req.headers.origin || "[No Origin]"}`);
 
     // ✅ Extract token from Authorization header
     let token = req.headers.authorization?.split(" ")[1];
     console.log("🔍 Extracted Token:", token ? "[Token Present]" : "[No Token]");
 
     if (!token || token === "null" || token === "undefined") {
-        console.error("❌ No valid token found in request");
+        console.error(`❌ No valid token found in request for ${req.method} ${req.originalUrl}`);
         return res.status(401).json({ error: "Authentication required" });
     }
 
@@ -29,7 +31,7 @@ export const requireAuth = (req, res, next) => {
 
         next();
     } catch (err) {
-        console.error("❌ JWT Verification Failed:", err.message);
+        console.error(`❌ JWT Verification Failed for ${req.method} ${req.originalUrl}:`, err.message);
 
         // ✅ Distinguish error types
         if (err.name === "TokenExpiredError") {
@@ -41,6 +43,7 @@ export const requireAuth = (req, res, next) => {
         return res.status(403).json({ error: "Authentication failed." });
     }
 };
+
 
 
 export const requireAdmin = (req, res, next) => {
