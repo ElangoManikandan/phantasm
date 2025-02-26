@@ -16,18 +16,29 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use(cookieParser()); // ✅ Parse cookies before handling requests
 
-// Enable CORS globally (Adjust origin if needed)
+// ✅ Allow multiple frontend origins
+const allowedOrigins = [
+    "https://phantasm2025-3s07ifyxj-elangos-projects-6b0f607b.vercel.app",
+    "https://phantasm2025.vercel.app"
+];
+
 app.use(cors({
-    origin: 'https://phantasm2025-3s07ifyxj-elangos-projects-6b0f607b.vercel.app',  // Replace with your frontend URL
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials:true
+    credentials: true
 }));
 
-// ✅ Use express.json() to parse JSON request bodies
+// ✅ Parse JSON request bodies
 app.use(express.json()); 
 
-// ✅ Optional: Use bodyParser.urlencoded() for form data
+// ✅ Optional: Parse form data
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static frontend files
@@ -35,13 +46,13 @@ const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "public")));
 
 // Define routes
-// Example usage for admin routes
 app.use("/api/admin", requireAuth, adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use("/api/events", requireAuth, eventsRoutes);
 app.use("/api/login", loginRoutes);  
-app.use("/api/user", requireAuth, userRouter);// Use user routes for '/api/user'
-// Test database route
+app.use("/api/user", requireAuth, userRouter);
+
+// ✅ Test database connection
 app.get("/test-db", async (req, res) => {
     const userId = 1;
 
@@ -73,9 +84,6 @@ app.get("/test-db", async (req, res) => {
         res.status(500).json({ error: "Database error!" });
     }
 });
-
-console.log("🔍 Checking Database Connection State:", db);
-
 
 // Serve index.html for root
 app.get("/", (req, res) => {
