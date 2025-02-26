@@ -18,7 +18,7 @@ app.use(cookieParser()); // ✅ Parse cookies before handling requests
 
 // Enable CORS globally (Adjust origin if needed)
 app.use(cors({
-    origin: 'https://phantasm-rust.vercel.app',  // Replace with your frontend URL
+    origin: 'https://phantasm2025-3s07ifyxj-elangos-projects-6b0f607b.vercel.app',  // Replace with your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials:true
