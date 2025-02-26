@@ -44,9 +44,9 @@ router.post("/", async (req, res) => {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        // ✅ FIX: Generate JWT token WITH `role`
+        // ✅ Generate JWT token WITH `role`
         const token = jwt.sign(
-            { userId: user.id, role: user.role }, // 👀 Include `role`
+            { userId: user.id, role: user.role },
             JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -59,8 +59,7 @@ router.post("/", async (req, res) => {
             maxAge: 60 * 60 * 1000, // Token expiration time (1 hour in ms)
         });
 
-        return res.json({ message: "Logged in successfully", role: user.role }); // 👀 Return role for debugging
-
+        return res.json({ message: "Logged in successfully", role: user.role }); // Return role for frontend handling
     } catch (err) {
         console.error('Error in login:', err);
         return res.status(500).json({ error: "Internal server error" });
