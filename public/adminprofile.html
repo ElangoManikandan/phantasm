@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #eef2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #222;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.profile-section, .attendance-section {
+    margin-bottom: 30px;
+}
+
+/* Scanner Section Styling */
+.scanner-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* The wrapper for the QR scanner */
+#scanner-container {
+    width: 250px;         /* Small container width */
+    height: 250px;        /* Small container height */
+    margin: 20px auto;    /* Center the container horizontally */
+    position: relative;   /* For positioning the video inside the container */
+    border: 2px solid #007BFF;   /* Blue border for the container */
+    border-radius: 12px;  /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+    overflow: hidden;     /* Hide overflow from video */
+    background-color: #ffffff; /* White background for the container */
+}
+
+/* The video element inside the scanner container */
+#qrVideo {
+            margin: 20px auto;
+            width: 320px;
+            height: 240px;
+            border: 2px solid #007bff;
+            border-radius: 8px; /* For debugging the video area */
+}
+
+/* Toggled state for the video */
+#qrVideo.toggled {
+            margin: 20px auto;
+            width: 320px;
+            height: 240px;
+            border: 2px solid #007bff;
+            border-radius: 8px;    /* Center the video inside the container */
+}
+
+#qrCanvas {
+    display: none;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background-color: #fdfdfd;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+td {
+    color: #555;
+}
+
+/* Button Styling */
+.btn {
+    display: inline-block;
+    padding: 12px 18px;
+    color: white;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
+}
+
+.btn:active {
+    background-color: #004085;
+    transform: scale(1);
+}
+
+/* Manual Attendance Marking Section */
+.manual-input {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.manual-input input,
+.manual-input select {
+    padding: 10px;
+    margin: 10px 5px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    width: 250px;
+    font-size: 14px;
+}
+
+.manual-input button {
+    padding: 12px 18px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.manual-input button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.manual-input button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.8);
+}
+
+.manual-input button:active {
+    background-color: #004085;
+    transform: scale(1);
+}
+
+.button-container112 {
+    display: flex;
+    justify-content: center;  /* Centers the button horizontally */
+    align-items: center;      /* Centers the button vertically */
+    width: 100%;              /* Ensures full width */
+    margin-top: 20px;         /* Space above the button */
+}
+
+/* Scanner Toggle Button */
+#toggleScannerBtn {
+    margin-top: 15px;
+    padding: 12px 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#toggleScannerBtn:hover {
+    background-color: #0056b3;
+}
+
+/* Attendance Status Text */
+#scanStatus {
+    margin-top: 10px;
+    font-size: 14px;
+    color: green;
+}
+
+/* Logout Section */
+.logout {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Loading Text */
+.loading-text {
+    text-align: center;
+    font-size: 16px;
+    color: #007bff;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Profile</h1>
+
+        <div class="profile-section">
+            <h2>Admin Details</h2>
+            <table>
+                <tr><th>Name</th><td id="adminName">Loading...</td></tr>
+                <tr><th>Email</th><td id="adminEmail">Loading...</td></tr>
+                <tr><th>College</th><td id="adminCollege">Loading...</td></tr>
+            </table>
+        </div>
+
+<div class="scanner-section">
+    <h2>Scan QR Code to Mark Attendance</h2>
+
+   <video id="qrVideo" autoplay></video>
+    <canvas id="qrCanvas" hidden></canvas>
+    <p id="scanStatus">Scanner is off.</p>
+</div>
+    <div class="button-container112">
+    <button id="toggleScannerBtn" onclick="toggleScanner()">Toggle QR Scanner</button>
+</div>
+        <div class="manual-input">
+            <h3>Manual Attendance Marking</h3>
+            <input type="text" id="manualQrCode" placeholder="Enter QR Code ID">
+             <select id="manualEventId" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; width: 100%; max-width: 400px;">
+        <option value="" disabled selected>Select Event</option>
+        <!-- Options will be populated dynamically -->
+    </select>
+            <button id="manualAttendanceBtn">Mark Attendance</button>
+        </div>
+
+        <div class="attendance-section">
+            <h2>Attendance Details</h2>
+            <table>
+                <thead>
+                    <tr><th>Event Name</th><th>Participant Name</th><th>Attendance Status</th><th>Marked At</th></tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                    <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+<a href="/api/logout" class="btn" onclick="return confirmLogout()">Logout</a>
+<script>
+function confirmLogout() {
+    return confirm("Are you sure you want to log out?");
+}
+</script>
+
+    </div>
+<script>
+const qrVideo = document.getElementById("qrVideo");
+const qrCanvas = document.getElementById("qrCanvas");
+const qrCanvasContext = qrCanvas.getContext("2d");
+const scanStatus = document.getElementById("scanStatus");
+const toggleScannerBtn = document.getElementById("toggleScannerBtn");
+
+let lastScannedCode = null; // Avoid duplicate scans
+let scannerStream = null;
+let isScannerOn = false;
+
+// Start QR Scanner
+async function startScanner() {
+    try {
+        console.log("Starting camera...");
+        scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        qrVideo.srcObject = scannerStream;
+        qrVideo.hidden = false;
+        qrVideo.classList.add("scanner");
+        qrVideo.classList.remove("toggled");
+
+        console.log("Video stream started successfully.");
+        scanStatus.textContent = "Scanner is on. Scanning...";
+        scanStatus.style.color = "green";
+
+        qrVideo.addEventListener("play", () => {
+            qrCanvas.width = qrVideo.videoWidth;
+            qrCanvas.height = qrVideo.videoHeight;
+            scanQRCode();
+        });
+    } catch (error) {
+        console.error("Error accessing camera:", error);
+        scanStatus.textContent = "Error accessing camera: " + error.message;
+        scanStatus.style.color = "red";
+    }
+}
+
+// Stop QR Scanner
+function stopScanner() {
+    if (scannerStream) {
+        scannerStream.getTracks().forEach(track => track.stop());
+        scannerStream = null;
+    }
+    qrVideo.hidden = true;
+    qrVideo.classList.remove("scanner");
+    qrVideo.classList.add("toggled");
+    scanStatus.textContent = "Scanner is off.";
+    scanStatus.style.color = "black";
+}
+
+// Toggle Scanner
+function toggleScanner() {
+    if (isScannerOn) {
+        stopScanner();
+        toggleScannerBtn.textContent = "Turn On Scanner";
+    } else {
+        startScanner();
+        toggleScannerBtn.textContent = "Turn Off Scanner";
+    }
+    isScannerOn = !isScannerOn;
+}
+
+// Scan QR Code
+function scanQRCode() {
+    if (!isScannerOn) return;
+
+    if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA) {
+        qrCanvasContext.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
+        const imageData = qrCanvasContext.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+        const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
+
+        if (qrCode && qrCode.data !== lastScannedCode) {
+            lastScannedCode = qrCode.data;
+            console.log("QR Code detected:", qrCode.data);
+
+            const event_id = prompt("Enter Event ID to mark attendance:");
+            if (event_id) markAttendance(qrCode.data, event_id);
+        }
+    }
+    requestAnimationFrame(scanQRCode); // Keep scanning
+}
+
+
+// Mark Attendance (QR Scanner)
+async function markAttendance(qr_code_id, event_id) {
+    try {
+        scanStatus.textContent = "Marking attendance...";
+        scanStatus.style.color = "black";
+
+        const response = await fetch("/api/admin/mark-attendance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ qr_code_id, event_id }),
+            credentials: "include"
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("Attendance marked successfully!");
+            scanStatus.textContent = "Attendance marked successfully.";
+            scanStatus.style.color = "green";
+            fetchAttendanceDetails();
+        } else {
+            throw new Error(result.message || "Failed to mark attendance.");
+        }
+    } catch (error) {
+        console.error("Error marking attendance:", error);
+        scanStatus.textContent = `Error: ${error.message}`;
+        scanStatus.style.color = "red";
+    } finally {
+        lastScannedCode = null; // Reset for next scan
+    }
+}
+
+// Manual Attendance Marking
+function markAttendanceManually() {
+    const qr_code_id = document.getElementById("manualQrCode").value.trim();
+    const event_id = document.getElementById("manualEventId").value.trim();
+    
+    if (!qr_code_id || !event_id) {
+        alert("Please provide both QR Code ID and Event ID.");
+        return;
+    }
+
+    markAttendance(qr_code_id, event_id);
+}
+
+// Fetch Attendance Details
+async function fetchAttendanceDetails() {
+    try {
+        const response = await fetch("/api/admin/attendance", { credentials: "include" });
+
+        if (!response.ok) throw new Error("Failed to fetch attendance records.");
+
+        const result = await response.json();
+        const data = result.data;
+
+        if (!Array.isArray(data)) {
+            console.error("Unexpected data format:", data);
+            return;
+        }
+
+        const tableBody = document.getElementById("attendanceTableBody");
+        tableBody.innerHTML = ""; // Clear existing table content
+
+        if (data.length === 0) {
+            tableBody.innerHTML = `
+                <tr><td colspan="4" style="text-align: center;">No attendance records found.</td></tr>
+            `;
+            return;
+        }
+
+        // Populate table dynamically
+        data.forEach(record => {
+            const row = document.createElement("tr");
+
+            // Format date correctly
+            let formattedDate = "Invalid Date";
+            if (record.marked_at) {
+                const dateObj = new Date(record.marked_at);
+                formattedDate = isNaN(dateObj.getTime())
+                    ? "Invalid Date"
+                    : dateObj.toLocaleString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                          hour12: true
+                      });
+            }
+
+            row.innerHTML = `
+                <td>${record.event_name || "N/A"}</td>
+                <td>${record.participant_name || "N/A"}</td>
+                <td>${record.attendance_status || "Present"}</td>
+                <td>${formattedDate}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+
+    } catch (error) {
+        console.error("Error fetching attendance details:", error);
+        document.getElementById("attendanceTableBody").innerHTML = `
+            <tr><td colspan="4" style="text-align: center; color: red;">Error loading attendance.</td></tr>
+        `;
+    }
+}
+
+
+
+// Fetch Event Names
+async function fetchEventNames() {
+    try {
+        const response = await fetch("/api/events/get-events");
+        if (!response.ok) throw new Error("Failed to load events.");
+
+        const events = await response.json();
+        const eventSelect = document.getElementById("manualEventId");
+        eventSelect.innerHTML = '<option value="" disabled selected>Select Event</option>';
+
+        events.forEach(event => {
+            const option = document.createElement("option");
+            option.value = event.id;
+            option.textContent = `${event.name} (${event.date} at ${event.time})`;
+            eventSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error fetching events:", error);
+        alert("Error loading events. Please try again.");
+    }
+}
+
+// Fetch Admin Profile
+async function fetchAdminProfile() {
+    try {
+        const response = await fetch("/api/admin/get-admin-profile", { credentials: "include" });
+
+        if (!response.ok) throw new Error("Failed to load admin profile.");
+
+        const data = await response.json();
+        document.getElementById("adminName").textContent = data.name || "N/A";
+        document.getElementById("adminEmail").textContent = data.email || "N/A";
+        document.getElementById("adminCollege").textContent = data.college || "N/A";
+    } catch (error) {
+        console.error("Error fetching admin details:", error);
+    }
+}
+
+// Initialize Components
+document.addEventListener("DOMContentLoaded", () => {
+    fetchAdminProfile();
+    fetchAttendanceDetails();
+    fetchEventNames();
+});
+
+document.getElementById("toggleScannerBtn").addEventListener("click", toggleScanner);
+document.getElementById("manualAttendanceBtn").addEventListener("click", markAttendanceManually);
+
+</script>
+
+</body>
+</html>
