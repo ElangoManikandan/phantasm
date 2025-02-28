@@ -704,7 +704,7 @@ a:hover {
     color: white;
     font-family: Arial, sans-serif;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    height: 150px;
+    height: 400px;
 }
 
 /* Unique Styling for Rules Box */
@@ -717,6 +717,9 @@ a:hover {
 @media (max-width: 768px) {
     .back1 {
         font-size: 15px;
+    }
+       .description-box{
+        height: 150px;
     }
 }
 
