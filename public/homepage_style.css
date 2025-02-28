@@ -90,7 +90,7 @@ body {
 }
 
 .header nav a:hover {
-  color: #000000;
+  color: #059AD2;
 }
 
 .hamburger {  /* Hide the hamburger by default */
@@ -180,7 +180,7 @@ footer p {
 }
 
 footer a {
-  color:white;
+  color:#059AD2;
   text-decoration: none;
 }
 
