@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title >Phantasm'25 </title>
+  <link rel="icon" href="gceblogo.png" type="image/x-icon">
+  <link rel="stylesheet" href="homepage_style.css"> 
+</head>
+<body>
+  <!--<div >
+    <video autoplay loop muted plays-inline class="background-clip">
+      <source src="back.mp4" type="video/mp4" >
+    </video>
+  </div>-->
+  <img src="bg.jpg" class="background-clip">
+  
+  
+    <!--header-->
+    <div class="header">
+      <div class="logo">Phantasm'25</div>
+      <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+          <div></div>
+          <div></div>
+          <div></div>
+      </div>
+      <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+      <nav>
+          <a href="#about">About</a>
+          <a href="events.html">Events</a>
+          <a href="#schedule">Schedule</a>
+          <a href="#contact">Contact</a>
+          <a href="login.html">Login</a>
+      </nav>
+      <div class="side-menu" id="sideMenu">
+  
+          <!-- Example folder-based links -->
+          <a href="pages/about.html">About</a>
+          <a href="events.html">Events</a>
+          <a href="pages/schedule.html">Schedule</a>
+          <a href="pages/contact.html">Contact</a>
+          <a href="login.html">Login</a>
+      </div>
+    </div>
+
+  <div class="preloader">
+    <img src="gceblogo.png" alt="Phantasm '25 Logo">
+    <h2>Welcome to Phantasm'25</h2>
+    <div class="loader">
+      <div class="bar1"></div>
+      <div class="bar2"></div>
+      <div class="bar3"></div>
+      <div class="bar4"></div>
+      <div class="bar5"></div>
+      <div class="bar6"></div>
+      <!-- <div class="circle two"></div>
+      <div class="circle three"></div> -->
+    </div>
+  </div>
+  
+  <!--div class="content">
+    <h2>Phantasm '25</h2>
+    <p>Welcome to the official symposium website! Stay tuned for exciting updates and events.</p>
+  </div-->
+  
+  <script>
+
+    // Set the target date and time for the countdown
+const targetDate = new Date("March 18, 2025 09:00:00").getTime();
+
+// Update the countdown every second
+const countdownInterval = setInterval(() => {
+  // Get the current date and time
+  const now = new Date().getTime();
+
+  // Calculate the time difference between the current date/time and the target date/time
+  const timeDifference = targetDate - now;
+
+  // Calculate days, hours, minutes, and seconds
+  const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+  // Display the calculated time in the HTML elements
+  document.getElementById("days").textContent = days;
+  document.getElementById("hours").textContent = hours;
+  document.getElementById("minutes").textContent = minutes;
+  document.getElementById("seconds").textContent = seconds;
+
+  // Check if the countdown has expired
+  if (timeDifference < 0) {
+    clearInterval(countdownInterval);
+    document.getElementById("timer").innerHTML = "Countdown expired";
+  }
+}, 1000);
+
+    // Simulate loading process
+    window.addEventListener('load', () => {
+      const preloader = document.querySelector('.preloader');
+      const content = document.querySelector('.content');
+  
+      // Add a slight delay for the demo effect
+      setTimeout(() => {
+        preloader.style.opacity = '0';
+        preloader.style.transition = 'opacity 0.5s ease';
+  
+        setTimeout(() => {
+          preloader.style.display = 'none';
+          content.classList.add('loaded');
+        }, 500);
+      }, 2000); // Simulate 2-second loading
+    });
+
+
+    function toggleMenu() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('active');
+    }
+  </script>
+
+
+
+  <div>
+    <section class="hero">
+      <h1>Welcome to Phantasm'25 Symposium</h1>
+      <p>Growth, Commitment, Excellence </p>
+      <p class="flash-symbol" style="font-size: 4rem;
+      font-family: 'Caudex', serif;
+      color: #ffffff;">⚡</p>
+    </section>
+  </div>
+
+  <div id="countdown">
+    <h2>Symposium Begins in...</h2>
+    <div id="timer">
+      <div>
+        <span id="days">0</span>
+        <span>Days</span>
+      </div>
+      <div>
+        <span id="hours">0</span>
+        <span>Hours</span>
+      </div>
+      <div>
+        <span id="minutes">0</span>
+        <span>Minutes</span>
+      </div>
+      <div>
+        <span id="seconds">0</span>
+        <span>Seconds</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="content" id="about">
+    <h2>About Phantasm 25</h2>
+    <p>GCE Bargur, an autonomous institution, is committed to providing quality education in engineering and technology.</p>
+  </section>
+   </div>
+
+
+  
+  </div>
+  <!-- First Section -->
+  <section class="header-section" id="events">
+    <h1>EVENTS</h1>
+    <hr>
+
+    <!-- Events Section -->
+    <div class="container">
+      <div class="grid">
+          <!-- Technical Events -->
+          <div id="box" class="animated-button">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          <div class="card tech-events">
+              <div class="card-content">
+                  <h2>Technical Events</h2>
+                  <ul>
+                      <li>Techtalk 2.0</li>
+                      <li>CodeStorm</li>
+                      <li>Query Quest</li>
+                      <li>Creative Blueprint</li>
+                  </ul>
+                  <a href="#" class="read-more" onclick="redirectToNextPage()">Read More</a>
+
+<script>
+  function redirectToNextPage() {
+    window.location.href = "events.html"; // URL of the next page
+  }
+</script>
+              </div>
+          </div>
+          </div>
+
+          <!-- Non-Technical Events -->
+          <div id="box" class="animated-button">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          <div class="card non-tech-events">
+              <div class="card-content">
+                  <h2>Non-Technical Events</h2>
+                  <ul>
+                      <li>IPL Auction</li>
+                      <li>3X Battle</li>
+                      <li>Free Fire</li>
+                      <li>Mystic Adventure</li>
+                  </ul>
+                  <a href="events.html" class="read-more">Read More</a>
+              </div>
+          </div>
+          </div>
+      </div>
+  </div>
+  </section>
+
+ 
+</div>
+
+<!--footer-->
+<footer>
+  <p>&copy; 2025 CSEA. All rights reserved.</p>
+  <p>Follow us on</p>
+  <p>
+      <a href="#">Instagram</a>, <a href="#">Facebook</a>, and <a href="#">Twitter</a>.
+  </p>
+</footer>
+
+<script>
+  // Function to toggle the side menu
+  function toggleMenu() {
+      const sideMenu = document.getElementById('sideMenu');
+      const hamburger = document.getElementById('hamburger');
+      const closeIcon = document.getElementById('closeIcon');
+
+      // Toggle side menu visibility
+      sideMenu.classList.toggle('open');
+
+      // Toggle visibility of hamburger and close icon
+      if (sideMenu.classList.contains('open')) {
+          hamburger.classList.add('hidden');
+          closeIcon.style.display = 'block';
+      } else {
+          hamburger.classList.remove('hidden');
+          closeIcon.style.display = 'none';
+      }
+  }
+
+
+</script>
+
+
+</body>
+</html>
