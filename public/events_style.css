@@ -1,0 +1,225 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+  /*color: hsl(0, 12%, 79%);*/
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  color: #fff;
+
+  /* Background image 
+    background: none;  Avoid direct background image to use the overlay method */
+}
+
+/* Pseudo-element for the background image */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('bg.jpg');
+  /* Replace with your image path */
+  background-size: cover;
+  /* Ensures the image covers the entire background */
+  background-position: center;
+  /* Centers the image */
+  background-attachment: fixed;
+  /* Keeps the image fixed during scroll */
+  background-repeat: no-repeat;
+  /* Prevents tiling 
+    opacity: 0.5; /* Adjust the opacity (0.1 to 1 for transparency) */
+  z-index: -1;
+  /* Keeps it behind all content */
+}
+
+
+h3 {
+  text-align: center;
+  font-size: 2rem;
+  margin: 0;
+  padding: 1rem;
+  font-weight: 700;
+  /*background:transparent;*/
+  color: white;
+  /* Contrasting white text */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-container {
+  display: flex;
+  /* Set up flexbox for horizontal alignment */
+  flex-wrap: nowrap;
+  /* Prevent wrapping */
+  gap: 25px;
+  /* Space between the cards */
+  overflow-x: scroll;
+  /* Enable horizontal scrolling */
+  padding: 2rem 10px;
+  /* Padding for the container */
+  scroll-snap-type: x mandatory;
+  /* Snap-to-position scrolling */
+  background: transparent;
+
+  /* Hide scrollbar in most browsers */
+  -ms-overflow-style: none;
+  /* For Internet Explorer and Edge */
+  scrollbar-width: none;
+  /* For Firefox */
+}
+
+/* Hide the scrollbar for Webkit browsers (Chrome, Safari, etc.) */
+.scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual card container styling */
+.parent {
+  flex: 0 0 auto;
+  /* Prevent cards from shrinking or growing */
+  width: 300px;
+  /* Fixed width for each card */
+  padding: 20px;
+  perspective: 1000px;
+  /* For 3D effects */
+}
+
+/* Card styling */
+.card {
+  padding-top: 50px;
+  border: 3px solid white;
+  transform-style: preserve-3d;
+  background: linear-gradient(135deg, #0000 18.75%, #3A3A3C 0 31.25%, #0000 0),
+    repeating-linear-gradient(45deg, black -6.25% 6.25%, #373738 0 18.75%);
+  background-size: 60px 60px;
+  background-position: 0 0, 0 0;
+  background-color: black;
+  scroll-snap-align: none;
+  /* Cards snap into place */
+  flex-shrink: 0;
+  /* Prevent shrinking */
+  width: 100%;
+  /* Take full width of the parent container */
+  box-shadow: rgba(142, 142, 142, 0.3) 0px 30px 30px -10px;
+  transition: all 0.3s ease-in-out;
+  /* Smooth transition */
+  transform: scale(1);
+  /* Default size (normal) */
+}
+
+/* Hover effect on the card */
+.card:hover {
+  background-position: -100px 100px, -100px 100px;
+  transform: rotate3d(0.5, 1, 0, 30deg) scale(1.1);
+  /* Enlarge the hovered card */
+}
+
+/* Shrink non-hovered cards when hovering over any card */
+.scroll-container:hover .card:not(:hover) {
+  transform: scale(0.9);
+  /* Shrink non-hovered cards */
+}
+
+/* Content box within the card */
+.content-box {
+  background: #059AD2;
+  padding: 60px 25px 25px 25px;
+  transform-style: preserve-3d;
+}
+
+/* Card title styling */
+.content-box .card-title {
+  display: inline-block;
+  color: white;
+  font-size: 25px;
+  font-weight: 900;
+  transition: all 0.5s ease-in-out;
+  transform: translate3d(0px, 0px, 50px);
+}
+
+.content-box .card-title:hover {
+  transform: translate3d(0px, 0px, 60px);
+}
+
+/* Card content styling */
+.content-box .card-content {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f2f2f2;
+  transition: all 0.5s ease-in-out;
+  transform: translate3d(0px, 0px, 30px);
+}
+
+.content-box .card-content:hover {
+  transform: translate3d(0px, 0px, 60px);
+}
+
+/* 'See More' link styling */
+.content-box .see-more {
+  cursor: pointer;
+  margin-top: 1rem;
+  display: inline-block;
+  font-weight: 900;
+  font-size: 9px;
+  text-transform: uppercase;
+  color: rgb(7, 185, 255);
+  background: white;
+  padding: 0.5rem 0.7rem;
+  transition: all 0.5s ease-in-out;
+  transform: translate3d(0px, 0px, 20px);
+}
+
+.content-box .see-more:hover {
+  transform: translate3d(0px, 0px, 60px);
+}
+
+
+.p_tag {
+  padding-top: 20px;
+}
+
+a {
+  text-decoration: none; /* Removes underline */
+  color: inherit; /* Keeps the text color same as the parent */
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .scroll-container {
+      padding: 1rem 5px;
+      gap: 10px;
+  }
+
+  .parent {
+      width: 250px;
+      padding: 10px;
+  }
+
+  .card {
+      padding-top: 30px;
+      border-width: 2px;
+  }
+
+  .content-box {
+      padding: 40px 15px 15px 15px;
+  }
+
+  .content-box .card-title {
+      font-size: 20px;
+  }
+
+  .content-box .card-content {
+      font-size: 10px;
+  }
+
+  .content-box .see-more {
+      font-size: 8px;
+      padding: 0.4rem 0.6rem;
+  }
+}
+
