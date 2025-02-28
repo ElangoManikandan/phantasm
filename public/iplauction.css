@@ -1,0 +1,721 @@
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Caudex:wght@400&display=swap');
+html {
+    background-image: url("bg.jpg");
+    background-size:cover;
+}
+body {
+    margin: 0;
+    font-family: 'Caudex', serif;
+    color: white;
+    min-height: 100vh;
+    background-repeat: no-repeat;
+    margin: 0;
+}
+
+/*header footer*/
+
+header {
+    position: relative;
+    background: url('1.jpg') no-repeat center center / cover;
+    color: white;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    overflow: hidden;
+}
+footer {
+    position: relative;
+    background: url('1.jpg') no-repeat center center / cover;
+    color: white;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    overflow: hidden;
+}
+header {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1a237e;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between; /* Ensures space between menu and login */
+    align-items: center;
+    box-sizing: border-box;
+}
+
+header .logo {
+    z-index: 2;
+    padding-left: 2em;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+    margin-right: auto; 
+}
+
+header nav {
+    display: flex;
+    gap: 15px;
+    position: relative;
+    z-index: 2;
+    margin-right: 0; /* Remove unwanted margins */
+    padding-right: 30px;
+    justify-content: center; /* Centers nav links */
+    gap: 20px;
+
+     /* Increases spacing between menu items */
+    
+    
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    transition: color 0.3s;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    color: #000000;
+}
+
+.hamburger {
+    display: flex;  /* Hide the hamburger by default */
+    flex-direction: column;
+    cursor: pointer;
+    z-index: 3;
+    position: relative;
+    padding: 10px;
+}
+
+.hamburger div {
+    width: 25px;
+    height: 3px;
+    background: white;
+    margin: 4px 0;
+    transition: all 0.3s;
+}
+
+.close-icon {
+    display: none;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    z-index: 3;
+    font-size: 2em;
+    color: white;
+}
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -250px;
+    width: 250px;
+    height: 100%;
+    background: url('1.jpg') no-repeat center center / cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    z-index: 2;
+    transition: right 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.side-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+.side-menu a:hover {
+    color: #f0a500;
+}
+
+.side-menu.open {
+    right: 0;
+}
+
+.ripple {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    animation: ripple-animation 4s infinite;
+    opacity: 0;
+    z-index: 0;
+}
+
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+footer p {
+    margin: 5px 0;
+    z-index: 10;
+    font-size: 0.9em;
+}
+
+footer a {
+    color:white;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+@keyframes ripple-animation {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    header nav {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex; /* Show hamburger only on mobile view */
+    }
+}
+
+@media (min-width: 769px) {
+    .hamburger {
+        display: none; /* Hide hamburger on desktop and larger screens */
+    }
+
+    header nav {
+        display: flex; /* Show normal navigation on desktop */
+    }
+}
+
+@media (max-width: 768px) {  
+    .box .ed {
+        transform: none !important; /* Removes any flipping effects */
+        transition: none !important; /* Disables transition */
+        height: 400px;
+    }
+    
+    .box .ed .back {
+        display: block;  /* Ensure the back content is always visible */
+        position: relative;
+        transform: none !important;
+        height: 400px;
+    }
+
+    .box .ed .front {
+        display: none; /* Hide front if it's part of a flip effect */
+    }
+
+        .box .ed p {
+            font-size: 14px; /* Adjust the size as needed */
+            padding-right:20px;
+        }
+
+            .box .ed li {
+                font-size: 14px; /* Adjust the size as needed */
+            }
+            .box .ed ol{
+                height:400px;
+                padding-left: 15px;
+            }
+            .box .ed ol li{
+                font-size:10px;
+            }
+
+         .box .ed .back p{
+                padding-right: 30px;
+                padding-left: 0%;
+                font-size: 12px;
+            }
+
+        .box .ed .back ol li{
+            font-size: 8px;
+        }
+        
+}
+
+
+@media (max-width: 768px) {
+    .events-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+    }
+  
+    .event-card {
+      width: 90%;
+      margin-bottom: 15px;
+    }
+  
+    .event-title {
+      text-align: center;
+
+
+    }
+  
+    .event-description {
+      font-size: 14px;
+      text-align: justify;
+    }
+
+        .back1{
+            transform: none; /* Remove the transform effect on mobile */
+        }
+
+        
+    .box:hover>.ed{
+        cursor: pointer;
+        transform:none;
+    }
+  }
+  
+
+
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: transparent;
+    backdrop-filter: blur(0.5px);
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.event-title {
+    font-family: 'Audiowide', cursive;
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(15px);
+    width: 100%;
+    height: 45px;
+    padding: 10px 0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: clamp(1rem, 2.5vw, 3rem);;
+    font-weight: bold;
+    text-align: center;
+    --glow-color: rgb(15, 144, 204);
+    text-shadow: 0 0 0.5em var(--glow-color);
+    
+}
+
+.event-section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(15px);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #555;
+    position: relative;
+
+}
+
+.event-section {
+    position: relative;
+    width:100%;
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(15px);
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+  margin-right:15px;
+  margin-left: 15px;
+}
+/* 
+.box {
+    position: relative;
+    width:100%;
+    height: 700px;
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(15px);
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+  margin-right:15px;
+  margin-left: 15px;
+} */
+
+.ed{
+    position :absolute;
+    width:100%;
+    height:100%;
+    transform-style: preserve-3d;
+    transition:all 1500ms;
+}
+
+.box:hover>.ed{
+    cursor: pointer;
+    transform:  rotateY(180deg);
+}
+
+.front{
+    position :absolute;
+    width: 100%;
+    border-radius: 10px;
+    height: 100%;
+    backface-visibility: hidden;
+    color:white;
+    align-content: center;
+    font-size: 40px;
+    font-family: 'Audiowide', cursive;
+
+}
+
+ol{
+    font-size: 20px;
+}
+
+.back{
+    position :absolute;
+    width: 100%;
+    border-radius: 10px;
+    height: 100%;
+    backface-visibility: hidden;
+    color:white;
+    font-size: 30px;
+    align-content: center;
+    font-family: 'Caudex', serif;
+    transform: rotateY(180deg);
+    text-align: justify;
+    
+}
+
+.coordinator-section {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin: 20px 0;
+  }
+  
+  .coordinator-box {
+   
+
+
+    border: 0.25em solid var(--glow-color);
+    padding: 1em 3em;
+    color: var(--glow-color);
+    font-size: 24px;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.15); 
+    border-radius: 8px;
+    outline: none;
+    box-shadow: 
+        0 0 1em 0.25em var(--glow-color), 
+        0 0 4em 1em var(--glow-spread-color),
+        inset 0 0 0.75em 0.25em var(--glow-color);
+    text-shadow: 0 0 0.5em var(--glow-color);
+    position: relative;
+    transition: all 0.3s;
+    width: 30%;
+    height: 220px;
+    backdrop-filter: blur(15px);
+    text-align: center;
+    padding: 10px;
+}
+
+
+
+.details{
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.name{
+    height: 100%;
+    width: 87%;
+    padding-left: 18px;
+    line-height: 25px;
+    padding-top: 10px;
+}
+
+.image{
+    width: 100px;
+    height:150px;
+}  
+
+.prize-box {
+    width: 100%;
+    height: 110px;
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(15px);
+    text-align: center;
+    padding: 5px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.prize{
+    position: relative;
+    width: 40%;
+    height:100%;
+    font-size: 40px;
+    color: white;
+    padding: 5px;
+}
+
+.back1{
+    position :absolute;
+    width: 100%;
+    border-radius: 10px;
+    height: 100%;
+    backface-visibility: hidden;
+    color:white;
+    align-content: center;
+    font-size:40px;
+    transform: rotateX(180deg) rotateZ(180deg);
+    
+}
+
+.back p{
+    font-size:15px;
+    padding-right: 30px;
+    padding-left:13px;
+}
+
+.details p {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.prize:hover>.ed{
+    cursor: pointer;
+    transform:  rotateX(180deg) rotateZ(180deg);
+}
+
+/*
+.footer {
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(15px);
+    border-top: 1px solid #555;
+    border-radius: 0 0 16px 16px;
+}*/
+button {     
+    --glow-color: rgb(5, 154, 210); /* Main Button Color - #059AD2 */
+    --glow-spread-color: rgba(3, 112, 168, 0.78); /* Adjusted Deeper Blue */
+    --enhanced-glow-color: rgb(102, 194, 255);  /* Soft Sky Blue */
+    --btn-color: rgb(0, 51, 102);  /* Dark Navy Blue */
+
+    border: 0.25em solid var(--glow-color);     
+    padding: 1em 3em;     
+    color: var(--glow-color);     
+    font-size: 15px;     
+    font-weight: bold;     
+    background-color: var(--btn-color);     
+    border-radius: 1em;     
+    outline: none;     
+    box-shadow:          
+        0 0 1em 0.25em var(--glow-color),          
+        0 0 4em 1em var(--glow-spread-color),         
+        inset 0 0 0.75em 0.25em var(--glow-color);     
+    text-shadow: 0 0 0.5em var(--glow-color);     
+    position: relative;     
+    transition: all 0.3s; 
+}  
+
+button::after {     
+    pointer-events: none;     
+    content: "";     
+    position: absolute;     
+    top: 120%;     
+    left: 0;     
+    height: 100%;     
+    width: 100%;     
+    background-color: var(--glow-spread-color);     
+    filter: blur(20px);     
+    opacity: 0.7;     
+    transform: perspective(1.5em) rotateX(35deg) scale(1, 0.6); 
+}  
+
+button:hover {     
+    color: var(--btn-color);     
+    background-color: var(--glow-color);     
+    box-shadow:          
+        0 0 1em 0.25em var(--glow-color),         
+        0 0 4em 2em var(--glow-spread-color),         
+        inset 0 0 0.75em 0.25em var(--glow-color); 
+}  
+
+button:active {     
+    box-shadow:          
+        0 0 0.6em 0.25em var(--glow-color),         
+        0 0 2.5em 2em var(--glow-spread-color),         
+        inset 0 0 0.5em 0.25em var(--glow-color); 
+}   
+.box .ed ol li {
+    font-size: 14px; /* Adjust font size */
+    color: #ffffff; /* Text color */
+    font-family: 'Caudex', serif;/* Font style */
+    line-height: 1.6; /* Spacing between lines */
+    margin-bottom: 8px; /* Space between list items */
+    margin-right:30px;
+}
+
+.register-button {     
+    margin: 30px 0;     
+    padding: 20px 40px;     
+    font-size: clamp(20px, 24px, 24px);     
+    background-color: rgba(255, 255, 255, 0.15);     
+    backdrop-filter: blur(15px);     
+    color: white;     
+    border: none;     
+    border-radius: 12px;     
+    cursor: pointer; 
+}  
+
+a {     
+    color: rgb(173, 216, 230);  /* Light Blue */     
+    text-decoration: none; 
+}  
+
+a:hover {     
+    color: rgba(70, 130, 180, 0.78); /* Steel Blue */  
+}
+
+@media (max-width: 768px) {
+    /* Hide the front side of the card */
+    .front {
+        font-size: 15px;
+    }
+
+    /* Ensure the back side is displayed */
+    .back {
+        display: flex !important;
+        height: 400px;
+    }
+
+    /* Stack all elements one below another */
+    .event-section,
+    .coordinator-section,
+    .details,
+    .prize-box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        
+    }
+
+    /* Ensure boxes take full width */
+    .event-section,
+    .coordinator-box,
+    .prize {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+ /* .box{
+        width: 100%;
+        margin-bottom: 20px;
+        height: 400px;
+    } */
+
+    /* Adjust image and text alignment */
+    .image {
+        width: 100px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .name {
+        width: 100%;
+        text-align: center;
+        padding-right: 15px;
+        height: 100%;
+        padding-top: 11px;
+        line-height: 10px;
+    }
+
+    .details p{
+        font-size: 15px;
+    }
+
+    .coordinator-box{
+        font-size: 16px;
+        height: 120px;
+    }
+
+    /* Register button styling */
+    .register-button {
+        padding: 15px 25px;
+    }
+}
+
+
+/* Common Styling for All Boxes */
+.box {
+    position: relative;
+    width: 83%;
+    height: 400px; /* Default height */
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    margin: 20px 15px;
+    transition: transform 0.6s ease-in-out;
+}
+
+
+
+/* Unique Styling for Description Box */
+.description-box {
+    color: white;
+    font-family: Arial, sans-serif;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Unique Styling for Rules Box */
+.rules-box {
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .back1 {
+        font-size: 15px;
+    }
+}
+
