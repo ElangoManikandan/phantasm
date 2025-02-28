@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire & PUBG</title>
+    <link rel="stylesheet" href="paper_presentation.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Phantasm'25</div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+        <nav>
+            <a href="#about">Home</a>
+            <a href="#events">Events</a>
+            <a href="#schedule">Schedule</a>
+            <a href="#contact">Contact</a>
+            <a href="#login">Login</a>
+        </nav>
+        <div class="side-menu" id="sideMenu">
+            <!-- Example folder-based links -->
+            <a href="pages/about.html">About</a>
+            <a href="pages/events.html">Events</a>
+            <a href="pages/schedule.html">Schedule</a>
+            <a href="pages/contact.html">Contact</a>
+            <a href="pages/login.html">Login</a>
+        </div>
+    </header>
+    <div class="container">
+ 
+        <div class="content">
+            <div class="event-title">Free Fire & PUBG</div>
+            <div class="event-section">
+                <div class="box description-box">
+                    <div class="ed">
+                        <div class="front">DESCRPTION</div>
+                        <div class="back">
+                            <p>Players will enter a battle royale-style competition in Free Fire and PUBG.
+                                The objective is to survive till the end by eliminating opponents.
+                                The last team standing is the winner.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box rules-box">
+                    <div class="ed">
+                        <div class="front">RULES</div>
+                        <div class="back"><ol>
+                        <li>Each team consist of 4 members</li>
+                        <li>Each match follows standard battle royale rules.</li>
+                        <li>Players must loot, strategize, and eliminate opponents.</li>
+                        <li>No external hacks, scripts, or unfair advantages.</li>
+                        <li>The last surviving team in the match is declared the winner.</li>
+                        <li>No teaming up with other teams.</li>
+                        <li>Organizers will decide the maps, and other settings.</li>
+                        </ol> 
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <button class="register-button">REGISTER NOW</button>
+
+            <div class="prize-box">
+                <div class="prize">
+                    <div class="ed">
+                        <div class="front">PRIZE POOL</div>
+                        <div class="back1">1000 INR</div>
+                    </div>
+                </div>
+                <div class="prize">
+                    <div class="ed">
+                        <div class="front">VENUE</div>
+                        <div class="back1">Second Year Classroom</div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+        </div>   
+    </div>
+    <script>
+        // Function to toggle the side menu
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const hamburger = document.getElementById('hamburger');
+            const closeIcon = document.getElementById('closeIcon');
+    
+            // Toggle side menu visibility
+            sideMenu.classList.toggle('open');
+    
+            // Toggle visibility of hamburger and close icon
+            if (sideMenu.classList.contains('open')) {
+                hamburger.style.display = 'none';
+                closeIcon.style.display = 'block';
+            } else {
+                hamburger.style.display = 'flex';
+                closeIcon.style.display = 'none';
+            }
+        }
+    
+
+    
+        // Add ripple effect to header, footer, and side menu
+    </script>
+        <footer>
+            <p>&copy; 2025 CSEA. All rights reserved.</p>
+            <p>Follow us on</p>
+            <p>
+                <a href="#">Instagram</a>, <a href="#">Facebook</a>, and <a href="#">Twitter</a>.
+            </p>
+        </footer>
+</body>
+</html>
