@@ -4,147 +4,695 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - PHANTASM'25</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Caudex:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
         /* Your existing CSS */
-        body {
-            font-family: Arial, sans-serif;
+        * {
+            font-family: Caudex, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            color:white;
+        }
+        html{
+            overflow-x: hidden;
+            z-index: 0;
+            background-image: url(bg.jpg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
         }
 
-        .login-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #4CAF50;
-            margin-bottom: 1rem;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        input[type="submit"] {
-            background-color: #4CAF50;
+        header, footer {
+            position: relative;
             color: white;
-            border: none;
-            padding: 0.75rem;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        .links {
             display: flex;
             justify-content: space-between;
-            margin-top: 1rem;
-            font-size: 0.9rem;
+            align-items: center;
+            min-height: 12.5dvh;
+            backdrop-filter: blur(25px);
+            z-index: 1;
+        }
+        header {
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            
+        }
+        header .logo {
+            font-family: Audiowide, sans-serif;
+            font-size: clamp(1.35rem, 3vw, 1.8rem);
+            font-weight: bold;
+            z-index: 2;
+        }
+        header nav {
+            display: flex;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        header nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s;
+        }
+        header nav a:hover {
+            color: #1cecff;
+        }
+        .hamburger {
+            display: none;  /* Hide the hamburger by default */
+            flex-direction: column;
+            cursor: pointer;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 10px;
+            z-index: 2;
         }
 
-        .links a {
-            color: #4CAF50;
+
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 4px 0;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .close-icon {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            z-index: 3;
+            font-size: 2em;
+            color: white;
+            z-index: 4;
+        }
+
+        .side-menu {
+            
+            background-color: #000000;
+            position: fixed;
+            top: 0;
+            right: -250px;
+            width: 250px;
+            height: 100dvh;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: right 0.3s ease-in-out;
+            overflow: hidden;
+            
+            
+        }
+
+        .side-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            
+        }
+
+        .side-menu a:hover {
+            color: #f0a500;
+        }
+
+        .side-menu.open {
+            right: 0;
+            backdrop-filter: blur(50px);
+            z-index: 2;
+        }
+
+        .ripple {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: ripple-animation 4s infinite;
+            opacity: 0;
+            z-index: 0;
+            
+        }
+        footer {
+            bottom: 0;
+            width: 100%;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+        footer {
+            font-size: clamp(.8rem,2.5vw,1rem);;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+        footer a {
+            color: rgb(25, 243, 255);
             text-decoration: none;
         }
-
-        .links a:hover {
+        footer a:hover {
             text-decoration: underline;
         }
+        @keyframes ripple-animation {
+            0% {
+                transform: scale(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header nav {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex; /* Show hamburger only on mobile view */
+
+            }
+            .side-menu{
+                display: flex;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .hamburger {
+                display: none; /* Hide hamburger on desktop and larger screens */
+            }
+
+            header nav {
+                display: flex; /* Show normal navigation on desktop */
+            }
+        }
+
+        button {
+            background-color: black;
+            border-style: none;
+            max-width: fit-content;
+            padding: 1rem;
+            margin: 1rem 0 0 0;
+            -webkit-transform: translate(0%, 0%);
+                transform: translate(0%, 0%);
+            overflow: hidden;
+            font-size: clamp(1.46rem,3.7vw,2rem);
+            color: white;
+            font-weight: 600;
+            transition: color,background-color 1s;
+        }
+        
+        
+        button:hover{
+            cursor: pointer;
+            background-color: white;
+            color:black;
+        }
+        
+        
+        .animated-button {
+            position: relative;
+            display: inline-block;
+            -webkit-transform: translate(0%, 0%);
+                    transform: translate(0%, 0%);
+            overflow: hidden;
+            color: #d4f7f7;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .animated-button  span{
+            z-index: 3;
+        }
+        
+        .animated-button::before {
+            content: '';
+            position: absolute;
+            background-color: #85adad;
+            opacity: 0;
+            -webkit-transition: .2s opacity ease-in-out;
+            transition: .2s opacity ease-in-out;
+        }
+        
+        .animated-button:hover::before {
+            opacity: 0.2;
+        }
+        
+        .animated-button span {
+            position: absolute;
+        }
+        
+        .animated-button span:nth-child(1) {
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 4px;
+            background: -webkit-gradient(linear, right top, left top, from(rgba(8, 43, 43, 0)), to(#029297));
+            background: linear-gradient(to left, rgba(8, 43, 43, 0), #029297);
+            -webkit-animation: 2s animateTop linear infinite;
+                    animation: 2s animateTop linear infinite;
+        }
+        
+        @keyframes animateTop {
+            0% {
+            -webkit-transform: translateX(100%);
+                    transform: translateX(100%);
+            }
+            100% {
+            -webkit-transform: translateX(-100%);
+                    transform: translateX(-100%);
+            }
+        }
+        
+        .animated-button span:nth-child(2) {
+            top: 0px;
+            right: 0px;
+            height: 100%;
+            width: 4px;
+            background: -webkit-gradient(linear, left bottom, left top, from(rgba(8, 43, 43, 0)), to(#029297));
+            background: linear-gradient(to top, rgba(8, 43, 43, 0), #029297);
+            -webkit-animation: 2s animateRight linear -1s infinite;
+                    animation: 2s animateRight linear -1s infinite;
+        }
+        
+        @keyframes animateRight {
+            0% {
+            -webkit-transform: translateY(100%);
+                    transform: translateY(100%);
+            }
+            100% {
+            -webkit-transform: translateY(-100%);
+                    transform: translateY(-100%);
+            }
+        }
+        
+        .animated-button span:nth-child(3) {
+            bottom: 0px;
+            left: 0px;
+            width: 100%;
+            height: 4px;
+            background: -webkit-gradient(linear, left top, right top, from(rgba(8, 43, 43, 0)), to(#029297));
+            background: linear-gradient(to right, rgba(8, 43, 43, 0), #029297);
+            -webkit-animation: 2s animateBottom linear infinite;
+                    animation: 2s animateBottom linear infinite;
+        }
+        
+        @keyframes animateBottom {
+            0% {
+            -webkit-transform: translateX(-100%);
+                    transform: translateX(-100%);
+            }
+            100% {
+            -webkit-transform: translateX(100%);
+                    transform: translateX(100%);
+            }
+        }
+        
+        .animated-button span:nth-child(4) {
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            width: 4px;
+            background: -webkit-gradient(linear, left top, left bottom, from(rgba(8, 43, 43, 0)), to(#029297));
+            background: linear-gradient(to bottom, rgba(8, 43, 43, 0), #029297);
+            -webkit-animation: 2s animateLeft linear -1s infinite;
+                    animation: 2s animateLeft linear -1s infinite;
+        }
+        
+        @keyframes animateLeft {
+            0% {
+            -webkit-transform: translateY(-100%);
+                    transform: translateY(-100%);
+            }
+            100% {
+            -webkit-transform: translateY(100%);
+                    transform: translateY(100%);
+            }
+        }
+        
+        
+        .animated-button2 {
+            position: relative;
+            display: inline-block;
+            -webkit-transform: translate(0%, 0%);
+                    transform: translate(0%, 0%);
+            overflow: hidden;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .animated-button2  span{
+            z-index: 3;
+        }
+        
+        .animated-button2::before {
+            content: '';
+            position: absolute;
+            background-color: #85adad;
+            opacity: 0;
+            -webkit-transition: .2s opacity ease-in-out;
+            transition: .2s opacity ease-in-out;
+        }
+        
+        .animated-button2:hover::before {
+            opacity: 0.2;
+        }
+        
+        .animated-button2 span {
+            position: absolute;
+        }
+        
+        .animated-button2 > span:nth-child(1) {
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 4px;
+            background: -webkit-gradient(linear, right top, left top, from(rgba(8, 43, 43, 0)), to(#0f0f0f));
+            background: linear-gradient(to left, rgba(8, 43, 43, 0), #029297);
+            -webkit-animation: 2s animateTop2 linear infinite;
+                    animation: 2s animateTop2 linear infinite;
+        }
+        
+        @keyframes animateTop2 {
+            0% {
+            -webkit-transform: translateX(100%);
+                    transform: translateX(100%);
+            }
+            100% {
+            -webkit-transform: translateX(-100%);
+                    transform: translateX(-100%);
+            }
+        }
+        
+        .animated-button2 > span:nth-child(2) {
+            top: 0px;
+            right: 0px;
+            height: 100%;
+            width: 4px;
+            background: -webkit-gradient(linear, left bottom, left top, from(rgba(8, 43, 43, 0)), to(#0f0f0f));
+            background: linear-gradient(to top, rgba(8, 43, 43, 0),#029297);
+            -webkit-animation: 2s animateRight2 linear -1s infinite;
+                    animation: 2s animateRight2 linear -1s infinite;
+        }
+        
+        @keyframes animateRight2 {
+            0% {
+            -webkit-transform: translateY(100%);
+                    transform: translateY(100%);
+            }
+            100% {
+            -webkit-transform: translateY(-100%);
+                    transform: translateY(-100%);
+            }
+        }
+        
+        .animated-button2 > span:nth-child(3) {
+            bottom: 0px;
+            left: 0px;
+            width: 100%;
+            height: 4px;
+            background: -webkit-gradient(linear, left top, right top, from(rgba(8, 43, 43, 0)), to(#0f0f0f));
+            background: linear-gradient(to right, rgba(8, 43, 43, 0),#029297);
+            -webkit-animation: 2s animateBottom2 linear infinite;
+                    animation: 2s animateBottom2 linear infinite;
+        }
+        
+        @keyframes animateBottom2 {
+            0% {
+            -webkit-transform: translateX(-100%);
+                    transform: translateX(-100%);
+            }
+            100% {
+            -webkit-transform: translateX(100%);
+                    transform: translateX(100%);
+            }
+        }
+        
+        .animated-button2 > span:nth-child(4) {
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            width: 4px;
+            background: -webkit-gradient(linear, left top, left bottom, from(rgba(8, 43, 43, 0)), to(#000000));
+            background: linear-gradient(to bottom, rgba(8, 43, 43, 0), #029297);
+            -webkit-animation: 2s animateLeft2 linear -1s infinite;
+                    animation: 2s animateLeft2 linear -1s infinite;
+        }
+        
+        @keyframes animateLeft2 {
+            0% {
+            -webkit-transform: translateY(-100%);
+                    transform: translateY(-100%);
+            }
+            100% {
+            -webkit-transform: translateY(100%);
+                    transform: translateY(100%);
+            }
+        }
+        
+        html{
+            background-image: url(./bg-login.jpg);
+            background-size: cover;
+            overflow: hidden;
+
+        }
+        body{
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+        }
+
+        .page{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 75dvh;
+            max-height: 75dvh;
+
+        }
+
+        #box{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            border-style: none;
+            backdrop-filter: blur(50px);
+            max-width: 90vw;
+            
+        }
+        #loginForm{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            margin: 1rem 0 1rem 0;
+        }
+        .eachform{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            margin: .45rem  0 .45rem 0;
+        }
+
+        .links{
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .links a{
+            margin: 0 1rem 1rem 1rem;
+            
+        }
+
+        input[type=text], input[type=password] {
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-size: clamp(1rem,2.5vw,1.35rem);
+            color: black;
+            text-align: center;
+            width: 70%;
+            border-style: none;
+            padding: 2px 15px;
+        }
+        input[type=submit] {
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-size: clamp(1.35rem, 3vw, 1.8rem);
+            color: black;
+            text-align: center;
+            border-style: none;
+            padding: 5px 15px;
+        }
+
+        #submit{
+            margin-top: 1rem;
+            max-width: fit-content;
+        }
+
+        #login-title{
+            font-family: Audiowide, sans-serif;
+            margin: 1rem 1rem 0 1rem;
+            font-size: clamp(1.35rem, 3vw, 1.8rem);
+        }
+
+        .eachform p{
+            margin: 0 .9rem .5rem 0;
+            font-size: clamp(1.15rem,2.5vw,1.5rem);
+        }
+
+
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h1>Login</h1>
-        <form id="loginForm">
-            <label for="email">Email</label>
-            <input type="text" id="email" name="email" placeholder="Enter your email" required>
+    <header>
+        <div class="logo">Phantasm'25</div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#events">Events</a>
+            <a href="#schedule">Schedule</a>
+            <a href="#contact">Contact</a>
+            <a href="#login">Login</a>
+        </nav>
+        <div class="side-menu" id="sideMenu">
+            
+            <!-- Example folder-based links -->
+            <a href="pages/about.html">About</a>
+            <a href="pages/events.html">Events</a>
+            <a href="pages/schedule.html">Schedule</a>
+            <a href="pages/contact.html">Contact</a>
+            <a href="pages/login.html">Login</a>
+        </div>
+    </header>
+    <div class="page">
+        <div id="box" class="animated-button2">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <h1 id="login-title">Login</h1>
+            <form id="loginForm">
+                    <div class="eachform">
+                        <label for="email"><p>Email</p></label>
+                        <input type="text" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="eachform">
+                        <label for="password"><p>Password</p></label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <div id="submit" class="eachform animated-button2">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <input type="submit" value="Login">
+                    </div>
+            </form>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-
-            <input type="submit" value="Login">
-        </form>
-
-        <div class="links">
-            <a href="register.html">New User? Sign Up</a>
-            <a href="forgot-password.html">Forgot Password?</a>
+            <div class="links">
+                <a href="register.html"> New User? Sign Up</a>
+                <a href="forgot-password.html">Forgot Password?</a>
+            </div>
         </div>
     </div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById('loginForm');
+    <footer>
+        <p class = "foot-p">&copy; 2025 CSEA. All rights reserved.</p>
+        <p class = "foot-p">Follow us on</p>
+        <p class = "foot-p">
+            <a href="#" >Instagram</a>, <a href="#">Facebook</a>, and <a href="#">Twitter</a>.
+        </p>
+    </footer>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const loginForm = document.getElementById('loginForm');
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent default form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
 
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-        if (!email || !password) {
-            alert("Please fill in both email and password.");
-            return;
-        }
-
-        try {
-            const response = await fetch("/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-                credentials: "include" // Ensure cookies are sent & received
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert("Login successful! Redirecting...");
-
-                // Check the role and redirect accordingly
-                if (result.role === "admin") {
-                    window.location.href = "/adminprofile.html"; // Redirect for admins
-                } else {
-                    window.location.href = "/profile.html"; // Redirect for normal users
-                }
-            } else {
-                alert(result.error || "Login failed. Please check your credentials.");
+            if (!email || !password) {
+                alert("Please fill in both email and password.");
+                return;
             }
-        } catch (error) {
-            console.error("Error during login:", error);
-            alert("Something went wrong, please try again.");
-        }
+
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }),
+                    credentials: "include" // Ensure cookies are sent & received
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert("Login successful! Redirecting...");
+
+                    // Check the role and redirect accordingly
+                    if (result.role === "admin") {
+                        window.location.href = "/adminprofile.html"; // Redirect for admins
+                    } else {
+                        window.location.href = "/profile.html"; // Redirect for normal users
+                    }
+                } else {
+                    alert(result.error || "Login failed. Please check your credentials.");
+                }
+            } catch (error) {
+                console.error("Error during login:", error);
+                alert("Something went wrong, please try again.");
+            }
+        });
     });
-});
-</script>
+    </script>
+    <script>
+                // Function to toggle the side menu
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const hamburger = document.getElementById('hamburger');
+            const closeIcon = document.getElementById('closeIcon');
+
+            // Toggle side menu visibility
+            sideMenu.classList.toggle('open');
+
+            // Toggle visibility of hamburger and close icon
+            if (sideMenu.classList.contains('open')) {
+                hamburger.style.display = 'none';
+                closeIcon.style.display = 'block';
+            } else {
+                hamburger.style.display = 'flex';
+                closeIcon.style.display = 'none';
+            }
+        }
+    </script>
+
+
 </body>
 </html>
