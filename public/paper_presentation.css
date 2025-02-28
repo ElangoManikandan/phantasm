@@ -585,7 +585,7 @@ button:active {
         inset 0 0 0.5em 0.25em var(--glow-color); 
 }   
 .box .ed ol li {
-    font-size: 10px; /* Adjust font size */
+    font-size: 15px; /* Adjust font size */
     color: #ffffff; /* Text color */
     font-family: 'Caudex', serif;/* Font style */
     line-height: 1.6; /* Spacing between lines */
