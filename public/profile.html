@@ -714,6 +714,37 @@ function handleLogout() {
         });
     }
 
+
+        function fetchPaymentStatus() {
+        fetch("/api/user/payment-status", {
+            method: "GET",
+            credentials: "include",
+        })
+        .then(response => handleFetchError(response))
+        .then(data => {
+            const paymentStatusText = document.getElementById("payment-status-text");
+            const paymentContainer = document.getElementById("payment-status-container");
+
+            if (data.paymentStatus === "Completed") {
+                paymentStatusText.textContent = "✅ Payment Completed";
+                paymentContainer.style.backgroundColor = "#28a745"; // Green
+                paymentContainer.style.color = "#fff"; // White text
+            } else if (data.paymentStatus === "Pending") {
+                paymentStatusText.textContent = "⚠️ Payment Pending";
+                paymentContainer.style.backgroundColor = "#ffc107"; // Yellow
+                paymentContainer.style.color = "#000"; // Black text
+            } else {
+                paymentStatusText.textContent = "❌ Error Fetching Status";
+                paymentContainer.style.backgroundColor = "#dc3545"; // Red (Error)
+                paymentContainer.style.color = "#fff"; // White text
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching payment status:", error);
+            document.getElementById("payment-status-text").textContent = "⚠️ Error Fetching Status";
+        });
+    }
+
  
 
     fetchUserProfile();
@@ -721,6 +752,7 @@ function handleLogout() {
     handleProfileEdit();
     handleLogout();
     setupEventNavigation();
+    fetchPaymentStatus();
 });
 
 </script>
