@@ -666,32 +666,30 @@ border: 1px solid rgba(255, 255, 255, 0.3);
     <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    const logoutButtons = document.querySelectorAll(".logoutBtn");
+document.querySelectorAll("#logoutBtn").forEach(button => {
+    button.removeEventListener("click", logoutFunction);
+    button.addEventListener("click", logoutFunction);
+});
 
-    logoutButtons.forEach(button => {
-        button.addEventListener("click", async function () {
-            try {
-                const response = await fetch("/api/logout", { method: "GET", credentials: "include" });
+async function logoutFunction() {
+    try {
+        const response = await fetch("/api/logout", { method: "GET", credentials: "include" });
 
-                if (response.ok) {
-                    // Remove authentication token
-                    localStorage.removeItem("authToken");
-                    sessionStorage.removeItem("authToken");
+        if (response.ok) {
+            localStorage.removeItem("authToken");
+            sessionStorage.removeItem("authToken");
+            console.log("✅ Logout successful!");
+            window.location.href = "login.html";
+        } else {
+            console.error("❌ Logout failed:", response.statusText);
+            alert("Failed to log out. Please try again.");
+        }
+    } catch (error) {
+        console.error("❌ Logout error:", error);
+        alert("An error occurred while logging out.");
+    }
+}
 
-                    console.log("✅ Logout successful!");
-
-                    // Redirect to login page
-                    window.location.href = "login.html";
-                } else {
-                    console.error("❌ Logout failed:", response.statusText);
-                    alert("Failed to log out. Please try again.");
-                }
-            } catch (error) {
-                console.error("❌ Logout error:", error);
-                alert("An error occurred while logging out.");
-            }
-        });
-    });
     async function handleFetchError(response) {
         if (!response.ok) {
             const errorData = await response.json();
