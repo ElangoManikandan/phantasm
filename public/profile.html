@@ -559,6 +559,7 @@ border: 1px solid rgba(255, 255, 255, 0.3);
                 closeIcon.style.display = 'none';
             }
         }
+        
       document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("logoutBtn").addEventListener("click", function () {
     localStorage.removeItem("authToken");
@@ -626,7 +627,15 @@ border: 1px solid rgba(255, 255, 255, 0.3);
             <button id="go-to-events-btn">Go to Events</button> 
             <button class="logout" id="logoutBtn">Logout</button>
         </div>
-                    
+<script>
+              document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("logoutBtn").addEventListener("click", function () {
+    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
+    window.location.href = "login.html"; // Redirect to login page
+  });
+});
+</script>            
         
 
                 <!-- New Payment Status Div -->
