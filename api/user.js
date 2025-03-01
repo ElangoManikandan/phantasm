@@ -168,6 +168,32 @@ router.get("/logout", async (req, res) => {
     }
 });
 
+router.get("/payment-status", requireAuth, async (req, res) => {
+    try {
+        const userId = req.user?.userId; // Get user ID from JWT
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: User ID missing." });
+        }
+
+        // SQL query to fetch payment status
+        const sqlQuery = "SELECT payment_status FROM users WHERE id = ?";
+        const [results] = await db.query(sqlQuery, [userId]);
+
+        if (!results || results.length === 0) {
+            return res.status(404).json({ error: "User not found!" });
+        }
+
+        const paymentStatus = results[0].payment_status || "Pending"; // Default to "Pending" if not set
+
+        res.json({ paymentStatus });
+    } catch (error) {
+        console.error("❌ Error fetching payment status:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
 
 
 export default router;
