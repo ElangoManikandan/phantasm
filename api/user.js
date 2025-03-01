@@ -190,7 +190,7 @@ router.get("/payment-status", requireAuth, async (req, res) => {
             return res.status(404).json({ error: "User not found!" });
         }
 
-        const paymentStatus = results[0].payment_status || "Pending"; // Default to "Pending" if not set
+        const paymentStatus = results[0].payment_status || "pending"; // Default to "Pending" if not set
         console.log(`✅ Payment Status for userId ${userId}:`, paymentStatus);
 
         res.json({ paymentStatus });
