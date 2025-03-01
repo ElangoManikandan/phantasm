@@ -7,7 +7,7 @@ export const requireAuth = (req, res, next) => {
 
     if (!token) {
         console.error("❌ No token found in request");
-          return res.status(401).json({ error: "Unauthorized:Kindly Login to Register Events!" });
+          return res.status(401).json({ error: "Unauthorized:  Kindly Login to Register Events!" });
     }
 
     try {
