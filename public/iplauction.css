@@ -177,10 +177,6 @@ footer a {
     text-decoration: none;
 }
 
-footer a:hover {
-    text-decoration: underline;
-}
-
 @keyframes ripple-animation {
     0% {
         transform: scale(0);
