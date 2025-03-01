@@ -1055,3 +1055,19 @@ p {
   left: 50%;
 }
 }
+.advertisement {
+   color: white;
+    text-align: center;
+    display: flex;
+    padding-bottom: 11px;
+  align-items: center;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: nowrap;
+    flex-direction: column;
+}
+
+.highlight {
+  color: #fff700;
+  font-size: 1.7rem;
+}
