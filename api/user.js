@@ -170,21 +170,28 @@ router.get("/logout", async (req, res) => {
 
 router.get("/payment-status", requireAuth, async (req, res) => {
     try {
+        console.log("🔍 Checking authentication...");
+        console.log("🔍 req.user:", req.user); // Debugging Log
+
         const userId = req.user?.userId; // Get user ID from JWT
 
         if (!userId) {
+            console.error("❌ Unauthorized: User ID missing.");
             return res.status(401).json({ error: "Unauthorized: User ID missing." });
         }
 
         // SQL query to fetch payment status
+        console.log(`🛠 Fetching payment status for userId: ${userId}`);
         const sqlQuery = "SELECT payment_status FROM users WHERE id = ?";
         const [results] = await db.query(sqlQuery, [userId]);
 
         if (!results || results.length === 0) {
+            console.error("❌ No user found in database for ID:", userId);
             return res.status(404).json({ error: "User not found!" });
         }
 
         const paymentStatus = results[0].payment_status || "Pending"; // Default to "Pending" if not set
+        console.log(`✅ Payment Status for userId ${userId}:`, paymentStatus);
 
         res.json({ paymentStatus });
     } catch (error) {
@@ -192,6 +199,7 @@ router.get("/payment-status", requireAuth, async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 
 
