@@ -18,11 +18,6 @@
         html{
             overflow-x: hidden;
             z-index: 0;
-            background-image: url(bg.jpg);
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
         }
 
         header, footer {
@@ -32,7 +27,8 @@
             justify-content: space-between;
             align-items: center;
             min-height: 12.5dvh;
-            backdrop-filter: blur(25px);
+            background-image: url(./1.jpg);
+            background-attachment: fixed;
             z-index: 1;
         }
         header {
@@ -104,7 +100,7 @@
             right: -250px;
             width: 250px;
             height: 100dvh;
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -184,10 +180,6 @@
 
             .hamburger {
                 display: flex; /* Show hamburger only on mobile view */
-
-            }
-            .side-menu{
-                display: flex;
             }
         }
 
@@ -465,7 +457,8 @@
         }
         
         html{
-            background-image: url(./bg-login.jpg);
+            background-image: url(./bg.jpg);
+            background-attachment: fixed;
             background-size: cover;
             overflow: hidden;
 
@@ -474,6 +467,7 @@
             display: flex;
             flex-direction: column;
             height: 100dvh;
+            overflow: hidden;
         }
 
         .page{
@@ -574,20 +568,20 @@
         </div>
         <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="events.html">Events</a>
-            <a href="schedule.html">Schedule</a>
-            <a href="contact-us.html">Contact</a>
-            <a href="login.html">Login</a>
+            <a href="#about">About</a>
+            <a href="#events">Events</a>
+            <a href="#schedule">Schedule</a>
+            <a href="#contact">Contact</a>
+            <a href="#login">Login</a>
         </nav>
         <div class="side-menu" id="sideMenu">
             
             <!-- Example folder-based links -->
-            <a href="index.html">About</a>
-            <a href="events.html">Events</a>
-            <a href="schedule.html">Schedule</a>
-            <a href="contact-us.html">Contact</a>
-            <a href="login.html">Login</a>
+            <a href="pages/about.html">About</a>
+            <a href="pages/events.html">Events</a>
+            <a href="pages/schedule.html">Schedule</a>
+            <a href="pages/contact.html">Contact</a>
+            <a href="pages/login.html">Login</a>
         </div>
     </header>
     <div class="page">
