@@ -665,6 +665,22 @@ border: 1px solid rgba(255, 255, 255, 0.3);
 </footer>
     <script>
 document.addEventListener("DOMContentLoaded", () => {
+
+    const logoutButtons = document.querySelectorAll(".logoutBtn");
+
+    logoutButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            // Remove authentication token
+            localStorage.removeItem("authToken");
+            sessionStorage.removeItem("authToken");
+
+            // Confirm token removal (for debugging)
+            console.log("Auth Token after removal:", localStorage.getItem("authToken"), sessionStorage.getItem("authToken"));
+
+            // Redirect to login page
+            window.location.href = "login.html";
+        });
+    });
     
     async function handleFetchError(response) {
         if (!response.ok) {
