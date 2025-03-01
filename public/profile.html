@@ -677,6 +677,7 @@ async function logoutFunction() {
     method: "POST", // Change to POST if your backend requires it
     credentials: "include" 
 });
+        const authToken = localStorage.getItem("authToken"); // Get token from localStorage
 
         if (response.ok) {
             localStorage.removeItem("authToken");
