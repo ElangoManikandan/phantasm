@@ -102,10 +102,9 @@ function registerForEvent(eventId) {
     .then(async response => {
         console.log("Response received:", response.status);
         
-        if (response.status === 401) {
-            alert("Your session has expired. Please log in again.");
+         if (response.status === 401) {
+            alert("Kindly Login for Registering Events!");
             window.location.href = '/login.html';
-            throw new Error("Unauthorized");
         }
 
         if (!response.ok) {
