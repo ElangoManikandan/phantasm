@@ -254,6 +254,17 @@ const countdownInterval = setInterval(() => {
       }
   }
 
+  document.getElementById("profileLink").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default navigation
+        let loggedIn = localStorage.getItem("loggedIn");
+
+        if (loggedIn === "true") {
+            window.location.href = "profile.html";
+        } else {
+            alert("Login first!");
+            window.location.href = "login.html";
+        }
+    });
 
 </script>
 
