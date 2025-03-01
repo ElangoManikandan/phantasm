@@ -716,5 +716,8 @@ a:hover {
     .description-box{
         height: 130px;
     }
+            .rules-box{
+        height: 150px;
+    }
 }
 
