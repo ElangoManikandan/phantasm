@@ -132,6 +132,29 @@ function registerForEvent(eventId) {
         alert(error.message || "An error occurred. Please try again.");
     });
 }
+
+        document.getElementById("profileLink").addEventListener("click", async function(event) {
+    event.preventDefault(); // Stop default action
+
+    try {
+        const response = await fetch("/api/user/check-auth", {
+            method: "GET",
+            credentials: "include" // ✅ Send cookies with request
+        });
+
+        if (response.ok) {
+            window.location.href = "/profile.html"; // ✅ Logged in, go to profile
+        } else {
+            alert("Login first!");
+            window.location.href = "/login.html"; // ❌ Not logged in, redirect to login
+        }
+    } catch (error) {
+        console.error("Error checking authentication:", error);
+        alert("Login first!");
+        window.location.href = "/login.html";
+    }
+});
+
  
     </script>
         <footer>
