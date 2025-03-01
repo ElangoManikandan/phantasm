@@ -832,7 +832,6 @@ function fetchPaymentStatus() {
         console.log("📢 Response Status:", status);
         console.log("📢 Response Body:", body);
 
-        // Ensure that paymentStatus exists
         if (!body || !body.paymentStatus) {
             console.error("❌ Invalid response structure:", body);
             return;
@@ -840,15 +839,22 @@ function fetchPaymentStatus() {
 
         const paymentStatusText = document.getElementById("payment-status-text");
         const paymentContainer = document.getElementById("payment-status-container");
+        const qrCodeContainer = document.querySelector(".payment-container"); // Select the QR Code Section
 
         if (body.paymentStatus.toLowerCase() === "completed") {
             paymentStatusText.textContent = "✅ Payment Completed";
             paymentContainer.style.backgroundColor = "#28a745"; // Green
             paymentContainer.style.color = "#fff";
+            
+            // Hide the QR code section
+            if (qrCodeContainer) qrCodeContainer.style.display = "none";
         } else if (body.paymentStatus.toLowerCase() === "pending") {
             paymentStatusText.textContent = "⚠️ Payment Pending";
             paymentContainer.style.backgroundColor = "#ffc107"; // Yellow
             paymentContainer.style.color = "#000";
+            
+            // Show the QR code section if it's hidden
+            if (qrCodeContainer) qrCodeContainer.style.display = "block";
         } else {
             paymentStatusText.textContent = "❌ Unknown Status";
             paymentContainer.style.backgroundColor = "#dc3545"; // Red
@@ -860,6 +866,7 @@ function fetchPaymentStatus() {
         document.getElementById("payment-status-text").textContent = "⚠️ Error Fetching Status";
     });
 }
+
 
 
     fetchUserProfile();
