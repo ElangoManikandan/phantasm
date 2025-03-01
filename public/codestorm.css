@@ -715,5 +715,8 @@ a:hover {
     .description-box{
         height: 200px;
     }
+        .description-box{
+        height: 150px;
+    }
 }
 
