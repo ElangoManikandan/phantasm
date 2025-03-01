@@ -172,7 +172,7 @@ const userId = req.user.userId;  // Make sure this is set properly in your JWT v
   }
 });
 
-router.get("/user/logout", async (req, res) => {
+router.get("/logout", async (req, res) => {
     console.log("Logout request received!"); // Debugging log
     try {
         res.clearCookie("authToken", { path: "/" });
