@@ -171,14 +171,9 @@ footer p {
     z-index: 10;
     font-size: 0.9em;
 }
-
 footer a {
-    color:white;
+    color:#059ad2;
     text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
 }
 
 @keyframes ripple-animation {
