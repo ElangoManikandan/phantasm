@@ -669,19 +669,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutButtons = document.querySelectorAll(".logoutBtn");
 
     logoutButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            // Remove authentication token
-            localStorage.removeItem("authToken");
-            sessionStorage.removeItem("authToken");
+    const logoutButtons = document.querySelectorAll(".logoutBtn");
 
-            // Confirm token removal (for debugging)
-            console.log("Auth Token after removal:", localStorage.getItem("authToken"), sessionStorage.getItem("authToken"));
+    logoutButtons.forEach(button => {
+        button.addEventListener("click", async function () {
+            try {
+                const response = await fetch("/api/logout", { method: "GET", credentials: "include" });
 
-            // Redirect to login page
-            window.location.href = "login.html";
+                if (response.ok) {
+                    // Remove authentication token
+                    localStorage.removeItem("authToken");
+                    sessionStorage.removeItem("authToken");
+
+                    console.log("✅ Logout successful!");
+
+                    // Redirect to login page
+                    window.location.href = "login.html";
+                } else {
+                    console.error("❌ Logout failed:", response.statusText);
+                    alert("Failed to log out. Please try again.");
+                }
+            } catch (error) {
+                console.error("❌ Logout error:", error);
+                alert("An error occurred while logging out.");
+            }
         });
     });
-    
     async function handleFetchError(response) {
         if (!response.ok) {
             const errorData = await response.json();
