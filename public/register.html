@@ -408,6 +408,25 @@
             }
         });
     });
+
+             function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const hamburger = document.getElementById('hamburger');
+            const closeIcon = document.getElementById('closeIcon');
+    
+            // Toggle side menu visibility
+            sideMenu.classList.toggle('open');
+    
+            // Toggle visibility of hamburger and close icon
+            if (sideMenu.classList.contains('open')) {
+                hamburger.style.display = 'none';
+                closeIcon.style.display = 'block';
+            } else {
+                hamburger.style.display = 'flex';
+                closeIcon.style.display = 'none';
+            }
+        }
+    
 </script>
 </body>
 </html>
