@@ -441,15 +441,37 @@ border: 1px solid rgba(255, 255, 255, 0.3);
         gap: 20px;
 }
 }
-#payment-status-btn {
-    pointer-events: none; /* Prevents clicks */
-    cursor: not-allowed;   /* Shows disabled cursor */
+#payment-status-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 10px 20px;
+    font-size: 16px;
     font-weight: bold;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 15px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Default State */
+#payment-status-text {
+    margin: 0;
+}
+
+/* Payment Pending (Yellow) */
+.pending {
+    background-color: #ffc107;  /* Yellow */
+    color: #000; /* Black text */
+}
+
+/* Payment Completed (Green) */
+.completed {
+    background-color: #28a745; /* Green */
+    color: #fff; /* White text */
+}
+
     </style>
 </head>
 <body>
