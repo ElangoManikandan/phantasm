@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantasm'25</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="contactus.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Phantasm'25</div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="#">Schedule</a>
+            <a href="contactus.html">Contact</a>
+            <a href="login".html>Login</a>
+        </nav>
+        <div class="side-menu" id="sideMenu">
+            <!-- Example folder-based links -->
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="schedule.html">Schedule</a>
+            <a href="contactus.html">Contact</a>
+            <a href="login.html">Login</a>
+        </div>
+    </header>
+
+
+<!-- Side menu -->
+<div class="side-menu" id="sideMenu">
+    <span class="close-btn" onclick="closeMenu()">&times;</span> 
+<p id="p_tag"></p>
+<div id="p_tag1"></div>
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="#schedule">Schedule</a>
+    <a href="contactus.html">Contact</a>
+    <a href="login.html">Login</a>
+</div>
+
+<main>
+    <!-- Committee Section -->
+  <div class="com">
+    <u><h3>INTER COLLEGE COMMITTEE</h3></u>
+  </div>
+  <div class="popup-container">
+    <div class="popup-box">
+      <u><h3>FAISAL</h3></u>
+      Aravinth: 4584383<br>
+      Aravinth@12890<br>
+    </div>
+    <div class="popup-boxa">
+      <u><h3>HARIHARAN</h3></u>
+      Deva: 1234589<br>
+      Deva@1237890<br>
+    </div>
+    <div class="popup-boxb">
+      <u><h3>NISHANTH</h3></u>
+      Deva: 1234789<br>
+      Deva@1234560<br>
+    </div>
+    <div class="popup-boxc">
+      <u><h3>KABILESWARAN</h3></u>
+      Deva: 12345<br>
+      Deva@66777<br>
+    </div>
+  </div>
+<br>
+  <!-- Map Section -->
+  <div class="new">
+    <h3>MAP</h3> 
+  </div>
+  <iframe
+    class="mapp"
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3894.5252160744144!2d78.32984797506931!3d12.547581087730197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bac4ad3c72b0051%3A0x121c6c71d83706b5!2sGovernment%20College%20of%20Engineering!5e0!3m2!1sen!2sin!4v1735819048722!5m2!1sen!2sin"
+    allowfullscreen=""
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+
+
+
+</main>
+
+<footer>
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <p>&copy; 2025 CSEA. All rights reserved.</p>
+    <p>Follow us on</p>
+    <p>
+        <a href="#">Instagram</a>, <a href="#">Facebook</a>, and <a href="#">Twitter</a>.
+    </p>
+</footer>
+
+<script>
+
+     // Function to toggle the side menu
+  function toggleMenu() {
+      const sideMenu = document.getElementById('sideMenu');
+      const hamburger = document.getElementById('hamburger');
+      const closeIcon = document.getElementById('closeIcon');
+
+      // Toggle side menu visibility
+      sideMenu.classList.toggle('open');
+
+      // Toggle visibility of hamburger and close icon
+      if (sideMenu.classList.contains('open')) {
+          hamburger.classList.add('hidden');
+          closeIcon.style.display = 'block';
+      } else {
+          hamburger.classList.remove('hidden');
+          closeIcon.style.display = 'none';
+      }
+  }
+
+
+</script>
+
+</body>
+</html>
