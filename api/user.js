@@ -6,6 +6,21 @@ import { requireAuth } from "./middleware.js";
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Use your secret for JWT
 
+router.get("/check-auth", (req, res) => {
+    const token = req.cookies.authToken; // Get JWT token from cookies
+
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: "Invalid token" });
+        }
+        res.json({ message: "Authenticated", user: decoded });
+    });
+});
+
 router.post("/update-profile", async (req, res, next) => {
     try {
         const { name, college, year, accommodation, phone } = req.body;
