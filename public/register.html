@@ -230,7 +230,13 @@
         }
         .form-group select {
             appearance: none;
+            
         }
+        .form-group select:focus {
+            background-color: white; /* Change background color when focused */
+            color: black; /* Change text color when focused */
+        }  
+        
         .form-group button {
             width: 100%;
             padding: 16px;
@@ -263,19 +269,19 @@
         </div>
         <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="events.html">Events</a>
-            <a href="schedule.html">Schedule</a>
-            <a href="contact-us.html">Contact</a>
-            <a href="login.html">Login</a>
+            <a href="#about">About</a>
+            <a href="#events">Events</a>
+            <a href="#schedule">Schedule</a>
+            <a href="#contact">Contact</a>
+            <a href="#login">Login</a>
         </nav>
         <div class="side-menu" id="sideMenu">
             <!-- Example folder-based links -->
-            <a href="index.html">Home</a>
-            <a href="events.html">Events</a>
-            <a href="schedule.html">Schedule</a>
-            <a href="contact-us.html">Contact</a>
-            <a href="login.html">Login</a>
+            <a href="pages/about.html">About</a>
+            <a href="pages/events.html">Events</a>
+            <a href="pages/schedule.html">Schedule</a>
+            <a href="pages/contact.html">Contact</a>
+            <a href="pages/login.html">Login</a>
         </div>
     </header>
 
