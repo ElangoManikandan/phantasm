@@ -90,6 +90,51 @@
 
     
         // Add ripple effect to header, footer, and side menu
+
+        
+function registerForEvent(eventId) {
+    console.log("Starting event registration...");
+
+    fetch('/api/events/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ eventId })
+    })
+    .then(async response => {
+        console.log("Response received:", response.status);
+        
+        if (response.status === 401) {
+            alert("Your session has expired. Please log in again.");
+            window.location.href = '/login.html';
+            throw new Error("Unauthorized");
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Unknown error");
+        }
+
+        return response.json();
+    })
+    .then(result => {
+        console.log("Registration successful:", result);
+        alert('Event registered successfully!');
+
+        // ✅ Set a flag in localStorage so profile.html can detect and update events
+        localStorage.setItem("updateEvents", "true");
+
+        // Redirect user to profile page where updateRegisteredEvents() is defined
+        window.location.href = "/profile.html";
+    })
+    .catch(error => {
+        console.error("Error occurred:", error);
+        alert(error.message || "An error occurred. Please try again.");
+    });
+}
+ 
     </script>
         <footer>
             <p>&copy; 2025 CSEA. All rights reserved.</p>
