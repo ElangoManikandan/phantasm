@@ -673,7 +673,10 @@ document.querySelectorAll("#logoutBtn").forEach(button => {
 
 async function logoutFunction() {
     try {
-        const response = await fetch("/api/logout", { method: "GET", credentials: "include" });
+ const response = await fetch("https://phantasm.onrender.com/api/logout", { 
+    method: "POST", // Change to POST if your backend requires it
+    credentials: "include" 
+});
 
         if (response.ok) {
             localStorage.removeItem("authToken");
