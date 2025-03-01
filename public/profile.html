@@ -743,38 +743,45 @@ function handleLogout() {
         });
     }
 
+function fetchPaymentStatus() {
+    fetch("/api/user/payment-status", {
+        method: "GET",
+        credentials: "include",
+    })
+    .then(response => response.json().then(data => ({ status: response.status, body: data })))
+    .then(({ status, body }) => {
+        console.log("📢 Response Status:", status);
+        console.log("📢 Response Body:", body);
 
-        function fetchPaymentStatus() {
-        fetch("/api/user/payment-status", {
-            method: "GET",
-            credentials: "include",
-        })
-        .then(response => handleFetchError(response))
-        .then(data => {
-            const paymentStatusText = document.getElementById("payment-status-text");
-            const paymentContainer = document.getElementById("payment-status-container");
+        // Ensure that paymentStatus exists
+        if (!body || !body.paymentStatus) {
+            console.error("❌ Invalid response structure:", body);
+            return;
+        }
 
-            if (data.paymentStatus === "Completed") {
-                paymentStatusText.textContent = "✅ Payment Completed";
-                paymentContainer.style.backgroundColor = "#28a745"; // Green
-                paymentContainer.style.color = "#fff"; // White text
-            } else if (data.paymentStatus === "Pending") {
-                paymentStatusText.textContent = "⚠️ Payment Pending";
-                paymentContainer.style.backgroundColor = "#ffc107"; // Yellow
-                paymentContainer.style.color = "#000"; // Black text
-            } else {
-                paymentStatusText.textContent = "❌ Error Fetching Status";
-                paymentContainer.style.backgroundColor = "#dc3545"; // Red (Error)
-                paymentContainer.style.color = "#fff"; // White text
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching payment status:", error);
-            document.getElementById("payment-status-text").textContent = "⚠️ Error Fetching Status";
-        });
-    }
+        const paymentStatusText = document.getElementById("payment-status-text");
+        const paymentContainer = document.getElementById("payment-status-container");
 
- 
+        if (body.paymentStatus.toLowerCase() === "completed") {
+            paymentStatusText.textContent = "✅ Payment Completed";
+            paymentContainer.style.backgroundColor = "#28a745"; // Green
+            paymentContainer.style.color = "#fff";
+        } else if (body.paymentStatus.toLowerCase() === "pending") {
+            paymentStatusText.textContent = "⚠️ Payment Pending";
+            paymentContainer.style.backgroundColor = "#ffc107"; // Yellow
+            paymentContainer.style.color = "#000";
+        } else {
+            paymentStatusText.textContent = "❌ Unknown Status";
+            paymentContainer.style.backgroundColor = "#dc3545"; // Red
+            paymentContainer.style.color = "#fff";
+        }
+    })
+    .catch(error => {
+        console.error("❌ Error fetching payment status:", error);
+        document.getElementById("payment-status-text").textContent = "⚠️ Error Fetching Status";
+    });
+}
+
 
     fetchUserProfile();
     updateRegisteredEvents();
