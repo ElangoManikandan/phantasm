@@ -673,21 +673,24 @@ document.querySelectorAll("#logoutBtn").forEach(button => {
 
 async function logoutFunction() {
     try {
- const response = await fetch("https://phantasm.onrender.com/api/user/logout", { 
-    method: "POST", // Change to POST if your backend requires it
-    credentials: "include" 
-});
-        const authToken = localStorage.getItem("authToken"); // Get token from localStorage
+        const response = await fetch("https://phantasm.onrender.com/api/logout", { 
+            method: "GET",  // Change to POST if needed
+            credentials: "include" 
+        });
 
-        if (response.ok) {
-            localStorage.removeItem("authToken");
-            sessionStorage.removeItem("authToken");
-            console.log("✅ Logout successful!");
-            window.location.href = "login.html";
-        } else {
-            console.error("❌ Logout failed:", response.statusText);
-            alert("Failed to log out. Please try again.");
+        if (!response.ok) {
+            throw new Error(`Logout failed: ${response.status}`);
         }
+
+        // Remove authentication tokens from storage
+        localStorage.removeItem("authToken");
+        sessionStorage.removeItem("authToken");
+
+        console.log("✅ Logout successful!");
+        alert("You have been logged out.");
+
+        // Redirect to login page
+        window.location.href = "login.html";  
     } catch (error) {
         console.error("❌ Logout error:", error);
         alert("An error occurred while logging out.");
