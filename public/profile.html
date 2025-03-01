@@ -759,27 +759,6 @@ const formData = {
         });
     }
 
-function handleLogout() {
-    document.getElementById("logoutbutton").addEventListener("click", () => {
-        const confirmLogout = confirm("Are you sure you want to logout?");
-        if (confirmLogout) {
-            fetch("/api/user/logout", {
-                method: "GET",
-                credentials: "include",
-            })
-            .then(response => {
-                if (response.ok) {
-                    document.cookie = "authToken=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-                    window.location.href = "/login.html";
-                } else {
-                    console.error("Logout failed");
-                }
-            })
-            .catch(error => console.error("Error during logout:", error));
-        }
-    });
-}
-
 
     function setupEventNavigation() {
         document.getElementById("go-to-events-btn").addEventListener("click", () => {
@@ -843,6 +822,14 @@ function fetchPaymentStatus() {
     handleLogout();
     setupEventNavigation();
     fetchPaymentStatus();
+});
+document.getElementById("logoutBtn").addEventListener("click", function () {
+  // Remove authentication token from localStorage and sessionStorage
+  localStorage.removeItem("authToken");
+  sessionStorage.removeItem("authToken");
+
+  // Redirect to the login page or home page
+  window.location.href = "login.html"; // Change to your actual login page
 });
 
 </script>
