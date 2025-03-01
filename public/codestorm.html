@@ -105,7 +105,6 @@ function registerForEvent(eventId) {
         console.log("Response received:", response.status);
         
         if (response.status === 401) {
-            alert("Kindly Login for Registering Events!");
             window.location.href = '/login.html';
         }
 
