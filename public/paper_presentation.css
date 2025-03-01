@@ -266,6 +266,8 @@ footer a:hover {
       align-items: center;
       padding: 10px;
     }
+
+    
   
     .event-card {
       width: 90%;
@@ -716,6 +718,12 @@ a:hover {
 @media (max-width: 768px) {
     .back1 {
         font-size: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .description-box {
+        height: 150px;
     }
 }
 
