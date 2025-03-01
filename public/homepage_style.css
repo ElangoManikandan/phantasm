@@ -306,6 +306,7 @@ nav ul li a:hover {
 .hero {
   text-align: center;
   padding: 100px 20px;
+  padding-bottom: 30px;
   background: url('C:\Users\HP\Desktop\n.jpg') no-repeat center center/cover; /* Replace with your hero image path */
   
  /* background-color: rgba(0, 0, 0, 0.5); /* Darken the background image slightly */
