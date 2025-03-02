@@ -80,7 +80,7 @@ router.get("/get-profile", async (req, res, next) => {
         console.log("🔍 Fetching profile for userId:", userId);
 
         // SQL query to fetch user data including qr_code_id and phone
-        const sqlQuery = "SELECT qr_code_id, name, college, year, accommodation, role, phone, qr_code_id FROM users WHERE id = ?";
+        const sqlQuery = "SELECT id , name, college, year, accommodation, role, phone, qr_code_id FROM users WHERE id = ?";
         console.log(`🛠 Running SQL Query: ${sqlQuery} with userId = ${userId}`);
 
         // Execute query
