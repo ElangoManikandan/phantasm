@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../utils/db.js";
 import { requireAuth, requireAdmin } from "../middleware.js";
-const fs = require("fs");
 
 const router = express.Router();
 // ✅ Mark Attendance Route (Admin Only)
