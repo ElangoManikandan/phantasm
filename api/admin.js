@@ -74,42 +74,6 @@ router.get("/overall-attendance", async (req, res) => {
     }
 });
 
-// **Download Attendance as CSV**
-router.get("/download", async (req, res) => {
-    try {
-        const [rows] = await pool.query(`
-            SELECT 
-                attendance.id, 
-                users.name AS user_name, 
-                users.college, 
-                events.name AS event_name, 
-                attendance.attendance_status, 
-                attendance.marked_at 
-            FROM attendance
-            JOIN users ON attendance.user_id = users.id
-            JOIN events ON attendance.event_id = events.id
-            ORDER BY attendance.marked_at DESC;
-        `);
-
-        if (rows.length === 0) {
-            return res.status(404).send("No attendance records found.");
-        }
-
-        // Convert data to CSV
-        const json2csvParser = new Parser();
-        const csv = json2csvParser.parse(rows);
-
-        // Send CSV as file
-        res.setHeader("Content-Type", "text/csv");
-        res.setHeader("Content-Disposition", "attachment; filename=attendance.csv");
-        res.status(200).send(csv);
-    } catch (error) {
-        console.error("Error generating CSV:", error);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-
 // ✅ Get Admin Profile Route
 router.get("/get-admin-profile", requireAuth, requireAdmin, async (req, res) => {
     try {
