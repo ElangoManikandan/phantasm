@@ -304,7 +304,7 @@ function scanQRCode() {
         if (event_id) markAttendance(qrCode.data, event_id);
     }
 
-    setTimeout(() => requestAnimationFrame(scanQRCode), 200); // ✅ Delay for performance
+    requestAnimationFrame(scanQRCode); // ✅ Smoother scanning
 }
 
 // **Start Scanner**
@@ -324,14 +324,16 @@ async function startScanner() {
             qrCanvas.height = qrVideo.videoHeight;
             qrVideo.play();
             scanQRCode();
-            updateToggleButton(); // ✅ Update button text after scanner starts
         };
+
+        isScannerOn = true;
+        updateToggleButton();
     } catch (error) {
         console.error("❌ Camera access error:", error);
         scanStatus.textContent = "Error: Camera permission denied!";
         scanStatus.style.color = "red";
-        isScannerOn = false; // Reset state if camera fails
-        updateToggleButton(); // ✅ Reset button if scanner fails
+        isScannerOn = false;
+        updateToggleButton();
     }
 }
 
@@ -341,10 +343,13 @@ function stopScanner() {
         scannerStream.getTracks().forEach(track => track.stop());
         scannerStream = null;
     }
-    qrVideo.srcObject = null; // ✅ Ensure video feed is removed
+    qrVideo.srcObject = null;
     qrVideo.hidden = true;
     scanStatus.textContent = "Scanner is off.";
     scanStatus.style.color = "black";
+
+    isScannerOn = false;
+    updateToggleButton();
 }
 
 // **Toggle Scanner**
@@ -354,8 +359,6 @@ async function toggleScanner() {
     } else {
         await startScanner();
     }
-    isScannerOn = !isScannerOn;
-    updateToggleButton(); // ✅ Ensures button updates after toggling
 }
 
 // **Update Button Text**
@@ -367,6 +370,7 @@ function updateToggleButton() {
 document.addEventListener("DOMContentLoaded", () => {
     toggleScannerBtn.addEventListener("click", toggleScanner);
 });
+
 
     
     function confirmLogout() {
@@ -541,6 +545,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchAttendanceDetails();
     fetchEventNames();
 });
+
 
 document.getElementById("toggleScannerBtn").addEventListener("click", toggleScanner);
 document.getElementById("manualAttendanceBtn").addEventListener("click", markAttendanceManually);
