@@ -718,7 +718,7 @@ function fetchUserProfile() {
     .then(response => handleFetchError(response))
     .then(data => {
         document.getElementById("user-name").textContent = data.name || "Guest";
-        document.getElementById("profile-id").textContent = data.id || "N/A"; // Add this line
+        document.getElementById("profile-id").textContent = data.qr_code_id || "N/A"; // Add this line
         document.getElementById("profile-name").textContent = data.name || "No name available";
         document.getElementById("profile-college").textContent = data.college || "No college available";
         document.getElementById("profile-year").textContent = data.year || "N/A";
