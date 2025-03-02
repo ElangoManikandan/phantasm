@@ -135,6 +135,16 @@ router.get('/attendance', requireAuth, requireAdmin, async (req, res) => {
     }
 });
 
+router.get("/logout", async (req, res) => {
+    console.log("Logout request received!"); // Debugging log
+    try {
+        res.clearCookie("authToken", { path: "/" });
+        return res.status(200).json({ message: "Successfully logged out" });
+    } catch (error) {
+        console.error("Logout error:", error);
+        return res.status(500).json({ error: "Error logging out" });
+    }
+});
 
 
 export default router;
