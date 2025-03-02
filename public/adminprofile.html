@@ -281,7 +281,6 @@ const qrCanvasContext = qrCanvas.getContext("2d");
 const scanStatus = document.getElementById("scanStatus");
 const toggleScannerBtn = document.getElementById("toggleScannerBtn");
 
-let lastScannedCode = null; // Avoid duplicate scans
 let scannerStream = null;
 let isScannerOn = false;
 
@@ -292,10 +291,7 @@ async function startScanner() {
         scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         qrVideo.srcObject = scannerStream;
         qrVideo.hidden = false;
-        qrVideo.classList.add("scanner");
-        qrVideo.classList.remove("toggled");
 
-        console.log("Video stream started successfully.");
         scanStatus.textContent = "Scanner is on. Scanning...";
         scanStatus.style.color = "green";
 
@@ -311,6 +307,35 @@ async function startScanner() {
     }
 }
 
+// Stop QR Scanner
+function stopScanner() {
+    if (scannerStream) {
+        scannerStream.getTracks().forEach(track => track.stop());
+        scannerStream = null;
+    }
+    qrVideo.hidden = true;
+    scanStatus.textContent = "Scanner is off.";
+    scanStatus.style.color = "black";
+}
+
+// Toggle Scanner
+async function toggleScanner() {
+    if (isScannerOn) {
+        stopScanner();
+        toggleScannerBtn.textContent = "Turn On Scanner";
+    } else {
+        await startScanner();
+        toggleScannerBtn.textContent = "Turn Off Scanner";
+    }
+    isScannerOn = !isScannerOn;
+}
+
+// Ensure Event Listener is Attached After DOM Loads
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("toggleScannerBtn").addEventListener("click", toggleScanner);
+});
+
+    
     function confirmLogout() {
     if (confirm("Are you sure you want to logout?")) {
         fetch("/api/admin/logout", {
@@ -327,54 +352,7 @@ async function startScanner() {
             alert("Error logging out! Please try again.");
         });
     }
-}
-
-
-// Stop QR Scanner
-function stopScanner() {
-    if (scannerStream) {
-        scannerStream.getTracks().forEach(track => track.stop());
-        scannerStream = null;
     }
-    qrVideo.hidden = true;
-    qrVideo.classList.remove("scanner");
-    qrVideo.classList.add("toggled");
-    scanStatus.textContent = "Scanner is off.";
-    scanStatus.style.color = "black";
-}
-
-// Toggle Scanner
-function toggleScanner() {
-    if (isScannerOn) {
-        stopScanner();
-        toggleScannerBtn.textContent = "Turn On Scanner";
-    } else {
-        startScanner();
-        toggleScannerBtn.textContent = "Turn Off Scanner";
-    }
-    isScannerOn = !isScannerOn;
-}
-
-// Scan QR Code
-function scanQRCode() {
-    if (!isScannerOn) return;
-
-    if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA) {
-        qrCanvasContext.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
-        const imageData = qrCanvasContext.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
-        const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
-
-        if (qrCode && qrCode.data !== lastScannedCode) {
-            lastScannedCode = qrCode.data;
-            console.log("QR Code detected:", qrCode.data);
-
-            const event_id = prompt("Enter Event ID to mark attendance:");
-            if (event_id) markAttendance(qrCode.data, event_id);
-        }
-    }
-    requestAnimationFrame(scanQRCode); // Keep scanning
-}
-
 
 // Mark Attendance (QR Scanner)
 async function markAttendance(qr_code_id, event_id) {
