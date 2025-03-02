@@ -356,10 +356,14 @@ function stopScanner() {
 async function toggleScanner() {
     if (isScannerOn) {
         stopScanner();
+        isScannerOn = false; // ✅ Update state immediately before calling stop
     } else {
+        isScannerOn = true; // ✅ Update state immediately before calling start
         await startScanner();
     }
+    updateToggleButton(); // ✅ Ensures button updates after toggling
 }
+
 
 // **Update Button Text**
 function updateToggleButton() {
