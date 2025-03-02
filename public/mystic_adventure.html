@@ -130,28 +130,30 @@ function registerForEvent(eventId) {
         alert(error.message || "An error occurred. Please try again.");
     });
 }
- document.getElementById("profileLink").addEventListener("click", async function(event) {
-    event.preventDefault(); // Stop default action
+document.getElementById("profileLinkDesktop").addEventListener("click", checkAuth);
+document.getElementById("profileLinkMobile").addEventListener("click", checkAuth);
 
+async function checkAuth(event) {
+    event.preventDefault();
+    
     try {
         const response = await fetch("/api/user/check-auth", {
             method: "GET",
-            credentials: "include" // ✅ Send cookies with request
+            credentials: "include"
         });
 
         if (response.ok) {
-            window.location.href = "/profile.html"; // ✅ Logged in, go to profile
+            window.location.href = "/profile.html";
         } else {
             alert("Login first!");
-            window.location.href = "/login.html"; // ❌ Not logged in, redirect to login
+            window.location.href = "/login.html";
         }
     } catch (error) {
         console.error("Error checking authentication:", error);
         alert("Login first!");
         window.location.href = "/login.html";
     }
-});
-
+}
     </script>
         <footer>
             <p>&copy; 2025 CSEA. All rights reserved.</p>
