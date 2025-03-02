@@ -23,7 +23,6 @@
 <body>
 
     <h2>Overall Attendance</h2>
-    <button class="download-btn" onclick="downloadCSV()">Download CSV</button>
     <table id="attendanceTable">
         <thead>
             <tr>
@@ -61,10 +60,6 @@
             } catch (error) {
                 console.error("Error fetching attendance:", error);
             }
-        }
-
-        function downloadCSV() {
-            window.location.href = "/api/admin/download";
         }
 
         fetchAttendance();
