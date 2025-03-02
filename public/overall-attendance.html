@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overall Attendance</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        .download-btn { 
+            padding: 10px 15px; 
+            background-color: #008CBA; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin-top: 10px;
+        }
+        .download-btn:hover { background-color: #005f73; }
+    </style>
+</head>
+<body>
+
+    <h2>Overall Attendance</h2>
+    <button class="download-btn" onclick="downloadCSV()">Download CSV</button>
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User Name</th>
+                <th>College</th>
+                <th>Event Name</th>
+                <th>Attendance Status</th>
+                <th>Marked At</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function fetchAttendance() {
+            try {
+                const response = await fetch("https://your-api-url.com/attendance");
+                const data = await response.json();
+
+                const tableBody = document.querySelector("#attendanceTable tbody");
+                tableBody.innerHTML = "";
+
+                data.forEach((record) => {
+                    const row = `<tr>
+                        <td>${record.id}</td>
+                        <td>${record.user_name}</td>
+                        <td>${record.college}</td>
+                        <td>${record.event_name}</td>
+                        <td>${record.attendance_status}</td>
+                        <td>${new Date(record.marked_at).toLocaleString()}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Error fetching attendance:", error);
+            }
+        }
+
+        function downloadCSV() {
+            window.location.href = "/api/admin/attendance/download";
+        }
+
+        fetchAttendance();
+    </script>
+
+</body>
+</html>
