@@ -275,7 +275,8 @@ function confirmLogout() {
 
     </div>
 <script>
-const qrVideo = document.getElementById("qrVideo");
+
+    const qrVideo = document.getElementById("qrVideo");
 const qrCanvas = document.getElementById("qrCanvas");
 const qrCanvasContext = qrCanvas.getContext("2d");
 const scanStatus = document.getElementById("scanStatus");
@@ -283,11 +284,34 @@ const toggleScannerBtn = document.getElementById("toggleScannerBtn");
 
 let scannerStream = null;
 let isScannerOn = false;
+let lastScannedCode = null; // ✅ Fix: Declare variable to prevent reference error
+
+// Scan QR Code
+function scanQRCode() {
+    if (!isScannerOn || !qrVideo || qrVideo.readyState !== qrVideo.HAVE_ENOUGH_DATA) {
+        requestAnimationFrame(scanQRCode); // Keep scanning even if data is not ready
+        return;
+    }
+
+    qrCanvasContext.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
+    const imageData = qrCanvasContext.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+    const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
+
+    if (qrCode && qrCode.data !== lastScannedCode) {
+        lastScannedCode = qrCode.data;
+        console.log("✅ QR Code detected:", qrCode.data);
+
+        const event_id = prompt("Enter Event ID to mark attendance:");
+        if (event_id) markAttendance(qrCode.data, event_id);
+    }
+
+    requestAnimationFrame(scanQRCode); // ✅ Keep scanning in a loop
+}
 
 // Start QR Scanner
 async function startScanner() {
     try {
-        console.log("Starting camera...");
+        console.log("🎥 Starting camera...");
         scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         qrVideo.srcObject = scannerStream;
         qrVideo.hidden = false;
@@ -295,13 +319,14 @@ async function startScanner() {
         scanStatus.textContent = "Scanner is on. Scanning...";
         scanStatus.style.color = "green";
 
-        qrVideo.addEventListener("play", () => {
+        // Wait for the video to be ready before scanning
+        qrVideo.addEventListener("loadedmetadata", () => {
             qrCanvas.width = qrVideo.videoWidth;
             qrCanvas.height = qrVideo.videoHeight;
-            scanQRCode();
+            scanQRCode(); // ✅ Ensure scanning starts properly
         });
     } catch (error) {
-        console.error("Error accessing camera:", error);
+        console.error("❌ Error accessing camera:", error);
         scanStatus.textContent = "Error accessing camera: " + error.message;
         scanStatus.style.color = "red";
     }
