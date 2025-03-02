@@ -718,17 +718,18 @@ function fetchUserProfile() {
     .then(response => handleFetchError(response))
     .then(data => {
         document.getElementById("user-name").textContent = data.name || "Guest";
+        document.getElementById("profile-id").textContent = data.id || "N/A"; // Add this line
         document.getElementById("profile-name").textContent = data.name || "No name available";
         document.getElementById("profile-college").textContent = data.college || "No college available";
         document.getElementById("profile-year").textContent = data.year || "N/A";
         document.getElementById("profile-accommodation").textContent = data.accommodation || "No info";
-        document.getElementById("profile-phone").textContent = data.phone || "Not available"; // Add this
+        document.getElementById("profile-phone").textContent = data.phone || "Not available";
 
         document.getElementById("name").value = data.name || "";
         document.getElementById("college").value = data.college || "";
         document.getElementById("year").value = data.year || "";
         document.getElementById("accommodation").value = data.accommodation || "yes";
-        document.getElementById("phone").value = data.phone || ""; // Add this
+        document.getElementById("phone").value = data.phone || "";
 
         if (data.qr_code_id) {
             document.getElementById("qr-code").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${data.qr_code_id}`;
@@ -736,6 +737,7 @@ function fetchUserProfile() {
     })
     .catch(error => console.error("Error fetching profile:", error));
 }
+
 
 
     function updateRegisteredEvents() {
