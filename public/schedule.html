@@ -252,6 +252,32 @@
     <div class="yet-to-be-declared">
         WILL BE REVEALED AT MARCH 10.
     </div>
+    <script>
+        document.getElementById("profileLinkDesktop").addEventListener("click", checkAuth);
+document.getElementById("profileLinkMobile").addEventListener("click", checkAuth);
+
+async function checkAuth(event) {
+    event.preventDefault();
+    
+    try {
+        const response = await fetch("/api/user/check-auth", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            window.location.href = "/profile.html";
+        } else {
+            alert("Login first!");
+            window.location.href = "/login.html";
+        }
+    } catch (error) {
+        console.error("Error checking authentication:", error);
+        alert("Login first!");
+        window.location.href = "/login.html";
+    }
+}
+    </script>
     <footer>
         <p>&copy; 2025 CSEA. All rights reserved.</p>
         <p>Follow us on</p>
