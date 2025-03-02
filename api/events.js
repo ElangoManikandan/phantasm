@@ -64,6 +64,11 @@ async function sendRegistrationEmail(name, email, qrCodeId, event) {
             pass: process.env.EMAIL_PASS,
         },
     });
+    const formattedDate = new Date(event.date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+});
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
