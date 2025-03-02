@@ -51,7 +51,7 @@ router.post("/mark-attendance", requireAuth, requireAdmin, async (req, res) => {
 // **GET Overall Attendance**
 router.get("/overall-attendance", async (req, res) => {
     try {
-        const [rows] = await pool.query(`
+        const [rows] = await db.query(`
             SELECT 
                 attendance.id, 
                 users.name AS user_name, 
