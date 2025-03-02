@@ -3,6 +3,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../utils/db.js";
 import { requireAuth, requireAdmin } from "../middleware.js";
+const fs = require("fs");
+
+const { Parser } = require("json2csv");
 
 const router = express.Router();
 // ✅ Mark Attendance Route (Admin Only)
@@ -48,21 +51,6 @@ router.post("/mark-attendance", requireAuth, requireAdmin, async (req, res) => {
         res.status(500).json({ success: false, message: "Database error!" });
     }
 });
-
-const express = require("express");
-const router = express.Router();
-const mysql = require("mysql2/promise");
-const fs = require("fs");
-const { Parser } = require("json2csv");
-
-// Database connection
-const pool = mysql.createPool({
-    host: "your-db-host",
-    user: "your-db-user",
-    password: "your-db-password",
-    database: "symposium_db2"
-});
-
 // **GET Overall Attendance**
 router.get("/overall-attendance", async (req, res) => {
     try {
