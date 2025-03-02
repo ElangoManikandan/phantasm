@@ -369,13 +369,6 @@ async function toggleScanner() {
 function updateToggleButton() {
     toggleScannerBtn.textContent = isScannerOn ? "Turn Off Scanner" : "Turn On Scanner";
 }
-
-// **Attach Event Listener After DOM Loads**
-document.addEventListener("DOMContentLoaded", () => {
-    toggleScannerBtn.addEventListener("click", toggleScanner);
-});
-
-
     
     function confirmLogout() {
     if (confirm("Are you sure you want to logout?")) {
@@ -545,6 +538,7 @@ async function fetchAdminProfile() {
 
 // Initialize Components
 document.addEventListener("DOMContentLoaded", () => {
+    toggleScanner();
     fetchAdminProfile();
     fetchAttendanceDetails();
     fetchEventNames();
@@ -553,6 +547,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.getElementById("toggleScannerBtn").addEventListener("click", toggleScanner);
 document.getElementById("manualAttendanceBtn").addEventListener("click", markAttendanceManually);
+document.addEventListener("DOMContentLoaded", () => {
+    toggleScannerBtn.addEventListener("click", toggleScanner);
+});
 
 </script>
 
