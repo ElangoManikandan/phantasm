@@ -76,7 +76,7 @@ async function sendRegistrationEmail(name, email, qrCodeId, event) {
         subject: `You're Officially Registered! 🎉 – ${event.name}`,
         html: `
             <p>Dear ${name},</p>
-            <p>We’re excited to welcome you to <strong>${event.name}</strong> on <strong>${event.date}</strong> at <strong>${event.venue}</strong>! Your registration has been confirmed, and we can’t wait to see you there.</p>
+            <p>We’re excited to welcome you to <strong>${event.name}</strong> on <strong>${formattedDate}</strong> at <strong>${event.venue}</strong>! Your registration has been confirmed, and we can’t wait to see you there.</p>
             <h3>✅ Your Registration Details:</h3>
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Event Registered:</strong> ${event.name}</p>
