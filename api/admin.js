@@ -5,8 +5,6 @@ import db from "../utils/db.js";
 import { requireAuth, requireAdmin } from "../middleware.js";
 const fs = require("fs");
 
-const { Parser } = require("json2csv");
-
 const router = express.Router();
 // ✅ Mark Attendance Route (Admin Only)
 router.post("/mark-attendance", requireAuth, requireAdmin, async (req, res) => {
