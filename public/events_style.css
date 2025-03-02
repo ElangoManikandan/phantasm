@@ -128,6 +128,7 @@ h3 {
   background: #059AD2;
   padding: 60px 25px 25px 25px;
   transform-style: preserve-3d;
+  background-repeat: round;
 }
 
 /* Card title styling */
