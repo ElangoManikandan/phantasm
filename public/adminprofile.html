@@ -275,8 +275,7 @@ function confirmLogout() {
 
     </div>
 <script>
-
-    const qrVideo = document.getElementById("qrVideo");
+const qrVideo = document.getElementById("qrVideo");
 const qrCanvas = document.getElementById("qrCanvas");
 const qrCanvasContext = qrCanvas.getContext("2d");
 const scanStatus = document.getElementById("scanStatus");
@@ -284,12 +283,12 @@ const toggleScannerBtn = document.getElementById("toggleScannerBtn");
 
 let scannerStream = null;
 let isScannerOn = false;
-let lastScannedCode = null; // ✅ Fix: Declare variable to prevent reference error
+let lastScannedCode = null;
 
-// Scan QR Code
+// **Scan QR Code Continuously**
 function scanQRCode() {
     if (!isScannerOn || !qrVideo || qrVideo.readyState !== qrVideo.HAVE_ENOUGH_DATA) {
-        requestAnimationFrame(scanQRCode); // Keep scanning even if data is not ready
+        requestAnimationFrame(scanQRCode);
         return;
     }
 
@@ -305,34 +304,35 @@ function scanQRCode() {
         if (event_id) markAttendance(qrCode.data, event_id);
     }
 
-    requestAnimationFrame(scanQRCode); // ✅ Keep scanning in a loop
+    setTimeout(() => requestAnimationFrame(scanQRCode), 200); // ✅ Delay for performance
 }
 
-// Start QR Scanner
+// **Start Scanner**
 async function startScanner() {
     try {
         console.log("🎥 Starting camera...");
         scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+
         qrVideo.srcObject = scannerStream;
         qrVideo.hidden = false;
 
         scanStatus.textContent = "Scanner is on. Scanning...";
         scanStatus.style.color = "green";
 
-        // Wait for the video to be ready before scanning
-        qrVideo.addEventListener("loadedmetadata", () => {
+        qrVideo.onloadedmetadata = () => {
             qrCanvas.width = qrVideo.videoWidth;
             qrCanvas.height = qrVideo.videoHeight;
-            scanQRCode(); // ✅ Ensure scanning starts properly
-        });
+            qrVideo.play();
+            scanQRCode();
+        };
     } catch (error) {
-        console.error("❌ Error accessing camera:", error);
-        scanStatus.textContent = "Error accessing camera: " + error.message;
+        console.error("❌ Camera access error:", error);
+        scanStatus.textContent = "Error: Camera permission denied!";
         scanStatus.style.color = "red";
     }
 }
 
-// Stop QR Scanner
+// **Stop Scanner**
 function stopScanner() {
     if (scannerStream) {
         scannerStream.getTracks().forEach(track => track.stop());
@@ -343,7 +343,7 @@ function stopScanner() {
     scanStatus.style.color = "black";
 }
 
-// Toggle Scanner
+// **Toggle Scanner**
 async function toggleScanner() {
     if (isScannerOn) {
         stopScanner();
@@ -355,7 +355,7 @@ async function toggleScanner() {
     isScannerOn = !isScannerOn;
 }
 
-// Ensure Event Listener is Attached After DOM Loads
+// **Attach Event Listener After DOM Loads**
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("toggleScannerBtn").addEventListener("click", toggleScanner);
 });
