@@ -230,7 +230,7 @@ td {
             <table>
                 <tr><th>Name</th><td id="adminName">Loading...</td></tr>
                 <tr><th>Email</th><td id="adminEmail">Loading...</td></tr>
-                <tr><th>College</th><td id="adminCollege">Loading...</td></tr>
+                <tr><th>College</th><td id="adminreg_no">Loading...</td></tr>
             </table>
         </div>
 
@@ -530,7 +530,7 @@ async function fetchAdminProfile() {
         const data = await response.json();
         document.getElementById("adminName").textContent = data.name || "N/A";
         document.getElementById("adminEmail").textContent = data.email || "N/A";
-        document.getElementById("adminCollege").textContent = data.college || "N/A";
+        document.getElementById("adminreg_no").textContent = data.reg_no || "N/A";
     } catch (error) {
         console.error("Error fetching admin details:", error);
     }
