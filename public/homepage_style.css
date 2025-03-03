@@ -584,6 +584,7 @@ p {
   display: none;
   text-align: center;
   padding: 50px;
+  padding-bottom: 20px;
 }
 
 .content.loaded {
