@@ -1054,7 +1054,8 @@ p {
   top: 75%;
   left: 50%;
 }
-.registration-container {
+.registration-card {
+  padding:0;
 }
 }
 .advertisement {
