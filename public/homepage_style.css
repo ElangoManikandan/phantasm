@@ -1072,6 +1072,10 @@ p {
     font-size: 18px;
     margin-bottom: 5px;
 }
+  .price {
+  font-size: 18px;
+  font-weight: bold;
+}
 }
 .advertisement {
    color: white;
