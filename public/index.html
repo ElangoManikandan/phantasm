@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
+<!-- saved from url=(0032)http://127.0.0.1:5500/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title >Phantasm'25 </title>
+  <title>Phantasm'25 </title>
   <link rel="icon" href="gceblogo.png" type="image/x-icon">
   <link rel="stylesheet" href="homepage_style.css"> 
 </head>
@@ -24,9 +24,9 @@
           <div></div>
           <div></div>
       </div>
-      <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+      <div class="close-icon" id="closeIcon" onclick="toggleMenu()">✕</div>
       <nav>
-          <a href="#">Home</a>
+          <a href="index.html">Home</a>
           <a href="events.html">Events</a>
           <a href="schedule.html">Schedule</a>
           <a href="contact-us.html">Contact</a>
@@ -46,7 +46,7 @@
       </div>
     </div>
 
-  <div class="preloader">
+  <div class="preloader" style="opacity: 0; transition: opacity 0.5s; display: none;">
     <img src="gceblogo.png" alt="Phantasm '25 Logo">
     <h2>Welcome to Phantasm'25</h2>
     <div class="loader">
@@ -145,15 +145,15 @@ const countdownInterval = setInterval(() => {
     <h2>Symposium Begins in...</h2>
     <div id="timer">
       <div>
-        <span id="days">0</span>
+        <span id="days">14</span>
         <span>Days</span>
       </div>
       <div>
-        <span id="hours">0</span>
+        <span id="hours">13</span>
         <span>Hours</span>
       </div>
       <div>
-        <span id="minutes">0</span>
+        <span id="minutes">13</span>
         <span>Minutes</span>
       </div>
       <div>
@@ -163,15 +163,35 @@ const countdownInterval = setInterval(() => {
     </div>
   </div>
 
-  <section class="content" id="about">
+  <section class="content loaded" id="about">
     <h2>About Phantasm 25</h2>
     <p>Phantasm25 is a national-level technical symposium featuring thrilling tech and non-tech events, fostering innovation, creativity, and competitive spirit among participants.</p>
   </section>
-   </div>
+   
+
+   <div class="registration-container">
+   <div class="registration-card">
+    <h2>🎉 Event Registration</h2>
+    <div class="pricing">
+        <div class="tech-prize-card">
+
+            <h3>Tech Events Pass</h3>
+            <p class="price">₹250</p>
+            <p>Access to <strong>all tech events</strong></p>
+        </div>
+        <div class="non-tech-prize-card">
+            <h3>Non-Tech Event</h3>
+            <p class="price">₹150</p>
+            <p>Per <strong>single event</strong></p>
+        </div>
+    </div>
+</div>
+</div>
+
 
 
   
-  </div>
+  
   <!-- First Section -->
   <section class="header-section" id="events">
     <h1>EVENTS</h1>
@@ -195,7 +215,7 @@ const countdownInterval = setInterval(() => {
                       <li>Query Quest</li>
                       <li>Creative Blueprint</li>
                   </ul>
-                  <a href="#" class="read-more" onclick="redirectToNextPage()">Read More</a>
+                  <a href="events.html" class="read-more" onclick="redirectToNextPage()">Read More</a>
 
 <script>
   function redirectToNextPage() {
@@ -230,11 +250,11 @@ const countdownInterval = setInterval(() => {
   </section>
 
  
-</div>
+
 
 <!--footer-->
 <footer>
-  <p>&copy; 2025 CSEA. All rights reserved.</p>
+  <p>© 2025 CSEA. All rights reserved.</p>
 </footer>
 
 <script>
@@ -287,5 +307,4 @@ async function checkAuth(event) {
 </script>
 
 
-</body>
-</html>
+</body></html>
