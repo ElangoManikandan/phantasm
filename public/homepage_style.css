@@ -306,8 +306,7 @@ nav ul li a:hover {
 .hero {
   text-align: center;
   padding: 100px 20px;
-  padding-bottom: 30px;
-  background: url('C:\Users\HP\Desktop\n.jpg') no-repeat center center/cover; /* Replace with your hero image path */
+  padding-bottom: 30px; /* Replace with your hero image path */
   
  /* background-color: rgba(0, 0, 0, 0.5); /* Darken the background image slightly */
 }
@@ -1054,6 +1053,9 @@ p {
   top: 75%;
   left: 50%;
 }
+.registration-container {
+  width:min-content
+}
 }
 .advertisement {
    color: white;
@@ -1070,4 +1072,90 @@ p {
 .highlight {
   color: #fff700;
   font-size: 1.7rem;
+}
+
+
+.registration-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registration-card {
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Adding a gradient border effect */
+.registration-card::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+  border-radius: 15px;
+}
+
+/* Hover effect */
+.registration-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Stylish headings */
+.registration-card h2 {
+  font-size: 26px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ffdd57, #ff758c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.registration-card h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.free {
+  font-size: 18px;
+  background: #28a745;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.pricing {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.tech-prize-card, .non-tech-prize-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  width: 48%;
+}
+
+.tech-prize-card h3, .non-tech-prize-card h3 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffdd57;
 }
