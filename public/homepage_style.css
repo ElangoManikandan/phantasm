@@ -1068,6 +1068,10 @@ p {
 ;
     justify-content: space-between;
 }
+  .tech-prize-card h3, .non-tech-prize-card h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
 }
 .advertisement {
    color: white;
@@ -1163,7 +1167,7 @@ p {
 }
 
 .tech-prize-card h3, .non-tech-prize-card h3 {
-    font-size: 13px;
+    font-size: 18px;
     margin-bottom: 5px;
 }
 
