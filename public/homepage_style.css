@@ -1056,6 +1056,7 @@ p {
 }
 .registration-card {
   padding: 25px;
+  width: 290px;
 }
   .registration-container{
     display: flex;
