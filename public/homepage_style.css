@@ -1057,6 +1057,12 @@ p {
 .registration-card {
   padding: 25px;
 }
+  .registration-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+  }
 }
 .advertisement {
    color: white;
@@ -1074,6 +1080,7 @@ p {
   color: #fff700;
   font-size: 1.7rem;
 }
+
 
 
 .registration-container {
