@@ -1063,6 +1063,11 @@ p {
     align-items: center;
     width: auto;
   }
+  .pricing {
+    display: flex
+;
+    justify-content: space-between;
+}
 }
 .advertisement {
    color: white;
