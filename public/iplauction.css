@@ -212,14 +212,14 @@ footer a {
     .box .ed {
         transform: none !important; /* Removes any flipping effects */
         transition: none !important; /* Disables transition */
-        height: 400px;
+        height: 150px;
     }
     
     .box .ed .back {
         display: block;  /* Ensure the back content is always visible */
         position: relative;
         transform: none !important;
-        height: 400px;
+        height: 150px;
     }
 
     .box .ed .front {
