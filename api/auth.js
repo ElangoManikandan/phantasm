@@ -7,13 +7,10 @@ import db from "../utils/db.js";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from 'dotenv';
+import { body, validationResult } from "express-validator";
 
 
 dotenv.config();
-
-const { body, validationResult } = require("express-validator");
-
-
 const router = express.Router();
 
 // Configure Nodemailer
