@@ -8,7 +8,11 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from 'dotenv';
 
+
 dotenv.config();
+
+const { body, validationResult } = require("express-validator");
+
 
 const router = express.Router();
 
@@ -95,61 +99,85 @@ const queryDatabase = async (query, values) => {
     }
 };
 // **User Registration**
-router.post("/register", async (req, res) => {
-    try {
-        const { name, college, department, reg_no, year, phone, email, password, accommodation, role, admin_key } = req.body;
 
+// **User Registration**
+router.post(
+    "/register",
+    [
         // Validate required fields
-        if (!name || !college || !department || !reg_no || !year || !phone || !email || !password || !accommodation || !role) {
-            return res.status(400).json({ error: "All fields are required!" });
+        body("name").notEmpty().withMessage("Name is required"),
+        body("college").notEmpty().withMessage("College is required"),
+        body("department").notEmpty().withMessage("Department is required"),
+        body("reg_no").notEmpty().withMessage("Registration number is required"),
+        body("year").notEmpty().withMessage("Year is required"),
+        body("phone")
+            .matches(/^\d{10}$/)
+            .withMessage("Invalid phone number! Must be 10 digits."),
+        body("email")
+            .isEmail()
+            .withMessage("Invalid email format")
+            .normalizeEmail(), // ✅ Normalizes email
+        body("password")
+            .isLength({ min: 6 })
+            .withMessage("Password must be at least 6 characters"),
+        body("accommodation").notEmpty().withMessage("Accommodation field is required"),
+        body("role").notEmpty().withMessage("Role is required"),
+        body("admin_key").optional(), // Admin key is only required if role is "admin"
+    ],
+    async (req, res) => {
+        try {
+            // Check for validation errors
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { name, college, department, reg_no, year, phone, email, password, accommodation, role, admin_key } =
+                req.body;
+
+            // Validate admin key if role is "admin"
+            if (role === "admin" && admin_key !== process.env.ADMIN_KEY) {
+                return res.status(400).json({ error: "Invalid admin key!" });
+            }
+
+            // Check if email already exists
+            const [existingUser] = await queryDatabase(`SELECT * FROM users WHERE email = ?`, [email]);
+            if (existingUser.length > 0) {
+                return res.status(400).json({ error: "Email already exists!" });
+            }
+
+            // Hash the password
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            // Insert user data into the database
+            const result = await queryDatabase(
+                `INSERT INTO users (name, college, department, reg_no, year, phone, email, password, accommodation, role) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [name, college, department, reg_no, year, phone, email, hashedPassword, accommodation, role]
+            );
+
+            // Get the newly inserted user's ID
+            const userId = result.insertId;
+
+            // Generate QR Code ID (format: PSM_<id>)
+            const qrCodeId = `PSM_${userId}`;
+
+            // Update the user's record with the generated qr_code_id
+            await queryDatabase(`UPDATE users SET qr_code_id = ? WHERE id = ?`, [qrCodeId, userId]);
+
+            // Generate JWT Token
+            const token = jwt.sign({ email, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+            res.status(201).json({
+                message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
+                token,
+                qr_code_id: qrCodeId,
+            });
+        } catch (error) {
+            console.error("Registration Error:", error);
+            res.status(500).json({ error: "Server error!" });
         }
-
-        // Validate phone number format (10 digits)
-        const phoneRegex = /^\d{10}$/;
-        if (!phoneRegex.test(phone)) {
-            return res.status(400).json({ error: "Invalid phone number! Must be 10 digits." });
-        }
-
-        // Validate admin key if role is "admin"
-        if (role === "admin" && admin_key !== process.env.ADMIN_KEY) {
-            return res.status(400).json({ error: "Invalid admin key!" });
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Insert user data into the database
-        const result = await queryDatabase(
-            `INSERT INTO users (name, college, department, reg_no, year, phone, email, password, accommodation, role) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [name, college, department, reg_no, year, phone, email, hashedPassword, accommodation, role]
-        );
-
-        // Get the newly inserted user's ID
-        const userId = result.insertId;
-
-        // Generate QR Code ID (format: PSM_<id>)
-        const qrCodeId = `PSM_${userId}`;
-
-        // Update the user's record with the generated qr_code_id
-        await queryDatabase(
-            `UPDATE users SET qr_code_id = ? WHERE id = ?`,
-            [qrCodeId, userId]
-        );
-
-        // Generate JWT Token
-        const token = jwt.sign({ email, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-        res.status(201).json({
-            message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
-            token,
-            qr_code_id: qrCodeId
-        });
-    } catch (error) {
-        console.error("Registration Error:", error);
-        res.status(500).json({ error: "Server error!" });
     }
-});
-
+);
 
 export default router;
