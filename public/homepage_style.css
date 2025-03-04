@@ -1077,6 +1077,7 @@ p {
   font-size: 18px;
   font-weight: bold;
 }
+
   p {
     font-size: .8rem;
 }
@@ -1169,14 +1170,14 @@ p {
 
 .tech-prize-card, .non-tech-prize-card {
   background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
-  border-radius: 8px;
+  padding: clamp(9px, 9px, 15px);
   width: 48%;
 }
 
 .tech-prize-card h3, .non-tech-prize-card h3 {
     font-size: 18px;
     margin-bottom: 5px;
+
 }
 
 .price {
