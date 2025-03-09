@@ -15,6 +15,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            text-align: center;
             margin: 0;
         overflow-x: hidden;
         }
@@ -199,6 +200,98 @@
     align-items: center;
     font-family: 'Audiowide', serif;
 }
+
+        #ttop {
+            font-size: 26px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color:white;
+            margin-bottom: 0px;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.8);
+        }
+
+        /* Table Styles */
+        .tab {
+    width: 85%;
+    margin: 50px 100px;
+    border-collapse: collapse;
+    background: transparent; /* Fully transparent background */
+    box-shadow: 0px 0px 20px rgba(0, 191, 255, 0.5); /* Neon glow */
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(10px); /* Adds a subtle glass effect */
+}
+
+
+        .tab th, .tab td {
+            padding: 12px;
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            text-align: center;
+            position: relative;
+        }
+
+        .tab th {
+            background: linear-gradient(90deg, #004488, #0088cc);
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 17px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+        }
+
+        .tab td {
+            background: rgba(0, 0, 0, 0.6);
+            color: #00bfff;
+            font-size: 15px;
+            transition: all 0.4s ease-in-out;
+        }
+
+        /* Full Row Pop-Out Effect */
+        .tab tr {
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .tab tr:hover {
+            background: rgba(0, 191, 255, 0.3); /* Light neon blue tint */
+            box-shadow: 0px 0px 15px rgba(0, 191, 255, 0.7), 
+                        0px 0px 25px rgba(0, 191, 255, 0.5); /* Outer glow */
+            border-radius: 6px; /* Slightly round the edges */
+            transition: all 0.3s ease-in-out;
+        }
+
+        @media (max-width: 768px) {
+            #ttop{
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+    .tab-container {
+        padding: 5px; /* Reduce padding for smaller screens */
+    }
+
+    .tab {
+        width: 80%; /* Full width for better fit */
+        margin: auto;
+        box-shadow: none; /* Reduce glow effect for clarity */
+    }
+
+    .tab th, .tab td {
+        padding: 8px;
+        font-size: 10.5px; /* Smaller font size for mobile */
+    }
+
+    .tab tr:hover {
+        background: rgba(0, 191, 255, 0.2);
+        box-shadow: none; /* No extra glow for better visibility */
+        transform: none; /* Prevent pop-out effect on mobile */
+    }
+
+    /* Make table more readable on smaller screens */
+    .tab-container {
+        overflow-x: scroll; /* Enables smooth scrolling */
+        -webkit-overflow-scrolling: touch; /* Enhances mobile experience */
+    }
+}
+
+
     </style>
 </head>
 <body>
@@ -250,9 +343,83 @@
         </div>
     </header>
 
-    <div class="yet-to-be-declared">
-        WILL BE REVEALED AT MARCH 10.
-    </div>
+    <H3 id="ttop">Event Schedule</H3>
+    <table class="tab">
+     <tr>
+        <th>Event Name</th>
+        <th>Event Type</th>
+        <th>Venue</th>
+        <th>Date</th>
+        <th>Time</th>
+     </tr>
+     <tr>
+        <td>TechTalk 2.0</td>
+        <td>Technical</td>
+        <td>Seminar Hall</td>
+        <td>18.03.2025</td>
+        <td>10 AM to 1 PM</td>
+     </tr>
+     <tr>
+        <td>Tech Tornado</td>
+        <td>Technical</td>
+        <td>OpenSource Laboratary</td>
+        <td>18.03.2025</td>
+        <td>10 AM to 11 AM</td>
+     </tr>
+     <tr>
+        <td>Query Quest</td>
+        <td>Technical</td>
+        <td>OpenSource Laboratary</td>
+        <td>18.03.2025</td>
+        <td>11 AM to 12 AM</td>
+     </tr>
+
+     <tr>
+        <td>Creative Blueprint</td>
+        <td>Technical</td>
+        <td>OpenSource Laboratary</td>
+        <td>18.03.2025</td>
+        <td>12 AM to 1 PM</td>
+     </tr>
+
+     <tr>
+        <td>IPL Auction</td>
+        <td>Non-Technical</td>
+        <td>Third Year Classroom</td>
+        <td>18.03.2025</td>
+        <td>2 PM to 5 PM</td>
+     </tr>
+
+     <tr>
+        <td>Mystic Adventure</td>
+        <td>Non-Technical</td>
+        <td>Final Year Classroom</td>
+        <td>18.03.2025</td>
+        <td>2 PM to 3 PM</td>
+     </tr>
+
+     <tr>
+        <td>3X Battle</td>
+        <td>Non-Technical</td>
+        <td>Seminar Hall</td>
+        <td>18.03.2025</td>
+        <td>3 PM to 4 PM</td>
+     </tr>
+
+     <tr>
+        <td>Free Fire and PUBG</td>
+        <td>Non-Technical</td>
+        <td>Second Year Classroom</td>
+        <td>18.03.2025</td>
+        <td>4 PM to 5 PM</td>
+     </tr>
+
+    </table>
+    <p></p>
+    <br>
+    <br>
+    <br>
+    <p></p>
     <script>
         document.getElementById("profileLinkDesktop").addEventListener("click", checkAuth);
 document.getElementById("profileLinkMobile").addEventListener("click", checkAuth);
