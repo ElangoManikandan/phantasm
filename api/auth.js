@@ -134,19 +134,18 @@ router.post("/register", async (req, res) => {
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: "Welcome to the Symposium!",
+            subject: "Welcome to the Phantasm'25!",
             html: `
                 <h2>Hello ${name},</h2>
                 <p>Welcome to our symposium! 🎉</p>
-                <p>Your QR Code ID: <strong>${qrCodeId}</strong></p>
+                <p>Your ID: <strong>${qrCodeId}</strong></p>
                 <p>Instructions to register for an event:</p>
                 <ul>
-                    <li>Visit our event page: <a href="https://your-symposium-website.com/events">Register Here</a></li>
-                    <li>Login using your email.</li>
+                    <li>Visit our event page: <a href="https://phantasm.onrender.com/events.html">Register Here</a></li>
                     <li>Select an event and confirm your participation.</li>
                 </ul>
                 <p>See you at the event! 🚀</p>
-                <p>Best Regards,<br/>Symposium Team</p>
+                <p>Best Regards,<br/>Phantasm Team</p>
             `
         };
 
