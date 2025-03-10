@@ -94,57 +94,76 @@ const queryDatabase = async (query, values) => {
         throw error;
     }
 };
-// **User Registration**
+// User Registration Route
 router.post("/register", async (req, res) => {
     try {
         const { name, college, department, reg_no, year, phone, email, password, accommodation, role, admin_key } = req.body;
 
-        // Validate required fields
         if (!name || !college || !department || !reg_no || !year || !phone || !email || !password || !accommodation || !role) {
             return res.status(400).json({ error: "All fields are required!" });
         }
 
-        // Validate phone number format (10 digits)
         const phoneRegex = /^\d{10}$/;
         if (!phoneRegex.test(phone)) {
             return res.status(400).json({ error: "Invalid phone number! Must be 10 digits." });
         }
 
-        // Validate admin key if role is "admin"
         if (role === "admin" && admin_key !== process.env.ADMIN_KEY) {
             return res.status(400).json({ error: "Invalid admin key!" });
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insert user data into the database
         const result = await queryDatabase(
             `INSERT INTO users (name, college, department, reg_no, year, phone, email, password, accommodation, role) 
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [name, college, department, reg_no, year, phone, email, hashedPassword, accommodation, role]
         );
 
-        // Get the newly inserted user's ID
         const userId = result.insertId;
-
-        // Generate QR Code ID (format: PSM_<id>)
         const qrCodeId = `PSM_${userId}`;
 
-        // Update the user's record with the generated qr_code_id
         await queryDatabase(
             `UPDATE users SET qr_code_id = ? WHERE id = ?`,
             [qrCodeId, userId]
         );
 
-        // Generate JWT Token
         const token = jwt.sign({ email, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        // Send Greeting Email
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Welcome to the Symposium!",
+            html: `
+                <h2>Hello ${name},</h2>
+                <p>Welcome to our symposium! 🎉</p>
+                <p>Your QR Code ID: <strong>${qrCodeId}</strong></p>
+                <p>Instructions to register for an event:</p>
+                <ul>
+                    <li>Visit our event page: <a href="https://your-symposium-website.com/events">Register Here</a></li>
+                    <li>Login using your email.</li>
+                    <li>Select an event and confirm your participation.</li>
+                </ul>
+                <p>See you at the event! 🚀</p>
+                <p>Best Regards,<br/>Symposium Team</p>
+            `
+        };
+
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error("Email Sending Error:", err);
+            } else {
+                console.log("Email Sent:", info.response);
+            }
+        });
 
         res.status(201).json({
             message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
             token,
             qr_code_id: qrCodeId
         });
+
     } catch (error) {
         console.error("Registration Error:", error);
         res.status(500).json({ error: "Server error!" });
