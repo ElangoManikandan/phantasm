@@ -1120,6 +1120,7 @@ p {
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 20px;
 }
 
 /* Adding a gradient border effect */
