@@ -716,5 +716,13 @@ a:hover {
     .rules-box{
         height: 100px;
     }
+    .warning-message{
+        font-size: 13px;
+    }
+}
+
+.warning-message{
+    font-size: 18px;
+    padding-bottom: 15px;
 }
 
