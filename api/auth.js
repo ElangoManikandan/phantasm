@@ -150,6 +150,7 @@ router.post("/register", async (req, res) => {
                 <h2>Hello ${name},</h2>
                 <p>Welcome to our symposium! 🚀</p>
                 <p>Your ID: <strong>${qrCodeId}</strong></p>
+                <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
                 <p>Instructions to register for an event:</p>
                 <ul>
                     <li>Visit our event page: <a href="https://phantasm.onrender.com/events.html">Register Here</a></li>
