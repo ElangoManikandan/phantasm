@@ -446,6 +446,9 @@ p {
   font-size: 1rem;
   font-family: 'Caudex', serif;
   color: #ffffff;
+  text-align: center;
+  padding-bottom: 30px;
+
 }
 
 .preloader {
