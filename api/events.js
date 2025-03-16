@@ -80,8 +80,7 @@ const formattedDate = new Date(event.date).toLocaleDateString("en-IN", {
             <h3>✅ Your Registration Details:</h3>
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Event Registered:</strong> ${event.name}</p>
-            <p><strong>user ID:</strong> ${qrCodeId}</p>
-            <p>We’ve attached the symposium poster with all the details—make sure to check it out!</p>
+            <p><strong>user ID:</strong> ${qrCodeId}</p>
             <p>Got questions? Feel free to reach out at phantasm25cse@gmail.com. Stay updated by visiting https://phantasm.onrender.com</p>
             <p>See you soon!</p>
             <p><strong>Best Regards,</strong></p>
