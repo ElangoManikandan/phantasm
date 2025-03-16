@@ -1,12 +1,15 @@
+// Import required modules
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cors from "cors";
-import {requireAuth} from "../middleware.js";
+import { requireAuth } from "../middleware.js";
 import db from "../utils/db.js";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
 
 dotenv.config();
 
@@ -20,6 +23,12 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS
     }
 });
+
+
+dotenv.config();
+
+// Define file path for the poster
+const posterPath = path.resolve("public", "poster.pdf");
 
 // Forgot Password Route
 router.post('/forgot-password', async (req, res) => {
@@ -94,7 +103,7 @@ const queryDatabase = async (query, values) => {
         throw error;
     }
 };
-// User Registration Route
+// User Registration Route with Poster Attachment
 router.post("/register", async (req, res) => {
     try {
         const { name, college, department, reg_no, year, phone, email, password, accommodation, role, admin_key } = req.body;
@@ -114,7 +123,7 @@ router.post("/register", async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const result = await queryDatabase(
+        const result = await db.query(
             `INSERT INTO users (name, college, department, reg_no, year, phone, email, password, accommodation, role) 
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [name, college, department, reg_no, year, phone, email, hashedPassword, accommodation, role]
@@ -123,30 +132,38 @@ router.post("/register", async (req, res) => {
         const userId = result.insertId;
         const qrCodeId = `PSM_${userId}`;
 
-        await queryDatabase(
-            `UPDATE users SET qr_code_id = ? WHERE id = ?`,
-            [qrCodeId, userId]
-        );
+        await db.query(`UPDATE users SET qr_code_id = ? WHERE id = ?`, [qrCodeId, userId]);
 
         const token = jwt.sign({ email, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        // Send Greeting Email
+        // Check if poster file exists before sending
+        if (!fs.existsSync(posterPath)) {
+            console.error("Poster file not found:", posterPath);
+        }
+
+        // Send Welcome Email with Poster Attachment
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: "Welcome to the Phantasm'25!",
+            subject: "Welcome to Phantasm'25! 🎉",
             html: `
                 <h2>Hello ${name},</h2>
-                <p>Welcome to our symposium! 🎉</p>
+                <p>Welcome to our symposium! 🚀</p>
                 <p>Your ID: <strong>${qrCodeId}</strong></p>
                 <p>Instructions to register for an event:</p>
                 <ul>
                     <li>Visit our event page: <a href="https://phantasm.onrender.com/events.html">Register Here</a></li>
                     <li>Select an event and confirm your participation.</li>
                 </ul>
-                <p>See you at the event! 🚀</p>
+                <p>See you at the event! 🏆</p>
                 <p>Best Regards,<br/>Phantasm Team</p>
-            `
+            `,
+            attachments: [
+                {
+                    filename: "Phantasm25_Poster.pdf",
+                    path: posterPath, // Attach the PDF poster
+                },
+            ],
         };
 
         transporter.sendMail(mailOptions, (err, info) => {
@@ -160,7 +177,7 @@ router.post("/register", async (req, res) => {
         res.status(201).json({
             message: `${role === "user" ? "User" : "Admin"} registered successfully!`,
             token,
-            qr_code_id: qrCodeId
+            qr_code_id: qrCodeId,
         });
 
     } catch (error) {
@@ -168,6 +185,5 @@ router.post("/register", async (req, res) => {
         res.status(500).json({ error: "Server error!" });
     }
 });
-
 
 export default router;
