@@ -446,9 +446,6 @@ p {
   font-size: 1rem;
   font-family: 'Caudex', serif;
   color: #ffffff;
-  text-align: center;
-  padding-bottom: 30px;
-
 }
 
 .preloader {
@@ -1188,4 +1185,11 @@ p {
   font-size: 22px;
   font-weight: bold;
   color: #ffdd57;
+}
+.p_tag{
+  font-size: 1rem;
+  font-family: 'Caudex', serif;
+  color: #ffffff;
+  text-align: center;
+  padding-bottom: 30px;
 }
