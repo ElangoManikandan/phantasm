@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="gceblogo.png" type="image/x-icon">
+    <title>3X Battle</title>
+    <link rel="stylesheet" href="3X_Battle.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Phantasm'25</div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="schedule.html">Schedule</a>
+            <a href="contact-us.html">Contact</a>
+<a href="#" id="profileLinkDesktop">Profile</a>
+            <a href="login.html">Login</a>
+        </nav>
+        <div class="side-menu" id="sideMenu">
+            <!-- Example folder-based links -->
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="schedule.html">Schedule</a>
+            <a href="contact-us.html">Contact</a>
+<a href="#" id="profileLinkMobile">Profile</a>
+            <a href="login.html">Login</a>
+        </div>
+    </header>
+    <div class="container">
+ 
+        <div class="content">
+            <div class="event-title">3X Battle</div>
+            <div class="warning-message">Note: Kindly refer the schedule before registering events</div>
+            <div class="event-section">
+                <div class="box description-box">
+                    <div class="ed">
+                        <div class="front">DESCRIPTION</div>
+                        <div class="back">
+                            <p>3X Battle is an exciting and fast-paced game designed to challenge players across three unique rounds, each testing a different skill set.
+                                Round 1: Funny Quiz – Get ready for a hilarious and unpredictable quiz where players must answer amusing, tricky, or downright silly questions.
+                                Round 2: Memory Maze– Sharpen your focus as you try to remember and match hidden objects, sequences, or patterns.
+                                Round 3: Jumble & Act – One player must unscramble a jumbled word and then act it out, while the other player tries to guess the correct word.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box rules-box">
+                    <div class="ed">
+                        <div class="front">RULES</div>
+                        <div class="back"><ol>
+                        <li>Each team should consist of 2 players.</li>
+                        <li>The game consists of three rounds: Funny Quiz, Memory maze, and Jumble & Act.</li>
+                        <li>At the end of each round, only the highest-scoring teams advance to the next round.</li>
+                        </ol> 
+                        </div>
+                        </div>
+                </div>
+            </div>
+ <button class="register-button" onclick="registerForEvent(8)"  >REGISTER NOW</button>
+
+            </div>
+        </div>
+        </div>   
+    </div>
+    <script>
+        // Function to toggle the side menu
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const hamburger = document.getElementById('hamburger');
+            const closeIcon = document.getElementById('closeIcon');
+    
+            // Toggle side menu visibility
+            sideMenu.classList.toggle('open');
+    
+            // Toggle visibility of hamburger and close icon
+            if (sideMenu.classList.contains('open')) {
+                hamburger.style.display = 'none';
+                closeIcon.style.display = 'block';
+            } else {
+                hamburger.style.display = 'flex';
+                closeIcon.style.display = 'none';
+            }
+        }
+    
+
+    
+        // Add ripple effect to header, footer, and side menu
+
+        
+function registerForEvent(eventId) {
+    console.log("Starting event registration...");
+
+    fetch('/api/events/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ eventId })
+    })
+    .then(async response => {
+        console.log("Response received:", response.status);
+        
+         if (response.status === 401) {
+            window.location.href = '/login.html';
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Unknown error");
+        }
+
+        return response.json();
+    })
+    .then(result => {
+        console.log("Registration successful:", result);
+        alert('Event registered successfully!');
+
+        // ✅ Set a flag in localStorage so profile.html can detect and update events
+        localStorage.setItem("updateEvents", "true");
+
+        // Redirect user to profile page where updateRegisteredEvents() is defined
+        window.location.href = "/profile.html";
+    })
+    .catch(error => {
+        console.error("Error occurred:", error);
+        alert(error.message || "An error occurred. Please try again.");
+    });
+}
+
+document.getElementById("profileLinkDesktop").addEventListener("click", checkAuth);
+document.getElementById("profileLinkMobile").addEventListener("click", checkAuth);
+
+async function checkAuth(event) {
+    event.preventDefault();
+    
+    try {
+        const response = await fetch("/api/user/check-auth", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            window.location.href = "/profile.html";
+        } else {
+            alert("Login first!");
+            window.location.href = "/login.html";
+        }
+    } catch (error) {
+        console.error("Error checking authentication:", error);
+        alert("Login first!");
+        window.location.href = "/login.html";
+    }
+}
+
+document.querySelector('.logo').addEventListener('click', function() {
+    window.location.href = 'index.html';
+  });
+ 
+    </script>
+        <footer>
+            <p>&copy; 2025 CSEA. All rights reserved.</p>
+        </footer>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Auction</title>
+      <link rel="icon" href="gceblogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="iplauction.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Phantasm'25</div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="schedule.html">Schedule</a>
+            <a href="contact-us.html">Contact</a>
+<a href="#" id="profileLinkDesktop">Profile</a>
+            <a href="login.html">Login</a>
+        </nav>
+        <div class="side-menu" id="sideMenu">
+            <!-- Example folder-based links -->
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="schedule.html">Schedule</a>
+            <a href="contact-us.html">Contact</a>
+<a href="#" id="profileLinkMobile">Profile</a>
+            <a href="login.html">Login</a>
+        </div>
+    </header>
+    <div class="container">
+ 
+        <div class="content">
+            <div class="event-title">IPL Auction</div>   <div class="warning-message">Note: Kindly refer the schedule before registering events</div>
+            <div class="event-section">
+                <div class="box description-box">
+                    <div class="ed">
+                        <div class="front">DESCRIPTION</div>
+                        <div class="back">
+                            <p>Get ready for an electrifying IPL-style auction, where 10 teams compete to build their dream squad by bidding on top cricket players! Each team will have a fixed budget to strategically acquire players across different categories—batsmen, bowlers, all-rounders, and wicketkeepers.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box rules-box">
+                    <div class="ed">
+                        <div class="front">RULES</div>
+                        <div class="back"><ol>
+                        <li>Each team will have a fixed budget of 100 crores.</li>
+
+                        <li>Teams can have a minimum number of 3 and maximum number of 4 participants.</li>
+                            
+                        <li>The auction will follow an open-bid system where teams bid in rounds.</li>
+                            
+                        <li>A team captain will be responsible for bidding.</li>
+                            
+                        <li>Once a bid remains unmatched and the auctioner goes for a final call, the player is sold.</li>
+                            
+                        <li>Bidding above the budget straight away disqualifies the team.</li>
+                            
+                        <li>A team must buy atleast 11 players and atmost 15.</li>
+                            
+                        <li>Unsold players may be auctioned again.</li>
+                            
+                        <li>Points will be awarded based on performance of the player on a specific basis which will be announced at the time of the auction.</li>
+                            
+                        <li>Atlast, a list of 11 players must be given with 2 players as captain and vice-captain respectively where captain gets a advantage of 2 × points and vice-captain with 1.5 × points.</li>
+                            
+                        <li>The team with the highest cumulative points wins the tournament.</li>
+                        </ol> 
+                        </div>
+                        </div>
+                </div>
+            </div>
+ <button class="register-button" onclick="registerForEvent(6)" >REGISTER NOW</button>
+            
+
+            </div>
+        </div>
+        </div>   
+    </div>
+    <script>
+        // Function to toggle the side menu
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const hamburger = document.getElementById('hamburger');
+            const closeIcon = document.getElementById('closeIcon');
+    
+            // Toggle side menu visibility
+            sideMenu.classList.toggle('open');
+    
+            // Toggle visibility of hamburger and close icon
+            if (sideMenu.classList.contains('open')) {
+                hamburger.style.display = 'none';
+                closeIcon.style.display = 'block';
+            } else {
+                hamburger.style.display = 'flex';
+                closeIcon.style.display = 'none';
+            }
+        }
+    
+
+    
+        // Add ripple effect to header, footer, and side menu
+
+        
+function registerForEvent(eventId) {
+    console.log("Starting event registration...");
+
+    fetch('/api/events/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ eventId })
+    })
+    .then(async response => {
+        console.log("Response received:", response.status);
+        
+        if (response.status === 401) {
+            window.location.href = '/login.html';
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Unknown error");
+        }
+
+        return response.json();
+    })
+    .then(result => {
+        console.log("Registration successful:", result);
+        alert('Event registered successfully!');
+
+        // ✅ Set a flag in localStorage so profile.html can detect and update events
+        localStorage.setItem("updateEvents", "true");
+
+        // Redirect user to profile page where updateRegisteredEvents() is defined
+        window.location.href = "/profile.html";
+    })
+    .catch(error => {
+        console.error("Error occurred:", error);
+        alert(error.message || "An error occurred. Please try again.");
+    });
+}
+
+document.getElementById("profileLinkDesktop").addEventListener("click", checkAuth);
+document.getElementById("profileLinkMobile").addEventListener("click", checkAuth);
+
+async function checkAuth(event) {
+    event.preventDefault();
+    
+    try {
+        const response = await fetch("/api/user/check-auth", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            window.location.href = "/profile.html";
+        } else {
+            alert("Login first!");
+            window.location.href = "/login.html";
+        }
+    } catch (error) {
+        console.error("Error checking authentication:", error);
+        alert("Login first!");
+        window.location.href = "/login.html";
+    }
+}
+ 
+
+
+document.querySelector('.logo').addEventListener('click', function() {
+    window.location.href = 'index.html';
+  });
+
+    </script>
+        <footer>
+            <p>&copy; 2025 CSEA. All rights reserved.</p>
+        </footer>
+</body>
+</html>

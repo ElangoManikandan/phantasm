@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Blueprint</title>
+      <link rel="icon" href="gceblogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="creative_blueprint.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Phantasm'25</div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="close-icon" id="closeIcon" onclick="toggleMenu()">&#x2715;</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="schedule.html">Schedule</a>
+            <a href="contact-us.html">Contact</a>
+<a href="#" id="profileLinkDesktop">Profile</a>
+            <a href="login.html">Login</a>
+        </nav>
+        <div class="side-menu" id="sideMenu">
+            <!-- Example folder-based links -->
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="schedule.html">Schedule</a>
+            <a href="contact-us.html">Contact</a>
+<a href="#" id="profileLinkMobile">Profile</a>
+            <a href="login.html">Login</a>
+        </div>
+    </header>
+    <div class="container">
+ 
+        <div class="content">
+            <div class="event-title">Creative Blueprint</div>  <div class="warning-message">Note: Kindly refer the schedule before registering events</div>
+            <div class="event-section">
+                <div class="box description-box">
+                    <div class="ed">
+                        <div class="front">DESCRIPTION</div>
+                        <div class="back">
+                            <p>
+                                Step into the world of imagination and design at Blueprints of Innovation using Figma, where creativity meets strategy. This one-of-a-kind event invites architects, designers, and dreamers to explore the art of blueprinting ideas that shape our future. Whether you're a professional in the industry or an aspiring innovator, this immersive experience will open new doors to your creative potential</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box rules-box">
+                    <div class="ed">
+                        <div class="front">RULES</div>
+                        <div class="back"><ol>
+                            <li>Individual participation only (No teams).</li>
+                            <li>Only Figma is allowed.</li>
+                            <li>No pre-made templates or external UI kits allowed.</li>
+                            <li>The design topic will be given at the start.</li>
+                            <li>Designs should focus on innovation, usability, and aesthetics.</li>
+                            <li>Participant should follow the given theme.</li>
+                        </ol> 
+                        </div>
+                        </div>
+                </div>
+            </div>
+ <button class="register-button" onclick="registerForEvent(4)">REGISTER NOW</button>
+            
+
+
+            </div>
+        </div>
+        </div>   
+    </div>
+    <script>
+        // Function to toggle the side menu
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const hamburger = document.getElementById('hamburger');
+            const closeIcon = document.getElementById('closeIcon');
+    
+            // Toggle side menu visibility
+            sideMenu.classList.toggle('open');
+    
+            // Toggle visibility of hamburger and close icon
+            if (sideMenu.classList.contains('open')) {
+                hamburger.style.display = 'none';
+                closeIcon.style.display = 'block';
+            } else {
+                hamburger.style.display = 'flex';
+                closeIcon.style.display = 'none';
+            }
+        }
+    
+
+    
+        // Add ripple effect to header, footer, and side menu
+
+        
+function registerForEvent(eventId) {
+    console.log("Starting event registration...");
+
+    fetch('/api/events/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ eventId })
+    })
+    .then(async response => {
+        console.log("Response received:", response.status);
+        
+        if (response.status === 401) {
+            window.location.href = '/login.html';
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Unknown error");
+        }
+
+        return response.json();
+    })
+    .then(result => {
+        console.log("Registration successful:", result);
+        alert('Event registered successfully!');
+
+        // ✅ Set a flag in localStorage so profile.html can detect and update events
+        localStorage.setItem("updateEvents", "true");
+
+        // Redirect user to profile page where updateRegisteredEvents() is defined
+        window.location.href = "/profile.html";
+    })
+    .catch(error => {
+        console.error("Error occurred:", error);
+        alert(error.message || "An error occurred. Please try again.");
+    });
+}
+
+document.getElementById("profileLinkDesktop").addEventListener("click", checkAuth);
+document.getElementById("profileLinkMobile").addEventListener("click", checkAuth);
+
+async function checkAuth(event) {
+    event.preventDefault();
+    
+    try {
+        const response = await fetch("/api/user/check-auth", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            window.location.href = "/profile.html";
+        } else {
+            alert("Login first!");
+            window.location.href = "/login.html";
+        }
+    } catch (error) {
+        console.error("Error checking authentication:", error);
+        alert("Login first!");
+        window.location.href = "/login.html";
+    }
+}
+
+document.querySelector('.logo').addEventListener('click', function() {
+    window.location.href = 'index.html';
+  });
+ 
+    </script>
+        <footer>
+            <p>&copy; 2025 CSEA. All rights reserved.</p>
+        </footer>
+</body>
+</html>
