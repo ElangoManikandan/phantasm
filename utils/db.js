@@ -9,7 +9,7 @@ const caCert = process.env.TIDB_CA_CERT
   : null;
 
 const db = mysql.createPool({
-  host: process.env.TIDB_HOST,###
+  host: process.env.TIDB_HOST,
   user: process.env.TIDB_USER,
   password: process.env.TIDB_PASSWORD,
   database: process.env.TIDB_NAME,
