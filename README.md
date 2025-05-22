@@ -38,18 +38,6 @@ This system enables students to register for events, while admins can manage eve
 
 ---
 
-## 📁 Project Structure
-
-```
-/public                 # All HTML/CSS/JS files (served statically)
-/routes                 # Route files for admin, auth, events, and profile
-/controllers            # Logic for handling routes
-/models                 # DB queries and schema abstraction
-/server.js              # Express.js entry point
-.env                    # Environment variables
-README.md               # Project overview
-```
-
 ---
 
 ## 🚀 Getting Started
