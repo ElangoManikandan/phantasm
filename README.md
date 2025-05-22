@@ -105,7 +105,7 @@ node server.js
 
 **Elango**  
 Final Year CSE, Government College of Engineering, Bargur  
-[GitHub](https://github.com/yourusername) • [LinkedIn](https://linkedin.com/in/your-profile)
+[GitHub](https://github.com/elangomanikandan) • [LinkedIn](https://linkedin.com/in/elango31204)
 
 ---
 
