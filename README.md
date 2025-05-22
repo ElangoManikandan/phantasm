@@ -34,7 +34,7 @@ This system enables students to register for events, while admins can manage eve
 | Backend      | Node.js, Express.js       |
 | Database     | TiDB Cloud                |
 | Auth         | JSON Web Tokens (JWT)     |
-| Deployment   | Vercel (Static Frontend), Render (Node.js Backend) |
+| Deployment   | Render  |
 
 ---
 
