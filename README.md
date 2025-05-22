@@ -94,9 +94,7 @@ node server.js
 ---
 
 ## ☁️ Deployment
-
-- **Frontend** deployed as static files on Vercel.
-- **Backend** deployed on Render or Vercel functions.
+- **Frontend & Backend** deployed on Render functions.
 - **Database** hosted on TiDB Cloud.
 
 ---
