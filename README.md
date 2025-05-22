@@ -61,7 +61,7 @@ Create a `.env` file in the root directory:
 
 ```env
 PORT=5000
-DB_URI=your_tidb_connection_string
+DB_URI=gateway01.ap-southeast-1.prod.aws.tidbcloud.com
 JWT_SECRET=your_secret_key
 ```
 
