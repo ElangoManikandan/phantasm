@@ -101,9 +101,8 @@ node server.js
 
 ## 👨‍💻 Developed By
 
-WEB DEVELOPMENT TEAM
+WEB DEVELOPMENT TEAM-2025
 -GCE BARGUR
--2025
 ---
 
 ## 📜 License
