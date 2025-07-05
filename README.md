@@ -101,10 +101,9 @@ node server.js
 
 ## 👨‍💻 Developed By
 
-**Elango**  
-Final Year CSE, Government College of Engineering, Bargur  
-[GitHub](https://github.com/elangomanikandan) • [LinkedIn](https://linkedin.com/in/elango31204)
-
+WEB DEVELOPMENT TEAM
+-GCE BARGUR
+-2025
 ---
 
 ## 📜 License
