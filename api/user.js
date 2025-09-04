@@ -1,5 +1,5 @@
 import express from 'express';
-import db from "../utils/db.js"; // Assuming db.query is your SQL query function
+import db from "../utils/db.js"; 
 import jwt from 'jsonwebtoken';
 import { requireAuth } from "./middleware.js"; 
 
